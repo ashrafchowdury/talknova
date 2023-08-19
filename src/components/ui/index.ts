@@ -30,6 +30,15 @@ import {
   DialogTitle,
   DialogDescription,
 } from "./dialog";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "./tooltip";
+import { Avatar, AvatarImage, AvatarFallback } from "./avatar";
+import { Skeleton } from "./skeleton";
+import { Switch } from "./switch";
 
 export {
   Button,
@@ -61,4 +70,13 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  Skeleton,
+  Switch,
 };
