@@ -1,6 +1,6 @@
 "use client";
 import { Navbar, Register, Features } from "@/components";
-import { Button } from "@/components/ui";
+import { Button } from "@/packages/ui";
 
 export default function Home() {
   return (

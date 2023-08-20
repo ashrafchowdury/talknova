@@ -16,7 +16,8 @@ import {
   Dialog,
   DialogTrigger,
   DialogContent,
-} from "./ui";
+} from "@/packages/ui";
+
 
 const Register = () => {
   return (

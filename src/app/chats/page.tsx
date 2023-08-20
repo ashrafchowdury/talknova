@@ -13,7 +13,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui";
+} from "@/packages/ui";
 
 import {
   GearIcon,

@@ -1,6 +1,6 @@
 "use client";
 import { MoonIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
-import { Button, Logo } from "./ui";
+import { Button, Logo } from "@/packages/ui";
 import Link from "next/link";
 import Register from "./Register";
 

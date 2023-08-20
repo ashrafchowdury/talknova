@@ -2,8 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 const outfit = Outfit({ subsets: ["latin"] });
-import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Toaster } from "@/packages/ui/toaster";
+import { ThemeProvider } from "@/packages/ui/theme/theme-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",

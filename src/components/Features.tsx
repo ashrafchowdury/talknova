@@ -9,7 +9,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui";
+} from "@/packages/ui";
 
 const Features = () => {
   const query = [
