@@ -6,7 +6,15 @@ import {
   AvatarImage,
   Input,
   Switch,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui";
+
 import {
   GearIcon,
   BellIcon,
@@ -189,7 +197,7 @@ const Chats = () => {
         </div>
 
         <div className="w-full mt-7">
-          <p className="mb-2 font-medium opacity-60">Medias</p>
+          <p className="mb-4 font-medium opacity-60">Medias</p>
 
           <div className="flex items-center space-x-3">
             <Button
@@ -215,8 +223,9 @@ const Chats = () => {
             </Button>
           </div>
         </div>
+
         <div className="w-full mt-7">
-          <p className="mb-2 font-medium opacity-60">Settings</p>
+          <p className="mb-4 font-medium opacity-60">Settings</p>
 
           <div className="w-full flex items-center justify-between mb-7">
             <div className="mr-5">
@@ -246,6 +255,51 @@ const Chats = () => {
             </div>
             <Switch />
           </div>
+        </div>
+
+        <div className="w-full mt-7">
+          <p className="mb-4 font-medium opacity-60">Theme</p>
+
+          <Select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a fruit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Colours</SelectLabel>
+                <SelectItem value="apple">
+                  <div className="w-full flex items-center justify-between">
+                    <div className="w-3 h-3 rounded-sm bg-black mr-2"></div>
+                    Black
+                  </div>
+                </SelectItem>
+                <SelectItem value="banana">
+                  <div className="w-full flex items-center justify-between">
+                    <div className="w-3 h-3 rounded-sm bg-blue-500 mr-2"></div>
+                    Blue
+                  </div>
+                </SelectItem>
+                <SelectItem value="blueberry">
+                  <div className="w-full flex items-center justify-between">
+                    <div className="w-3 h-3 rounded-sm bg-red-500 mr-2"></div>
+                    Red Rose
+                  </div>
+                </SelectItem>
+                <SelectItem value="grapes">
+                  <div className="w-full flex items-center justify-between">
+                    <div className="w-3 h-3 rounded-sm bg-green-600 mr-2"></div>
+                    Green Leave
+                  </div>
+                </SelectItem>
+                <SelectItem value="pineapple">
+                  <div className="w-full flex items-center justify-between">
+                    <div className="w-3 h-3 rounded-sm bg-orange-500 mr-2"></div>
+                    Orange
+                  </div>
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </section>
     </main>

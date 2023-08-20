@@ -39,6 +39,29 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "./avatar";
 import { Skeleton } from "./skeleton";
 import { Switch } from "./switch";
+import {
+  Select,
+  SelectGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+  SelectSeparator,
+} from "./select";
+import { Popover, PopoverTrigger, PopoverContent } from "./popover";
+import {
+  Command,
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandShortcut,
+  CommandSeparator,
+} from "./command";
+import { Progress } from './progress'
 
 export {
   Button,
@@ -79,4 +102,25 @@ export {
   AvatarFallback,
   Skeleton,
   Switch,
+  Select,
+  SelectGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+  SelectSeparator,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Command,
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandShortcut,
+  CommandSeparator,
+  Progress,
 };
