@@ -28,6 +28,9 @@ import {
   DashboardIcon,
   FileTextIcon,
 } from "@radix-ui/react-icons";
+import Notification from "@/components/Notification";
+import Invite from "@/components/Invite";
+import Users from "@/components/Users";
 
 const Chats = () => {
   return (
@@ -44,20 +47,16 @@ const Chats = () => {
               >
                 <MagnifyingGlassIcon className="w-5 h-5" />
               </Button>
-              <Button
-                variant="ghost"
-                title="Notifications"
-                className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
-              >
-                <BellIcon className="w-5 h-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                title="Invite Friends"
-                className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
-              >
-                <PlusCircledIcon className="w-5 h-5" />
-              </Button>
+              <Notification />
+              <Invite>
+                <Button
+                  variant="ghost"
+                  title="Invite Friends"
+                  className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
+                >
+                  <PlusCircledIcon className="w-5 h-5" />
+                </Button>
+              </Invite>
               <Button
                 variant="ghost"
                 title="Settings"
@@ -69,58 +68,18 @@ const Chats = () => {
           </nav>
 
           <section className="w-[98%] mt-8">
-            <div className=" flex items-start justify-between my-7">
-              <div className=" flex items-center">
-                <Avatar>
-                  <AvatarImage src="/preview_one.png" alt="@shadcn" />
-                </Avatar>
-                <div className="ml-3 mr-2">
-                  <p className=" font-bold mb-1 flex items-center">
-                    <span className=" w-[10px] h-[10px] rounded-full bg-green-500 mr-[6px]"></span>
-                    Ashraf Chowdury
-                  </p>
-                  <p className="w-[240px] text-sm opacity-60 whitespace-nowrap overflow-hidden truncate">
-                    Me: Lorem ipsum dolor sit amet. ipsum dolor sit amet
-                  </p>
-                </div>
-              </div>
-              <p className="text-xs mt-1 ">Today</p>
-            </div>
-            <div className=" flex items-start justify-between my-7">
-              <div className=" flex items-center">
-                <Avatar>
-                  <AvatarImage src="/preview_two.png" alt="@shadcn" />
-                </Avatar>
-                <div className="ml-3 mr-2">
-                  <p className=" font-bold mb-1">Ashraf Chowdury</p>
-                  <p className="w-[240px] text-sm opacity-60 whitespace-nowrap overflow-hidden truncate">
-                    Me: Lorem ipsum dolor sit amet. ipsum dolor sit amet
-                  </p>
-                </div>
-              </div>
-              <p className="text-xs mt-1">Yesterday</p>
-            </div>
-            <div className=" flex items-start justify-between my-7">
-              <div className=" flex items-center">
-                <Avatar>
-                  <AvatarImage src="/preview_three.png" alt="@shadcn" />
-                </Avatar>
-                <div className="ml-3 mr-2">
-                  <p className="font-bold mb-1">Ashraf Chowdury</p>
-                  <p className="w-[240px] text-sm opacity-60 whitespace-nowrap overflow-hidden truncate">
-                    Me: Lorem ipsum dolor sit amet. ipsum dolor sit amet
-                  </p>
-                </div>
-              </div>
-              <p className="text-xs mt-1">Yesterday</p>
-            </div>
+            <Users />
+            <Users />
+            <Users />
           </section>
         </div>
 
-        <Button className=" w-[98%]">
-          <PlusCircledIcon className="w-5 h-5 mr-2" />
-          Invite Friends
-        </Button>
+        <Invite>
+          <Button className=" w-[98%]">
+            <PlusCircledIcon className="w-5 h-5 mr-2" />
+            Invite Friends
+          </Button>
+        </Invite>
       </aside>
 
       <main className=" w-[900px] h-[98vh] border-x mt-2">
@@ -184,8 +143,12 @@ const Chats = () => {
         </section>
       </main>
 
-      <section className="w-[350px] h-[98vh] px-4">
-        <div className="flex flex-col items-center justify-center mt-6">
+      <section className="w-[350px] h-[98vh]">
+        <nav className="h-[60px] mt-2 px-8 border-b flex items-center justify-between">
+          <p className=" text-xl font-bold">Settings</p>
+        </nav>
+
+        <div className="flex flex-col items-center justify-center mt-6 px-4">
           <Avatar className="w-24 h-24">
             <AvatarImage src="/preview_three.png" alt="@shadcn" />
           </Avatar>
@@ -196,7 +159,7 @@ const Chats = () => {
           </p>
         </div>
 
-        <div className="w-full mt-7">
+        <div className="w-full mt-7 px-4">
           <p className="mb-4 font-medium opacity-60">Medias</p>
 
           <div className="flex items-center space-x-3">
@@ -224,7 +187,7 @@ const Chats = () => {
           </div>
         </div>
 
-        <div className="w-full mt-7">
+        <div className="w-full mt-7 px-4">
           <p className="mb-4 font-medium opacity-60">Settings</p>
 
           <div className="w-full flex items-center justify-between mb-7">
@@ -257,7 +220,7 @@ const Chats = () => {
           </div>
         </div>
 
-        <div className="w-full mt-7">
+        <div className="w-full mt-7 px-4">
           <p className="mb-4 font-medium opacity-60">Theme</p>
 
           <Select>

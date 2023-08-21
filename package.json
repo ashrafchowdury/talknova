@@ -46,6 +46,7 @@
     "zod": "^3.22.1"
   },
   "devDependencies": {
-    "husky": "^8.0.0"
+    "husky": "^8.0.0",
+    "prettier": "3.0.2"
   }
 }
