@@ -22,9 +22,7 @@ const Invite = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Dialog>
-        <DialogTrigger asChild>
-          {children}
-        </DialogTrigger>
+        <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
             <DialogTitle>Search & Invite Friends</DialogTitle>

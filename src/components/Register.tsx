@@ -18,7 +18,6 @@ import {
   DialogContent,
 } from "@/packages/ui";
 
-
 const Register = () => {
   return (
     <>

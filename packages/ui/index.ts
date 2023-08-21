@@ -61,7 +61,7 @@ import {
   CommandShortcut,
   CommandSeparator,
 } from "./command";
-import { Progress } from './progress'
+import { Progress } from "./progress";
 
 export {
   Button,

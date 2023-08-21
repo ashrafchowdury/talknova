@@ -1,5 +1,5 @@
 {
-  "name": "chat-app",
+  "name": "talknova",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "check-types": "tsc --pretty --noEmit",
+    "check-format": "prettier --check .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.2.0",
