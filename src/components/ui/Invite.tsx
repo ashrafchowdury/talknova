@@ -17,8 +17,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/packages/ui";
+import { ChildrenType } from "@/types";
 
-const Invite = ({ children }: { children: React.ReactNode }) => {
+const Invite = ({ children }: ChildrenType) => {
   return (
     <>
       <Dialog>
