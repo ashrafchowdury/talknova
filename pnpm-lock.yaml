@@ -65,6 +65,9 @@ dependencies:
   cmdk:
     specifier: ^0.2.0
     version: 0.2.0(@types/react@18.2.20)(react-dom@18.2.0)(react@18.2.0)
+  date-and-time:
+    specifier: ^3.0.2
+    version: 3.0.2
   eslint:
     specifier: 8.47.0
     version: 8.47.0
@@ -2198,6 +2201,13 @@ packages:
     resolution:
       {
         integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==,
+      }
+    dev: false
+
+  /date-and-time@3.0.2:
+    resolution:
+      {
+        integrity: sha512-MOqlRertOQmQI7ySbz6dKLM7Rxm9dgcPuBI9IL7NVe0UGqHPK+6hWSKVhLrVHxlSgQQtocE2R7+HFOf5aMz8vw==,
       }
     dev: false
 

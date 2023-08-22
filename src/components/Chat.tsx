@@ -19,20 +19,23 @@ import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
 import { Message, BackSpace, Loader } from "./ui";
 import { useRouter } from "next/navigation";
+import { useUsers } from "@/provider";
 
 const Chat = ({ className }: ClassType) => {
   const { windowSize } = useUI();
   const router = useRouter();
+  const { selectedUser, userId } = useUsers();
+
   return (
     <main className={cn("h-[98vh] border-x mt-2", className)}>
       <nav className="h-[60px] px-8 border-b flex items-center justify-between">
         <BackSpace />
         <div className="flex items-center">
           <Avatar>
-            <AvatarImage src="/preview_three.png" alt="@shadcn" />
+            <AvatarImage src={selectedUser?.image} alt={selectedUser?.name} />
           </Avatar>
           <div className="ml-2">
-            <p className="text-lg font-bold ">Ashraf Chowdury</p>
+            <p className="text-lg font-bold ">{selectedUser?.name}</p>
             <p className="text-sm opacity-60 -mt-1 flex items-end ">
               Typing <Loader variant="black" className="opacity-50 ml-[2px]" />
             </p>

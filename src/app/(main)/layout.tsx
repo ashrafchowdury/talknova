@@ -1,9 +1,13 @@
-import { UiContextProvider } from "@/provider";
+import { UiContextProvider, UserContextProvider } from "@/provider";
 
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <UiContextProvider>{children}</UiContextProvider>;
+  return (
+    <UserContextProvider>
+      <UiContextProvider>{children}</UiContextProvider>;
+    </UserContextProvider>
+  );
 }

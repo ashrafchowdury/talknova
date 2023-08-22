@@ -9,8 +9,10 @@ import { ImageIcon, DashboardIcon, FileTextIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
 import { ThemeSelector, ToggleSwitch, BackSpace } from "./ui";
+import { useUsers } from "@/provider";
 
 const UserSettings = ({ className }: ClassType) => {
+  const { selectedUser } = useUsers();
   return (
     <section className={cn("h-[98vh]", className)}>
       <nav className="h-[60px] mt-2 xl:px-8 border-b flex items-center justify-start">
@@ -20,12 +22,12 @@ const UserSettings = ({ className }: ClassType) => {
 
       <div className="flex flex-col items-center justify-center mt-6 px-4">
         <Avatar className="w-24 h-24">
-          <AvatarImage src="/preview_three.png" alt="@shadcn" />
+          <AvatarImage src={selectedUser?.image} alt={selectedUser?.name} />
         </Avatar>
 
-        <p className="text-xl font-bold mt-2 mb-1">Ashraf Chowdury</p>
+        <p className="text-xl font-bold mt-2 mb-1">{selectedUser?.name}</p>
         <p className="w-[90%] text-sm text-center opacity-60">
-          Lorem ipsum dolor sit amet consectetur this is elit.
+          {selectedUser?.bio}
         </p>
       </div>
 

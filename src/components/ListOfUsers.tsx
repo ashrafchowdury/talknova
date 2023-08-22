@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import { Notification, Invite, Users } from "@/components/ui";
 import {
   GearIcon,
@@ -6,8 +8,11 @@ import {
 } from "@radix-ui/react-icons";
 import { Button, Input } from "@/packages/ui";
 import Link from "next/link";
+import { useUsers } from "@/provider";
 
 const ListOfUsers = () => {
+  const [searchUsers, setSearchUsers] = useState("");
+  const { users } = useUsers();
   return (
     <aside className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[300px] xl:w-[400px] h-[98vh] ml-5 mt-2 flex flex-col justify-between">
       <div>
@@ -38,14 +43,24 @@ const ListOfUsers = () => {
         </nav>
 
         <section className="w-full relative mt-4 mb-5 md:pr-[14px]">
-          <Input placeholder="Search Friends" className="w-full py-5 px-9" />
+          <Input
+            placeholder="Search Friends"
+            className="w-full py-5 px-9"
+            value={searchUsers}
+            onChange={(e) => setSearchUsers(e.target.value)}
+          />
           <MagnifyingGlassIcon className="w-5 h-5 absolute top-[11px] left-[10px]" />
         </section>
 
         <section className="w-full md:w-[98%] mt-8">
-          <Users />
-          <Users />
-          <Users />
+          {users
+            .filter(
+              (data) =>
+                data.name?.toLowerCase().includes(searchUsers.toLowerCase())
+            )
+            .map((data) => (
+              <Users data={data} />
+            ))}
         </section>
       </div>
 

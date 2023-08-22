@@ -33,6 +33,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
+    "date-and-time": "^3.0.2",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.17",
     "lucide-react": "^0.268.0",
