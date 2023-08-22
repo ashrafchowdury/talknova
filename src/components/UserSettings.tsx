@@ -8,13 +8,14 @@ import {
 import { ImageIcon, DashboardIcon, FileTextIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
-import { ThemeSelector, ToggleSwitch } from "./ui";
+import { ThemeSelector, ToggleSwitch, BackSpace } from "./ui";
 
 const UserSettings = ({ className }: ClassType) => {
   return (
     <section className={cn("h-[98vh]", className)}>
-      <nav className="h-[60px] mt-2 px-8 border-b flex items-center justify-between">
-        <p className=" text-xl font-bold">Settings</p>
+      <nav className="h-[60px] mt-2 xl:px-8 border-b flex items-center justify-start">
+        <BackSpace className="flex xl:hidden" />
+        <p className=" text-xl font-bold ml-3 xl:ml-0">Settings</p>
       </nav>
 
       <div className="flex flex-col items-center justify-center mt-6 px-4">

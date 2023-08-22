@@ -14,13 +14,12 @@ export const useUI = () => useContext(UiContext)!;
 const UiContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
-  const [windowSize, setWindowSize] = useState(0);
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   useEffect(() => {
     const getWindowSize = () => {
       setWindowSize(window.innerWidth);
     };
-    getWindowSize();
     window.addEventListener("resize", getWindowSize);
     return () => {
       window.removeEventListener("resize", getWindowSize);
