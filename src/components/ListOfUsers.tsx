@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { Notification, Invite, Users } from "@/components/ui";
 import {
   GearIcon,
@@ -59,7 +59,9 @@ const ListOfUsers = () => {
                 data.name?.toLowerCase().includes(searchUsers.toLowerCase())
             )
             .map((data) => (
-              <Users data={data} />
+              <Fragment key={data.id}>
+                <Users data={data} />
+              </Fragment>
             ))}
         </section>
       </div>

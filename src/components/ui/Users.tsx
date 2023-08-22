@@ -13,7 +13,6 @@ const Users = ({ data }: any) => {
   return (
     <div
       className=" flex items-start justify-between my-7 cursor-pointer"
-      key={data.id}
       onClick={() => {
         router.push(
           windowSize < 1025 ? `/chats?${data.id}` : `/users?${data.id}`

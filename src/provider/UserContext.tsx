@@ -24,7 +24,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   useEffect(() => {
     const filter = users.filter((data) => data.id == userId);
     setSelectedUser(filter[0]);
-  }, [userId]);
+  }, [userId, users]);
 
   const value: TypeUserContextProvider = {
     users,

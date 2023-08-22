@@ -28,10 +28,10 @@ const Invite = ({ children }: ChildrenType) => {
           <DialogHeader>
             <DialogTitle>Search & Invite Friends</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
+              Make changes to your profile here. Click save when youre done.
             </DialogDescription>
           </DialogHeader>
-          <div className="">
+          <div>
             <Command className="rounded-lg border shadow-md">
               <CommandInput placeholder="Type a command or search..." />
               <CommandList>
