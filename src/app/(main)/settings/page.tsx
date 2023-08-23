@@ -11,7 +11,7 @@ import { BackSpace, ToggleSwitch, ThemeSelector } from "@/components/ui";
 const Settings = () => {
   return (
     <main className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[1050px] mx-auto">
-      <nav className="h-[60px] mt-2 border-b flex items-center justify-start">
+      <nav className="h-[60px] border-b flex items-center justify-start">
         <BackSpace />
         <p className=" text-xl font-bold ml-3">Settings</p>
       </nav>
@@ -33,7 +33,7 @@ const Settings = () => {
         />
       </div>
 
-      <div className="w-full mt-7 px-4">
+      <div className="w-full mt-7 md:px-4">
         <p className="mb-4 font-medium opacity-60">Settings</p>
         <ToggleSwitch
           title="Enable Encryption"
@@ -67,7 +67,7 @@ const Settings = () => {
       </div>
 
       <div className="flex items-center justify-center mt-20 mb-6">
-        <Button variant="destructive" className="w-[98%]  py-5">
+        <Button variant="destructive" className="w-full md:w-[98%]  py-5">
           Log Out
         </Button>
       </div>

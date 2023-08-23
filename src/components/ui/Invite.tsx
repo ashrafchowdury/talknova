@@ -24,7 +24,7 @@ const Invite = ({ children }: ChildrenType) => {
     <>
       <Dialog>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="sm:max-w-[480px]">
+        <DialogContent className="w-[95%] sm:max-w-[480px]">
           <DialogHeader>
             <DialogTitle>Search & Invite Friends</DialogTitle>
             <DialogDescription>

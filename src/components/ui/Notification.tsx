@@ -12,7 +12,7 @@ const Notification = () => {
           <BellIcon className="w-5 h-5" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 -mt-1">
+      <PopoverContent className="w-[258px] md:w-80 -mt-1">
         <div className="grid gap-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Notification</h4>

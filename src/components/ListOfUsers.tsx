@@ -14,7 +14,7 @@ const ListOfUsers = () => {
   const [searchUsers, setSearchUsers] = useState("");
   const { users } = useUsers();
   return (
-    <aside className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[300px] xl:w-[400px] h-[98vh] ml-5 mt-2 flex flex-col justify-between">
+    <aside className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[300px] xl:w-[400px] h-[98vh] mt-2 flex flex-col justify-between">
       <div>
         <nav className="h-[60px] flex items-center justify-between border-b">
           <h1 className=" text-2xl font-bold">Inbox</h1>

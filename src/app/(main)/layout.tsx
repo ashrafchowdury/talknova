@@ -7,7 +7,7 @@ export default function MainLayout({
 }) {
   return (
     <UserContextProvider>
-      <UiContextProvider>{children}</UiContextProvider>;
+      <UiContextProvider>{children}</UiContextProvider>
     </UserContextProvider>
   );
 }

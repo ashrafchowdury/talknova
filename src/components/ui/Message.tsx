@@ -9,14 +9,16 @@ const Message = () => {
   return (
     <>
       <div
-        className={cn("py-2 px-5 rounded-lg w-auto text-white my-3 relative")}
+        className={cn(
+          "py-3 px-5 text-sm md:text-[16px] rounded-lg w-auto text-white my-2 md:my-3 relative"
+        )}
         style={{ backgroundColor: userAppearance }}
       >
         <span>Lorem ipsum dolor sit. ipsum dolor sit.</span>
       </div>
 
       <div
-        className="h-10 w-16 rounded-lg bg-black text-white my-3 flex items-center justify-center"
+        className="h-[34px] md:h-10 w-16 rounded-lg bg-black text-white my-2 md:my-3 flex items-center justify-center"
         style={{ backgroundColor: userAppearance }}
       >
         <Loader variant="white" />

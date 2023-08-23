@@ -12,7 +12,7 @@ const Users = ({ data }: any) => {
   const { setUserId, getSelectedUser } = useUsers();
   return (
     <div
-      className=" flex items-start justify-between my-7 cursor-pointer"
+      className="flex items-start justify-between my-7 cursor-pointer relative overflow-hidden"
       onClick={() => {
         router.push(
           windowSize < 1025 ? `/chats#${data.id}` : `/users#${data.id}`
@@ -21,12 +21,12 @@ const Users = ({ data }: any) => {
         getSelectedUser(data.id);
       }}
     >
-      <div className=" flex items-center">
+      <div className="flex items-center">
         <Avatar>
           <AvatarImage
             src={data.image}
             alt={data.name}
-            className=" object-cover"
+            className="object-cover"
           />
         </Avatar>
         <div className="ml-3 mr-2">
@@ -39,12 +39,14 @@ const Users = ({ data }: any) => {
             ></span>
             {data.name}
           </p>
-          <p className="lg:w-[180px] xl:w-[240px] text-sm opacity-60 whitespace-nowrap overflow-hidden truncate">
+          <p className="w-[90%] text-xs sm:text-sm opacity-60 whitespace-nowrap overflow-hidden truncate">
             Me: {data.msg}
           </p>
         </div>
       </div>
-      <p className="text-xs mt-1 mr-3 capitalize">{data.date}</p>
+      <p className="text-[10px] mt-1 whitespace-nowrap mr-3 capitalize absolute top-1 right-0">
+        {data.date}
+      </p>
     </div>
   );
 };
