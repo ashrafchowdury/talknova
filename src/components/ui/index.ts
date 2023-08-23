@@ -6,6 +6,7 @@ import ThemeSelector from "./ThemeSelector";
 import ToggleSwitch from "./ToggleSwitch";
 import BackSpace from "./BackSpace";
 import Loader from "./Loader";
+import Emojies from "./Emojies";
 
 export {
   Invite,
@@ -16,4 +17,5 @@ export {
   ToggleSwitch,
   BackSpace,
   Loader,
+  Emojies,
 };

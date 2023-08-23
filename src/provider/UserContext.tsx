@@ -9,6 +9,7 @@ type TypeUserContextProvider = {
   userId: string;
   setUserId: any;
   selectedUser: any;
+  getSelectedUser: (id: string) => void;
 };
 
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
@@ -17,20 +18,28 @@ export const useUsers = () => useContext(UserContext)!;
 const UserContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
+  // states
   const [users, setUsers] = useState(filterUsers);
-  const [selectedUser, setSelectedUser] = useState({});
-  const [userId, setUserId] = useState(window.location.search);
-
+  const [selectedUser, setSelectedUser] = useState(filterUsers[0]);
+  const [userId, setUserId] = useState("");
+  // effects
   useEffect(() => {
-    const filter = users.filter((data) => data.id == userId);
+    window.location.hash = `${selectedUser.id}`;
+    setUserId(`${selectedUser.id}`);
+  }, []);
+
+  //functions
+  const getSelectedUser = (id: string) => {
+    const filter = users.filter((data) => data.id == id);
     setSelectedUser(filter[0]);
-  }, [userId, users]);
+  };
 
   const value: TypeUserContextProvider = {
     users,
     userId,
     setUserId,
     selectedUser,
+    getSelectedUser,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

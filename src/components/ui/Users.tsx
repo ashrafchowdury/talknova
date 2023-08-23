@@ -9,15 +9,16 @@ import { useRouter } from "next/navigation";
 const Users = ({ data }: any) => {
   const { windowSize } = useUI();
   const router = useRouter();
-  const { setUserId } = useUsers();
+  const { setUserId, getSelectedUser } = useUsers();
   return (
     <div
       className=" flex items-start justify-between my-7 cursor-pointer"
       onClick={() => {
         router.push(
-          windowSize < 1025 ? `/chats?${data.id}` : `/users?${data.id}`
+          windowSize < 1025 ? `/chats#${data.id}` : `/users#${data.id}`
         );
         setUserId(data.id);
+        getSelectedUser(data.id);
       }}
     >
       <div className=" flex items-center">

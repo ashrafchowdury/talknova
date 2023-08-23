@@ -5,7 +5,6 @@ import {
   PaperPlaneIcon,
   ImageIcon,
   MixerVerticalIcon,
-  MixIcon,
 } from "@radix-ui/react-icons";
 import {
   Button,
@@ -17,12 +16,12 @@ import {
 import { useUI } from "@/provider";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
-import { Message, BackSpace, Loader } from "./ui";
+import { Message, BackSpace, Loader, Emojies } from "./ui";
 import { useRouter } from "next/navigation";
 import { useUsers } from "@/provider";
 
 const Chat = ({ className }: ClassType) => {
-  const { windowSize } = useUI();
+  const { windowSize, userAppearance } = useUI();
   const router = useRouter();
   const { selectedUser, userId } = useUsers();
 
@@ -48,7 +47,9 @@ const Chat = ({ className }: ClassType) => {
             title="Settings"
             className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
             onClick={() =>
-              windowSize < 1350 ? router.push("/user-settings") : null
+              windowSize < 1350
+                ? router.push(`/user-settings#${selectedUser?.id}`)
+                : null
             }
           >
             <GearIcon className="w-5 h-5" />
@@ -64,24 +65,27 @@ const Chat = ({ className }: ClassType) => {
           className=" !py-6 text-[16px] border border-black pr-16"
         />
         <div className=" flex items-center space-x-3 absolute top-[7px] right-2">
-          <Button
-            title="Emoji"
-            variant="ghost"
-            className="py-[2px] px-2 hover:bg-slate-200 duration-300"
-          >
-            <MixIcon className="w-4 h-4" />
-          </Button>
+          <Emojies />
           <Button
             title="Select Media"
             variant="ghost"
-            className="py-[2px] px-2 hover:bg-slate-200 duration-300"
+            className="py-[2px] px-2 hover:bg-slate-200 duration-300 relative overflow-hidden "
           >
-            <ImageIcon className="w-4 h-4" />
+            <ImageIcon className="w-4 h-4 cursor-pointer" />
+            <Input
+              type="file"
+              accept=".png, .jpg, .jpeg"
+              className=" opacity-0 absolute top-0 left-0 right-0 bottom-0 cursor-pointer"
+            />
           </Button>
           {/* <Button title="Record Voice" className="py-0 px-3">
               <MixerVerticalIcon className="w-4 h-4" />
             </Button> */}
-          <Button title="Send Message" className="py-0 px-3">
+          <Button
+            title="Send Message"
+            className="py-0 px-3"
+            style={{ backgroundColor: userAppearance }}
+          >
             <PaperPlaneIcon className="w-4 h-4" />
           </Button>
         </div>
