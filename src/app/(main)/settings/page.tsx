@@ -7,8 +7,10 @@ import {
   Input,
 } from "@/packages/ui";
 import { BackSpace, ToggleSwitch, ThemeSelector } from "@/components/ui";
+import { useAuth } from "@/provider";
 
 const Settings = () => {
+  const { logout } = useAuth();
   return (
     <main className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[1050px] mx-auto">
       <nav className="h-[60px] border-b flex items-center justify-start">
@@ -67,7 +69,11 @@ const Settings = () => {
       </div>
 
       <div className="flex items-center justify-center mt-20 mb-6">
-        <Button variant="destructive" className="w-full md:w-[98%]  py-5">
+        <Button
+          variant="destructive"
+          className="w-full md:w-[98%] py-5"
+          onClick={() => logout()}
+        >
           Log Out
         </Button>
       </div>

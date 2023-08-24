@@ -4,6 +4,7 @@ import { Outfit } from "next/font/google";
 const outfit = Outfit({ subsets: ["latin"] });
 import { Toaster } from "@/packages/ui/toaster";
 import { ThemeProvider } from "@/packages/ui/theme/theme-provider";
+import { AuthContextProvider } from "@/provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,7 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={outfit.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children} <Toaster />
+          <AuthContextProvider>
+            {children} <Toaster />
+          </AuthContextProvider>
         </ThemeProvider>
       </body>
     </html>

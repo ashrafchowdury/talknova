@@ -62,6 +62,7 @@ import {
   CommandSeparator,
 } from "./command";
 import { Progress } from "./progress";
+import { useToast } from "./hooks/use-toast";
 
 export {
   Button,
@@ -123,4 +124,5 @@ export {
   CommandShortcut,
   CommandSeparator,
   Progress,
+  useToast,
 };

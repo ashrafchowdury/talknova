@@ -10,50 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/packages/ui";
+import { features } from "@/lib/helpers";
 
 const Features = () => {
-  const query = [
-    {
-      id: "text-chat",
-      title: "text chat",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque recusandae atque nulla fugit quas est quaerat culpa eum tempore eius.",
-      image: "/preview_one.png",
-    },
-    {
-      id: "voice-chat",
-      title: "voice chat",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque recusandae atque nulla fugit quas est quaerat culpa eum tempore eius.",
-      image: "/preview_two.png",
-    },
-    {
-      id: "customization",
-      title: "Theme Customization",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque recusandae atque nulla fugit quas est quaerat culpa eum tempore eius.",
-      image: "/preview_three.png",
-    },
-    {
-      id: "emcryption",
-      title: "E-2-E Emcryption",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque recusandae atque nulla fugit quas est quaerat culpa eum tempore eius.",
-      image: "",
-    },
-    {
-      id: "invitation",
-      title: "User Invitation",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque recusandae atque nulla fugit quas est quaerat culpa eum tempore eius.",
-      image: "",
-    },
-  ];
   return (
     <>
-      <Tabs defaultValue="text-chat" className="w-[95%] mt-20 mb-20">
-        <TabsList className="w-[800px]">
-          {query.map((data) => (
+      <Tabs
+        defaultValue="text-chat"
+        className="w-full md:w-[95%] mt-12 sm:mt-20 mb-20"
+      >
+        <TabsList className="w-[95%] xl:w-[800px] overflow-x-auto">
+          {features.map((data) => (
             <TabsTrigger
               value={data.id}
               key={data.id}
@@ -63,7 +30,7 @@ const Features = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        {query.map((data) => (
+        {features.map((data) => (
           <TabsContent value={data.id} key={data.id}>
             <Card>
               <CardHeader>
@@ -72,7 +39,7 @@ const Features = () => {
                 </CardTitle>
                 <CardDescription>{data.description}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="w-full overflow-hidden">
                 <Image
                   src={data?.image}
                   width={1300}
