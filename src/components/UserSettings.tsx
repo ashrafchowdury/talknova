@@ -8,7 +8,7 @@ import {
 import { ImageIcon, DashboardIcon, FileTextIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
-import { ThemeSelector, ToggleSwitch, BackSpace } from "./ui";
+import { ThemeSelector, ToggleSwitch, BackSpace, SecretKey } from "./ui";
 import { useUsers } from "@/provider";
 
 const UserSettings = ({ className }: ClassType) => {
@@ -61,10 +61,16 @@ const UserSettings = ({ className }: ClassType) => {
 
       <div className="w-full mt-7 px-4">
         <p className="mb-4 font-medium opacity-60">Settings</p>
-        <ToggleSwitch
-          title="Enable Encryption"
-          desc="Lorem ipsum, dolor sit amet consectetur adipisicing elit."
-        />
+        <div className="w-full flex items-center justify-between mb-7">
+          <div className="mr-5">
+            <p className="text-[16px] font-bold mb-1">Enable Encryption</p>
+            <p className="text-xs opacity-60 -mt-1">
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+            </p>
+          </div>
+          <SecretKey />
+        </div>
+
         <ToggleSwitch
           title="Auto Lock"
           desc="Lorem ipsum, dolor sit amet consectetur dolor sit amet consectetur"

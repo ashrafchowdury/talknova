@@ -7,6 +7,7 @@ import ToggleSwitch from "./ToggleSwitch";
 import BackSpace from "./BackSpace";
 import Loader from "./Loader";
 import Emojies from "./Emojies";
+import SecretKey from "./SecretKey";
 
 export {
   Invite,
@@ -18,4 +19,5 @@ export {
   BackSpace,
   Loader,
   Emojies,
+  SecretKey,
 };
