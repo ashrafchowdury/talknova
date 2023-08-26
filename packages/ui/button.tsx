@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "./tooltip";
 import { cn } from "@/lib/functions";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
@@ -43,10 +44,23 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  load?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, title, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      title,
+      children,
+      load,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button";
     return (
       <TooltipProvider>
@@ -56,7 +70,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               className={cn(buttonVariants({ variant, size, className }))}
               ref={ref}
               {...props}
-            />
+              disabled={load ?? false}
+            >
+              <>
+                {load && (
+                  <ReloadIcon className="w-3 md:w-[14px] h-3 md:h-[14px] mr-2 animate-spin" />
+                )}
+                {children}
+              </>
+            </Comp>
           </TooltipTrigger>
           {title && (
             <TooltipContent>

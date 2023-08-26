@@ -10,7 +10,7 @@ import { BackSpace, ToggleSwitch, ThemeSelector } from "@/components/ui";
 import { useAuth } from "@/provider";
 
 const Settings = () => {
-  const { logout } = useAuth();
+  const { logout, isLoading } = useAuth();
   return (
     <main className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[1050px] mx-auto">
       <nav className="h-[60px] border-b flex items-center justify-start">
@@ -73,6 +73,7 @@ const Settings = () => {
           variant="destructive"
           className="w-full md:w-[98%] py-5"
           onClick={() => logout()}
+          load={isLoading}
         >
           Log Out
         </Button>

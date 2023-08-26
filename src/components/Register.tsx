@@ -1,4 +1,5 @@
 "use client";
+import { FormEvent } from "react";
 import {
   Input,
   Button,
@@ -26,40 +27,21 @@ import {
 import { useToast } from "@/packages/ui";
 
 const Register = () => {
-  const { singup, login, forget } = useAuth();
+  const { singup, login, forget, isLoading } = useAuth();
   const { toast } = useToast();
 
-  const handleSingUp = (e: any) => {
+  const hnadleForms = (
+    e: any,
+    form: number[],
+    authFunction: (...args: string[]) => void
+  ) => {
     e.preventDefault();
-    const name: string = e.target[0].value;
-    const email: string = e.target[1].value;
-    const password: string = e.target[2].value;
+    const value = form.map((data) => e.target[data].value);
 
-    if (!name || !email || !password) {
-      toast({ variant: "destructive", title: "Pleace fill up all the fildes" });
+    if (value.some((data) => !data)) {
+      toast({ variant: "destructive", title: "Please fill up all the fildes" });
     } else {
-      singup(name, email, password);
-    }
-  };
-  const handleLogIn = (e: any) => {
-    e.preventDefault();
-    const email: string = e.target[0].value;
-    const password: string = e.target[1].value;
-
-    if (!email || !password) {
-      toast({ variant: "destructive", title: "Pleace fill up all the fildes" });
-    } else {
-      login(email, password);
-    }
-  };
-  const handleForgetPass = (e: any) => {
-    e.preventDefault();
-    const email: string = e.target[0].value;
-
-    if (!email) {
-      toast({ variant: "destructive", title: "Pleace fill up all the fildes" });
-    } else {
-      forget(email);
+      authFunction(...value);
     }
   };
 
@@ -90,7 +72,10 @@ const Register = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleSingUp} className="space-y-3">
+                  <form
+                    onSubmit={(e) => hnadleForms(e, [0, 1, 2], singup)}
+                    className="space-y-3"
+                  >
                     <div className="space-y-1 relative">
                       <Label htmlFor="name">Name</Label>
                       <PersonIcon className="w-4 h-4 absolute bottom-[11px] left-[10px]" />
@@ -119,7 +104,9 @@ const Register = () => {
                         className="px-8"
                       />
                     </div>
-                    <Button className=" !mt-8 w-full">Create Account</Button>
+                    <Button className="!mt-8 w-full" load={isLoading}>
+                      Create Account
+                    </Button>
                   </form>
                 </CardContent>
               </Card>
@@ -135,7 +122,10 @@ const Register = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleLogIn} className="space-y-3">
+                  <form
+                    onSubmit={(e) => hnadleForms(e, [0, 1], login)}
+                    className="space-y-3"
+                  >
                     <div className="space-y-1 relative">
                       <Label htmlFor="email">Email</Label>
                       <EnvelopeClosedIcon className="w-4 h-4 absolute bottom-[10px] left-[11px]" />
@@ -162,8 +152,9 @@ const Register = () => {
                         Forget Password!
                       </TabsTrigger>
                     </TabsList>
-
-                    <Button className=" !mt-8 w-full">Log In</Button>
+                    <Button className="!mt-8 w-full" load={isLoading}>
+                      Log In
+                    </Button>
                   </form>
                 </CardContent>
               </Card>
@@ -180,7 +171,7 @@ const Register = () => {
                 </CardHeader>
                 <CardContent>
                   <form
-                    onSubmit={handleForgetPass}
+                    onSubmit={(e) => hnadleForms(e, [0], forget)}
                     className="space-y-1 relative"
                   >
                     <Label htmlFor="email">Email</Label>
@@ -190,8 +181,9 @@ const Register = () => {
                       placeholder="Email Addrese"
                       className="px-9"
                     />
-
-                    <Button className=" !mt-8 w-full">Forget Password</Button>
+                    <Button className="!mt-8 w-full" load={isLoading}>
+                      Forget Password
+                    </Button>
                   </form>
                 </CardContent>
               </Card>

@@ -22,6 +22,7 @@ type AuthContextType = {
   forget: (email: string) => void;
   updateInfo: (name: string) => void;
   logout: () => void;
+  isLoading: boolean;
 };
 type AuthUserType = {
   displayName: string;
@@ -29,6 +30,12 @@ type AuthUserType = {
   photoURL: string;
   uid: string;
 };
+type ActionsType = {
+  toasts?: string;
+  direct?: string;
+  logic?: any;
+};
+
 export const AuthContext = createContext<AuthContextType | null>(null);
 export const useAuth = () => useContext(AuthContext)!;
 
@@ -36,21 +43,20 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
   const [currentUser, setCurrentUser] = useState<AuthUserType | {}>({});
+  const [isLoading, setIsLoading] = useState(false);
   // hooks
   const { toast } = useToast();
   const { push } = useRouter();
 
   // functions
-  const singup = async (name: string, email: string, password: string) => {
+  const actions = async ({ toasts, direct, logic }: ActionsType) => {
     try {
-      const createAccount = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      setCurrentUser(createAccount.user);
-      toast({ title: "Account Created Successfully" });
-      push("/users");
+      setIsLoading(true);
+      const result = await logic();
+      setCurrentUser(result?.user ?? {});
+      toasts && toast({ title: toasts });
+      direct && push(direct);
+      setIsLoading(false);
     } catch (error: any) {
       if (error.message == "auth/email-already-in-use") {
         toast({ variant: "destructive", title: "User already exist" });
@@ -59,25 +65,27 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
       }
     }
   };
+
+  const singup = async (name: string, email: string, password: string) => {
+    actions({
+      logic: () => createUserWithEmailAndPassword(auth, email, password),
+      toasts: "Account Created Successfully",
+      direct: "/users",
+    });
+  };
   const login = async (email: string, password: string) => {
-    try {
-      const userLogin = await signInWithEmailAndPassword(auth, email, password);
-      setCurrentUser(userLogin.user);
-      toast({ title: "User Login Successfully" });
-      push("/users");
-    } catch (error: any) {
-      console.log(error);
-      toast({ variant: "destructive", title: "Something went wrong!" });
-    }
+    actions({
+      logic: () => signInWithEmailAndPassword(auth, email, password),
+      toasts: "User Login Successfully",
+      direct: "/users",
+    });
   };
 
   const forget = async (email: string) => {
-    try {
-      const forgetPassword = await sendPasswordResetEmail(auth, email);
-      toast({ title: "Check your email" });
-    } catch (error) {
-      toast({ variant: "destructive", title: "Something wwent wrong!" });
-    }
+    actions({
+      logic: () => sendPasswordResetEmail(auth, email),
+      toasts: "Check your email",
+    });
   };
 
   const updateInfo = async (name: string) => {
@@ -91,14 +99,11 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
   };
 
   const logout = async () => {
-    try {
-      const logoutUser = await signOut(auth);
-      setCurrentUser({});
-      toast({ title: "User LogOut Successfully" });
-      push("/");
-    } catch (error) {
-      toast({ variant: "destructive", title: "Something wwent wrong!" });
-    }
+    actions({
+      logic: () => signOut(auth),
+      toasts: "User LogOut Successfully",
+      direct: "/",
+    });
   };
 
   //effects
@@ -118,6 +123,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
     forget,
     updateInfo,
     logout,
+    isLoading,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
