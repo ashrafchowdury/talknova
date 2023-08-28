@@ -63,6 +63,17 @@ import {
 } from "./command";
 import { Progress } from "./progress";
 import { useToast } from "./hooks/use-toast";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+} from "./sheet";
+import { Separator } from "./separator";
 
 export {
   Button,
@@ -125,4 +136,13 @@ export {
   CommandSeparator,
   Progress,
   useToast,
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+  Separator,
 };

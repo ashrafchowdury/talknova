@@ -1,12 +1,13 @@
 "use client";
 import { useState, Fragment } from "react";
-import { Notification, Invite, Users } from "@/components/ui";
+import { Notification, Users } from "@/components/ui";
 import {
   GearIcon,
   PlusCircledIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
 import { Button, Input } from "@/packages/ui";
+import { Invite } from ".";
 import Link from "next/link";
 import { useUsers } from "@/provider";
 
@@ -33,7 +34,6 @@ const ListOfUsers = () => {
               variant="ghost"
               title="Settings"
               className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
-              asChild
             >
               <Link href="/settings">
                 <GearIcon className="w-5 h-5" />

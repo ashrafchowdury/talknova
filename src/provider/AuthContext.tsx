@@ -11,16 +11,21 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
 } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
+import { database } from "@/server";
+import { generateUid } from "@/lib/functions";
 import { useToast } from "@/packages/ui";
 import { ChildrenType } from "@/types";
 import { useRouter } from "next/navigation";
+import { useCookies } from "@/lib/hooks";
+// import { useUsers } from ".";
 
 type AuthContextType = {
   currentUser: any;
   singup: (name: string, email: string, password: string) => void;
   login: (email: string, password: string) => void;
   forget: (email: string) => void;
-  updateInfo: (name: string) => void;
+  updateAuthInfo: (name: string) => void;
   logout: () => void;
   isLoading: boolean;
 };
@@ -34,6 +39,7 @@ type ActionsType = {
   toasts?: string;
   direct?: string;
   logic?: any;
+  type?: string; // action type like: signup, login
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -42,17 +48,37 @@ export const useAuth = () => useContext(AuthContext)!;
 const AuthContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
-  const [currentUser, setCurrentUser] = useState<AuthUserType | {}>({});
+  const [currentUser, setCurrentUser] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   // hooks
   const { toast } = useToast();
   const { push } = useRouter();
+  const { createSession, removeSession } = useCookies();
 
   // functions
-  const actions = async ({ toasts, direct, logic }: ActionsType) => {
+  const createUserProfile = async (user: any) => {
+    await setDoc(doc(database, "users", user.email), {
+      uid: user.uid,
+      name: user.displayName,
+      bio: "Work ipsum dolor sit amet Lorem ipsum dolor sit amet.",
+      image: "",
+      email: user.email,
+      friends: [],
+      invite: [],
+    });
+  };
+
+  const actions = async ({ toasts, direct, logic, type }: ActionsType) => {
     try {
       setIsLoading(true);
       const result = await logic();
+      if (type == "login") {
+        createSession(result?.user.uid);
+      } else if (type) {
+        await updateProfile(result?.user, { displayName: type });
+        createUserProfile(result?.user);
+        createSession(result?.user.uid);
+      }
       setCurrentUser(result?.user ?? {});
       toasts && toast({ title: toasts });
       direct && push(direct);
@@ -69,6 +95,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
   const singup = async (name: string, email: string, password: string) => {
     actions({
       logic: () => createUserWithEmailAndPassword(auth, email, password),
+      type: name,
       toasts: "Account Created Successfully",
       direct: "/users",
     });
@@ -76,6 +103,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
   const login = async (email: string, password: string) => {
     actions({
       logic: () => signInWithEmailAndPassword(auth, email, password),
+      type: "login",
       toasts: "User Login Successfully",
       direct: "/users",
     });
@@ -88,15 +116,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
     });
   };
 
-  const updateInfo = async (name: string) => {
-    // try {
-    //   const update = await updateProfile(currentUser, {
-    //     displayName: name
-    //   })
-    // } catch (error) {
-    //   toast({ variant: "destructive", title: "Something wwent wrong!" });
-    // }
-  };
+  const updateAuthInfo = async (name: string) => {};
 
   const logout = async () => {
     actions({
@@ -104,6 +124,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
       toasts: "User LogOut Successfully",
       direct: "/",
     });
+    removeSession();
   };
 
   //effects
@@ -121,7 +142,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
     singup,
     login,
     forget,
-    updateInfo,
+    updateAuthInfo,
     logout,
     isLoading,
   };

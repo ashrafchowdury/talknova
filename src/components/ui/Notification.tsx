@@ -1,32 +1,104 @@
-import { Button, Popover, PopoverContent, PopoverTrigger } from "@/packages/ui";
-import { BellIcon } from "@radix-ui/react-icons";
+"use client";
+import {
+  Button,
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+  Separator,
+} from "@/packages/ui";
+import { BellIcon, TrashIcon, CheckIcon } from "@radix-ui/react-icons";
+import { useUsers } from "@/provider";
+import { AvatarImg } from ".";
+
 const Notification = () => {
+  const { getUserInvitations, invite } = useUsers();
+
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <Sheet>
+      <SheetTrigger asChild>
         <Button
           variant="ghost"
           title="Notifications"
           className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
+          onClick={() => invite.length == 0 && getUserInvitations()}
         >
           <BellIcon className="w-5 h-5" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[258px] md:w-80 -mt-1">
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">Notification</h4>
-            <p className="text-sm text-muted-foreground">
-              Set the dimensions for the layer.
-            </p>
-          </div>
-          <div className="flex flex-col space-y-3 items-center justify-center h-20">
-            <p className="text-[16px] text-muted-foreground">No Notification</p>
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+      </SheetTrigger>
+      <SheetContent
+        side="left"
+        className=" flex flex-col justify-between overflow-y-auto p-3 md:p-6"
+      >
+        <aside>
+          <SheetHeader>
+            <SheetTitle>Notifications</SheetTitle>
+            <SheetDescription>
+              Make changes to your profile here.
+            </SheetDescription>
+          </SheetHeader>
+          <section className="py-4 mt-3">
+            {invite.length > 0 ? (
+              <>
+                {invite.map((data: any) => (
+                  <>
+                    <div
+                      key={data.uid}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center space-x-2 !mr-3 w-[70%]">
+                        <AvatarImg
+                          fallback={data.name}
+                          className="w-9 md:w-10 h-9 md:h-10 text-xs md:text-sm"
+                        />
+                        <div className="overflow-hidden ">
+                          <p className="text-sm md:text-[16px] font-semibold mb-1">
+                            {data.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground whitespace-nowrap">
+                            {data.bio}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1 md:space-x-2">
+                        <Button size="icon" className="w-7 h-7 md:w-8 md:h-8">
+                          <CheckIcon className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="w-7 h-7 md:w-8 md:h-8"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <Separator className="mt-3 mb-4" />
+                  </>
+                ))}
+              </>
+            ) : (
+              <div className="flex flex-col space-y-3 items-center justify-center h-20">
+                <p className="text-sm text-muted-foreground">No Notification</p>
+              </div>
+            )}
+          </section>
+        </aside>
+
+        <SheetFooter className=" mt-8">
+          <SheetClose className="flex items-center space-x-2 w-full">
+            <Button variant="destructive" className="w-full">
+              Reject All
+            </Button>
+            <Button className="w-full">Accept All</Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 };
-
 export default Notification;

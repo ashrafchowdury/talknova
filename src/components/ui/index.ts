@@ -1,4 +1,3 @@
-import Invite from "./Invite";
 import Message from "./Message";
 import Notification from "./Notification";
 import Users from "./Users";
@@ -8,9 +7,11 @@ import BackSpace from "./BackSpace";
 import Loader from "./Loader";
 import Emojies from "./Emojies";
 import SecretKey from "./SecretKey";
+import AvatarImg from "./AvatarImg";
+import InviteUsers from "./InviteUsers";
 
 export {
-  Invite,
+  InviteUsers,
   Message,
   Notification,
   Users,
@@ -20,4 +21,5 @@ export {
   Loader,
   Emojies,
   SecretKey,
+  AvatarImg,
 };

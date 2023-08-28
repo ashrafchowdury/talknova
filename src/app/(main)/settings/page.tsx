@@ -10,7 +10,7 @@ import { BackSpace, ToggleSwitch, ThemeSelector } from "@/components/ui";
 import { useAuth } from "@/provider";
 
 const Settings = () => {
-  const { logout, isLoading } = useAuth();
+  const { logout, isLoading, currentUser } = useAuth();
   return (
     <main className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[1050px] mx-auto">
       <nav className="h-[60px] border-b flex items-center justify-start">
@@ -20,11 +20,14 @@ const Settings = () => {
 
       <div className="flex flex-col items-center justify-center mt-6 px-4">
         <Avatar className="w-24 h-24">
-          <AvatarImage src="/preview_three.png" alt="@shadcn" />
+          <AvatarImage src={currentUser.photoURL} alt="@shadcn" />
+          <AvatarFallback className=" text-2xl font-bold w-full h-full bg-slate-300 uppercase">
+            {currentUser.displayName?.slice(0, 2)}
+          </AvatarFallback>
         </Avatar>
         <Input
           placeholder="Username"
-          defaultValue="Ashraf Chowdury"
+          defaultValue={currentUser.displayName}
           className="border-none w-[80%] md:w-[60%] text-xl text-center font-bold mt-2 mb-1"
         />
         <Input
