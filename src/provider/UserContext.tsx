@@ -1,7 +1,7 @@
 "use client";
 // This context contines all the UI related logics
 import React, { useState, useEffect, useContext, createContext } from "react";
-import { ChildrenType, UsersType } from "@/types";
+import { ChildrenType, UsersType, UserType } from "@/types";
 import { users as filterUsers } from "@/lib/functions";
 import {
   doc,
@@ -12,6 +12,8 @@ import {
   deleteDoc,
   where,
   updateDoc,
+  arrayRemove,
+  arrayUnion,
 } from "firebase/firestore";
 import { database } from "@/server";
 import { useAuth } from "./AuthContext";
@@ -21,15 +23,18 @@ import { useCookies } from "@/lib/hooks";
 type TypeUserContextProvider = {
   users: UsersType[];
   userId: string;
-  setUserId: any;
-  selectedUser: any;
+  selectedUser: UsersType;
+  user: UserType[];
+  invite: UserType[];
+  friends: UserType[];
+  setUserId: React.Dispatch<React.SetStateAction<string>>;
   getSelectedUser: (id: string) => void;
   getAllUsers: () => void;
-  user: any;
-  getUserFriends: any;
-  inviteUser: any;
-  getUserInvitations: any;
-  invite: any;
+  getUserFriends: (id: string[]) => void;
+  inviteUser: (email: string) => void;
+  getUserInvitations: (id: string[]) => void;
+  acceptUserInvite: (id: string) => void;
+  rejectUserInvite: (id: string) => void;
 };
 
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
@@ -39,11 +44,11 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
   // states
-  const [myself, setMyself] = useState<any>({});
+  const [myself, setMyself] = useState<UserType | {}>({});
   const [users, setUsers] = useState<any>(filterUsers); // all users
-  const [user, setUser] = useState<any>([]);
-  const [friends, setFriends] = useState<any>([]); // user friends
-  const [invite, setInvite] = useState<any>([]);
+  const [user, setUser] = useState<UserType[]>([]);
+  const [friends, setFriends] = useState<UserType[]>([]); // user friends
+  const [invite, setInvite] = useState<UserType[]>([]);
   const [selectedUser, setSelectedUser] = useState(filterUsers[0]); // first user
   const [userId, setUserId] = useState(""); // selected user id
   const [chats, setChats] = useState([]); // user chats
@@ -59,9 +64,12 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const getAllUsers = () => {
     const q = query(collection(database, "users"));
     onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      const data: any = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
       const filterData = data.filter(
-        (value: any) => value.uid !== currentUser.uid
+        (item: UserType) => item.uid !== currentUser.uid
       );
       setUser(filterData);
     });
@@ -76,45 +84,51 @@ const UserContextProvider: React.FC<ChildrenType> = ({
       }))[0];
       setMyself(data);
       data.friends.length > 0 && getUserFriends(data.friends);
+      data?.invite.length > 0 && getUserInvitations(data.invite);
     });
   };
 
   const getUserFriends = (id: string[]) => {
     const q = query(collection(database, "users"), where("uid", "in", id));
     onSnapshot(q, (snapshot) => {
-      const frined = snapshot.docs.map((doc) => ({
+      const data: any = snapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       }));
-      setFriends(frined);
+      setFriends(data);
     });
   };
 
-  const getUserInvitations = () => {
-    const q = query(
-      collection(database, "users"),
-      where("uid", "in", myself.invite)
-    );
+  const getUserInvitations = (id: string[]) => {
+    const q = query(collection(database, "users"), where("uid", "in", id));
     onSnapshot(q, (snapshot) => {
-      setInvite(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setInvite(
+        snapshot.docs.map((doc: any) => ({ ...doc.data(), id: doc.id }))
+      );
     });
   };
 
-  // to invite a user, we have access the his invite db and then we have create a doc wiht our information
-  const inviteUser = async (email: any) => {
+  const inviteUser = async (email: string) => {
     try {
       await updateDoc(doc(database, "users", email), {
-        invite: [uid],
+        invite: arrayUnion(uid),
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  const acceptUserInvite = async (email: any, id: any) => {
-    await updateDoc(doc(database, "users", email), {
-      friends: [id],
-      invite: [...id],
+  const acceptUserInvite = async (id: string) => {
+    await updateDoc(doc(database, "users", `${currentUser.email}`), {
+      friends: arrayUnion(id),
+      invite: arrayRemove(id),
+    });
+    getCurrentUser();
+  };
+
+  const rejectUserInvite = async (id: string) => {
+    await updateDoc(doc(database, "users", `${currentUser.email}`), {
+      invite: arrayRemove(id),
     });
   };
 
@@ -176,13 +190,16 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     userId,
     setUserId,
     selectedUser,
+    user,
+    invite,
+    friends,
     getSelectedUser,
     getAllUsers,
-    user,
-    getUserFriends,
     inviteUser,
+    getUserFriends,
     getUserInvitations,
-    invite,
+    acceptUserInvite,
+    rejectUserInvite,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

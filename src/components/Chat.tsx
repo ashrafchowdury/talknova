@@ -47,9 +47,8 @@ const Chat = ({ className }: ClassType) => {
             title="Settings"
             className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
             onClick={() =>
-              windowSize < 1350
-                ? router.push(`/user-settings#${selectedUser?.id}`)
-                : null
+              windowSize < 1350 &&
+              router.push(`/user-settings#${selectedUser?.id}`)
             }
           >
             <GearIcon className="w-5 h-5" />

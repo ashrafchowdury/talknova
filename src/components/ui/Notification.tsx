@@ -13,10 +13,10 @@ import {
 } from "@/packages/ui";
 import { BellIcon, TrashIcon, CheckIcon } from "@radix-ui/react-icons";
 import { useUsers } from "@/provider";
-import { AvatarImg } from ".";
+import { Avatar } from ".";
 
 const Notification = () => {
-  const { getUserInvitations, invite } = useUsers();
+  const { getUserInvitations, invite, acceptUserInvite } = useUsers();
 
   return (
     <Sheet>
@@ -25,7 +25,6 @@ const Notification = () => {
           variant="ghost"
           title="Notifications"
           className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
-          onClick={() => invite.length == 0 && getUserInvitations()}
         >
           <BellIcon className="w-5 h-5" />
         </Button>
@@ -44,14 +43,14 @@ const Notification = () => {
           <section className="py-4 mt-3">
             {invite.length > 0 ? (
               <>
-                {invite.map((data: any) => (
+                {invite.map((data) => (
                   <>
                     <div
                       key={data.uid}
                       className="flex items-center justify-between"
                     >
                       <div className="flex items-center space-x-2 !mr-3 w-[70%]">
-                        <AvatarImg
+                        <Avatar
                           fallback={data.name}
                           className="w-9 md:w-10 h-9 md:h-10 text-xs md:text-sm"
                         />
@@ -65,7 +64,11 @@ const Notification = () => {
                         </div>
                       </div>
                       <div className="flex items-center space-x-1 md:space-x-2">
-                        <Button size="icon" className="w-7 h-7 md:w-8 md:h-8">
+                        <Button
+                          size="icon"
+                          className="w-7 h-7 md:w-8 md:h-8"
+                          onClick={() => acceptUserInvite(data.uid)}
+                        >
                           <CheckIcon className="w-4 h-4" />
                         </Button>
                         <Button

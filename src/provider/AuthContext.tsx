@@ -20,20 +20,20 @@ import { useRouter } from "next/navigation";
 import { useCookies } from "@/lib/hooks";
 // import { useUsers } from ".";
 
-type AuthContextType = {
-  currentUser: any;
-  singup: (name: string, email: string, password: string) => void;
-  login: (email: string, password: string) => void;
-  forget: (email: string) => void;
-  updateAuthInfo: (name: string) => void;
-  logout: () => void;
-  isLoading: boolean;
-};
 type AuthUserType = {
   displayName: string;
   email: string;
   photoURL: string;
   uid: string;
+};
+type AuthContextType = {
+  currentUser: AuthUserType | any;
+  isLoading: boolean;
+  singup: (name: string, email: string, password: string) => void;
+  login: (email: string, password: string) => void;
+  forget: (email: string) => void;
+  updateAuthInfo: (name: string) => void;
+  logout: () => void;
 };
 type ActionsType = {
   toasts?: string;
@@ -48,15 +48,16 @@ export const useAuth = () => useContext(AuthContext)!;
 const AuthContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
-  const [currentUser, setCurrentUser] = useState<any>({});
+  const [currentUser, setCurrentUser] = useState<AuthUserType | any>({});
   const [isLoading, setIsLoading] = useState(false);
+
   // hooks
   const { toast } = useToast();
   const { push } = useRouter();
   const { createSession, removeSession } = useCookies();
 
   // functions
-  const createUserProfile = async (user: any) => {
+  const createUserProfile = async (user: AuthUserType) => {
     await setDoc(doc(database, "users", user.email), {
       uid: user.uid,
       name: user.displayName,

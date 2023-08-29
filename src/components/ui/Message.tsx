@@ -3,7 +3,7 @@ import Loader from "./Loader";
 import { cn } from "@/lib/functions";
 import { useUI } from "@/provider";
 import { ClipboardCopyIcon, TrashIcon } from "@radix-ui/react-icons";
-// { meg, className, leading }
+
 const Message = () => {
   const { userAppearance } = useUI();
   return (

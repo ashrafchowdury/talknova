@@ -1,14 +1,21 @@
-import { AvatarImg } from ".";
+import { Avatar } from ".";
 import { Button, CommandItem } from "@/packages/ui";
+import { UserType } from "@/types";
 
-const InviteUsers = ({ data, onclick, button }: any) => {
+type InviteUsersType = {
+  data: UserType;
+  onclick: (email: string) => void;
+  button: string;
+};
+
+const InviteUsers = ({ data, onclick, button }: InviteUsersType) => {
   return (
     <CommandItem
       key={data.uid}
       className="my-1 group/item cursor-pointer flex items-center justify-between"
     >
       <div className="flex items-center space-x-2">
-        <AvatarImg fallback={data.name} className="w-6 h-6 text-[10px]" />
+        <Avatar fallback={data.name} className="w-6 h-6 text-[10px]" />
         <span className="font-semibold">{data.name}</span>
       </div>
       <Button

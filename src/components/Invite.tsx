@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import {
   Command,
   CommandEmpty,
@@ -16,14 +16,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/packages/ui";
-import { AvatarImg, InviteUsers } from "./ui";
+import { InviteUsers } from "./ui";
 import { ChildrenType } from "@/types";
 import { useUsers } from "@/provider";
 import { useToast } from "@/packages/ui";
 
 const Invite = ({ children }: ChildrenType) => {
-  const [selectedInvitation, setSelectedInvitation] = useState<any>([]);
-  const { getAllUsers, user, inviteUser } = useUsers();
+  const [selectedInvitation, setSelectedInvitation] = useState<string[]>([]);
+  const { getAllUsers, user, inviteUser, friends, invite } = useUsers();
   const { toast } = useToast();
 
   const handleInviteUsers = () => {
@@ -35,7 +35,7 @@ const Invite = ({ children }: ChildrenType) => {
   };
   const removeUsers = (email: string) => {
     setSelectedInvitation(() =>
-      selectedInvitation.filter((val: any) => val !== email)
+      selectedInvitation.filter((data) => data !== email)
     );
   };
 
@@ -64,15 +64,15 @@ const Invite = ({ children }: ChildrenType) => {
                 <>
                   <CommandGroup heading="Selected Friends" className="py-2">
                     {user
-                      .filter((data: any) => {
-                        return selectedInvitation.includes(data.id);
-                      })
-                      .map((data: any) => (
-                        <InviteUsers
-                          data={data}
-                          onclick={removeUsers}
-                          button="Remove"
-                        />
+                      .filter((data) => selectedInvitation.includes(data.id))
+                      .map((data) => (
+                        <Fragment key={data.uid}>
+                          <InviteUsers
+                            data={data}
+                            onclick={removeUsers}
+                            button="Remove"
+                          />
+                        </Fragment>
                       ))}
                   </CommandGroup>
                   <CommandSeparator />
@@ -81,11 +81,21 @@ const Invite = ({ children }: ChildrenType) => {
 
               <CommandGroup heading="Suggestions" className="py-2">
                 {user
-                  .filter((data: any) => {
-                    return !selectedInvitation.includes(data.id);
-                  })
-                  .map((data: any) => (
-                    <InviteUsers data={data} onclick={addUsers} button="Add" />
+                  .filter(
+                    (data) => !friends.find((item) => item.uid == data.uid)
+                  )
+                  .filter(
+                    (data) => !invite.find((item) => item.uid == data.uid)
+                  )
+                  .filter((data) => !selectedInvitation.includes(data.id))
+                  .map((data) => (
+                    <Fragment key={data.uid}>
+                      <InviteUsers
+                        data={data}
+                        onclick={addUsers}
+                        button="Add"
+                      />
+                    </Fragment>
                   ))}
               </CommandGroup>
             </CommandList>

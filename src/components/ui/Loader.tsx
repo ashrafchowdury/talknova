@@ -1,4 +1,3 @@
-import { ClassType } from "@/types";
 import { cn } from "@/lib/functions";
 
 type VariantType = {

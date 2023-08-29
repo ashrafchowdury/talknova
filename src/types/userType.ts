@@ -7,3 +7,14 @@ export type UsersType = {
   active: boolean;
   date: string;
 };
+
+export type UserType = {
+  id: string;
+  uid: string;
+  name: string;
+  bio: string;
+  image: string;
+  date: string;
+  friends: string[];
+  invite: string[];
+};

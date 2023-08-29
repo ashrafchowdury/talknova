@@ -7,7 +7,7 @@ import BackSpace from "./BackSpace";
 import Loader from "./Loader";
 import Emojies from "./Emojies";
 import SecretKey from "./SecretKey";
-import AvatarImg from "./AvatarImg";
+import Avatar from "./Avatar";
 import InviteUsers from "./InviteUsers";
 
 export {
@@ -21,5 +21,5 @@ export {
   Loader,
   Emojies,
   SecretKey,
-  AvatarImg,
+  Avatar,
 };
