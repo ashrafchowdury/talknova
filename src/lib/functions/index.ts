@@ -1,6 +1,6 @@
 import { cn } from "./utils";
-import { users } from "./alignUsers";
+import { formatTimeByLastMsg } from "./formatTime";
 import { autoScroll } from "./autoScroll";
 import { generateUid } from "./uidGenerator";
 
-export { cn, users, autoScroll, generateUid };
+export { cn, formatTimeByLastMsg, autoScroll, generateUid };

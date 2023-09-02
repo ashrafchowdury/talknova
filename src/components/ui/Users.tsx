@@ -5,6 +5,7 @@ import { useUI } from "@/provider";
 import { cn } from "@/lib/functions";
 import { useUsers } from "@/provider";
 import { useRouter } from "next/navigation";
+import { formatTimeByLastMsg } from "@/lib/functions";
 
 const Users = ({ data }: any) => {
   const { windowSize } = useUI();
@@ -22,13 +23,13 @@ const Users = ({ data }: any) => {
         getSelectedUser(data.uid);
       }}
     >
-      <div className="flex items-center">
+      <div className="w-full flex items-center">
         <Avatar
           img={data.image}
           fallback={data.name}
           className="w-10 md:w-12 h-10 md:h-12"
         />
-        <div className="ml-2 md:ml-3 mr-2">
+        <div className="w-full ml-2 md:ml-3 mr-2">
           <p className=" font-bold mb-1 flex items-center">
             <span
               className={cn(
@@ -39,12 +40,12 @@ const Users = ({ data }: any) => {
             {data.name}
           </p>
           <p className="w-[90%] md:w-[80%] text-xs sm:text-sm text-muted-foreground whitespace-nowrap overflow-hidden truncate">
-            Me: {data.bio}
+            {data?.lastMsg ?? "New Friend"}
           </p>
         </div>
       </div>
       <p className="text-[10px] mt-1 whitespace-nowrap mr-3 capitalize absolute top-1 right-0">
-        1 month ago
+        {formatTimeByLastMsg(data?.lastMsgTime)}
       </p>
     </div>
   );

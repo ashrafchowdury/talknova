@@ -2,7 +2,6 @@
 // This context contines all the UI related logics
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { ChildrenType, UsersType, UserType } from "@/types";
-import { users as filterUsers } from "@/lib/functions";
 import {
   doc,
   setDoc,
@@ -94,7 +93,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         id: doc.id,
       }))[0];
       setMyself(data);
-      data?.friends?.length > 0 && getUserFriends(data.friends);
+      if (data?.friends?.length > 0) {
+        getUserFriends(data.friends);
+      }
       data?.invite?.length > 0 && getUserInvitations(data.invite);
     });
   };
@@ -110,6 +111,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
       setSelectedUser(data[0]);
       window.location.hash = `${data[0]?.uid}`;
       setUserId(`${data[0]?.uid}`);
+      getLastMsg(data);
     });
     setIsLoading(false);
   };
@@ -179,12 +181,42 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     return combinedUid;
   };
 
+  const getLastMsg = (friendData: any) => {
+    try {
+      const q = query(collection(database, "chats"), limit(50));
+      onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map((doc: any) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        const friendsWithMsgs = friendData.map((friend: any) => {
+          const matchingData = data.find((item) => {
+            const users = item.users.split(" & ");
+            return users.includes(friend.name);
+          });
+
+          if (matchingData) {
+            const msg = matchingData.lastMsg.split(" | ");
+            friend.lastMsg = `${msg[1] == uid ? "You:" : "They:"} ${msg[0]}`;
+            friend.lastMsgTime = matchingData.lastMsgTime;
+          }
+
+          return friend;
+        });
+        setFriends(friendsWithMsgs);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getChats = () => {
     try {
       const q = query(
         collection(database, "chats", `${createChatId()}`, "messagas"),
         orderBy("timestemp", "asc"),
-        limit(20)
+        limit(50)
       );
       onSnapshot(q, (snapshot) => {
         setChats(
@@ -210,6 +242,10 @@ const UserContextProvider: React.FC<ChildrenType> = ({
           timestemp: serverTimestamp(),
           uid: currentUser.uid,
           time: `${new Date()}`,
+        });
+        await updateDoc(doc(database, "chats", `${createChatId()}`), {
+          lastMsgTime: new Date().toISOString(),
+          lastMsg: `${message} | ${uid}`,
         });
         setMessage("");
         selectFiles && setSelectFiles([]);

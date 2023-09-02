@@ -1,6 +1,9 @@
 import { balkUsers } from "../helpers";
 
-function formatTimeByName(date: Date): string {
+export function formatTimeByLastMsg(dateStr: string): string {
+  // Parse the input string into a Date object
+  const date = new Date(dateStr);
+
   const now = new Date();
   const timeDifference = now.getTime() - date.getTime();
   const seconds = Math.floor(timeDifference / 1000);
@@ -27,27 +30,3 @@ function formatTimeByName(date: Date): string {
     return `just now`;
   }
 }
-
-const shortUsersByTime = () => {
-  const now = new Date();
-  const changeTimeFormat = balkUsers.map((data) => {
-    return {
-      ...data,
-      date: new Date(data.date),
-    };
-  });
-  const alignUserByTime = changeTimeFormat
-    .sort(
-      (a, b) =>
-        Math.abs(now.getTime() - a.date.getTime()) -
-        Math.abs(now.getTime() - b.date.getTime())
-    )
-    .map((data) => {
-      return {
-        ...data,
-        date: formatTimeByName(data.date),
-      };
-    });
-  return alignUserByTime;
-};
-export const users = shortUsersByTime();
