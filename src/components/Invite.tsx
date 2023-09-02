@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/packages/ui";
 import { InviteUsers } from "./ui";
 import { ChildrenType } from "@/types";
@@ -29,6 +30,7 @@ const Invite = ({ children }: ChildrenType) => {
   const handleInviteUsers = () => {
     selectedInvitation.map((email: string) => inviteUser(email));
     toast({ title: "Sended Request Successfully" });
+    setSelectedInvitation([]);
   };
   const addUsers = (email: string) => {
     setSelectedInvitation([...selectedInvitation, email]);
@@ -56,13 +58,16 @@ const Invite = ({ children }: ChildrenType) => {
             </DialogDescription>
           </DialogHeader>
 
-          <Command className="rounded-lg border shadow-md h-[600px]">
+          <Command className="rounded-lg border shadow-md h-[60vh] md:h-[600px]">
             <CommandInput placeholder="Type a command or search..." />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               {selectedInvitation.length > 0 && (
                 <>
-                  <CommandGroup heading="Selected Friends" className="py-2">
+                  <CommandGroup
+                    heading="Selected Friends"
+                    className="py-1 md:py-2"
+                  >
                     {user
                       .filter((data) => selectedInvitation.includes(data.id))
                       .map((data) => (
@@ -79,7 +84,7 @@ const Invite = ({ children }: ChildrenType) => {
                 </>
               )}
 
-              <CommandGroup heading="Suggestions" className="py-2">
+              <CommandGroup heading="Suggestions" className="py-1 md:py-2">
                 {user
                   .filter(
                     (data) => !friends.find((item) => item.uid == data.uid)
@@ -102,13 +107,19 @@ const Invite = ({ children }: ChildrenType) => {
           </Command>
 
           <DialogFooter>
-            <Button
-              type="submit"
-              className="w-full"
-              onClick={handleInviteUsers}
-            >
-              Invite
-            </Button>
+            <DialogClose>
+              {selectedInvitation.length > 0 ? (
+                <Button
+                  type="submit"
+                  className="w-full"
+                  onClick={handleInviteUsers}
+                >
+                  Invite
+                </Button>
+              ) : (
+                <Button className="w-full">Close</Button>
+              )}
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

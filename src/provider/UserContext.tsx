@@ -41,7 +41,7 @@ type TypeUserContextProvider = {
   getUserFriends: (id: string[]) => void;
   inviteUser: (email: string) => void;
   getUserInvitations: (id: string[]) => void;
-  acceptUserInvite: (id: string) => void;
+  acceptUserInvite: (id: string, userEmail: string) => void;
   rejectUserInvite: (id: string) => void;
   createChatDatabase: () => void;
   getChats: () => void;
@@ -94,7 +94,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         id: doc.id,
       }))[0];
       setMyself(data);
-      data.friends.length > 0 && getUserFriends(data.friends);
+      data?.friends?.length > 0 && getUserFriends(data.friends);
       data?.invite?.length > 0 && getUserInvitations(data.invite);
     });
   };
@@ -133,10 +133,13 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
-  const acceptUserInvite = async (id: string) => {
+  const acceptUserInvite = async (id: string, userEmail: string) => {
     await updateDoc(doc(database, "users", `${currentUser.email}`), {
       friends: arrayUnion(id),
       invite: arrayRemove(id),
+    });
+    await updateDoc(doc(database, "users", `${userEmail}`), {
+      friends: arrayUnion(uid),
     });
     getCurrentUser();
   };

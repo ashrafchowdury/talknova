@@ -29,6 +29,7 @@ import {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DialogClose,
 } from "./dialog";
 import {
   Tooltip,
@@ -105,6 +106,7 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DialogClose,
   Tooltip,
   TooltipTrigger,
   TooltipContent,

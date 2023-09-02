@@ -67,7 +67,7 @@ const Notification = () => {
                         <Button
                           size="icon"
                           className="w-7 h-7 md:w-8 md:h-8"
-                          onClick={() => acceptUserInvite(data.uid)}
+                          onClick={() => acceptUserInvite(data.uid, data.id)}
                         >
                           <CheckIcon className="w-4 h-4" />
                         </Button>

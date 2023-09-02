@@ -85,6 +85,16 @@ const DialogFooter = ({
 );
 DialogFooter.displayName = "DialogFooter";
 
+const DialogClose = ({
+  className,
+  children,
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <DialogPrimitive.Close className={cn("w-full flex items-center", className)}>
+    {children}
+  </DialogPrimitive.Close>
+);
+DialogClose.displayName = "DialogClose";
+
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
@@ -120,4 +130,5 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DialogClose,
 };
