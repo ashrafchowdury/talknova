@@ -10,7 +10,7 @@ const Emojies = () => {
           variant="ghost"
           className="py-[2px] px-2 hover:bg-slate-200 duration-300"
         >
-          <MixIcon className="w-4 h-4" />
+          <MixIcon className="w-3 md:w-4 h-3 md:h-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 -mt-1">

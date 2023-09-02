@@ -13,7 +13,8 @@ import { useUsers } from "@/provider";
 
 const ListOfUsers = () => {
   const [searchUsers, setSearchUsers] = useState("");
-  const { users } = useUsers();
+  const { friends } = useUsers();
+
   return (
     <aside className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[300px] xl:w-[400px] h-[98vh] mt-2 flex flex-col justify-between">
       <div>
@@ -53,13 +54,13 @@ const ListOfUsers = () => {
         </section>
 
         <section className="w-full md:w-[98%] mt-8">
-          {users
+          {friends
             .filter(
               (data) =>
                 data.name?.toLowerCase().includes(searchUsers.toLowerCase())
             )
             .map((data) => (
-              <Fragment key={data.id}>
+              <Fragment key={data.uid}>
                 <Users data={data} />
               </Fragment>
             ))}

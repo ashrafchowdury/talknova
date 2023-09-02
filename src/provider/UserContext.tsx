@@ -14,6 +14,10 @@ import {
   updateDoc,
   arrayRemove,
   arrayUnion,
+  orderBy,
+  limit,
+  serverTimestamp,
+  addDoc,
 } from "firebase/firestore";
 import { database } from "@/server";
 import { useAuth } from "./AuthContext";
@@ -21,12 +25,16 @@ import { generateUid } from "@/lib/functions";
 import { useCookies } from "@/lib/hooks";
 
 type TypeUserContextProvider = {
-  users: UsersType[];
   userId: string;
-  selectedUser: UsersType;
+  selectedUser: UsersType | any;
   user: UserType[];
   invite: UserType[];
   friends: UserType[];
+  myself: UserType;
+  isLoading: boolean;
+  chats: any;
+  message: string;
+  setMessage: React.Dispatch<React.SetStateAction<string>>;
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   getSelectedUser: (id: string) => void;
   getAllUsers: () => void;
@@ -35,6 +43,9 @@ type TypeUserContextProvider = {
   getUserInvitations: (id: string[]) => void;
   acceptUserInvite: (id: string) => void;
   rejectUserInvite: (id: string) => void;
+  createChatDatabase: () => void;
+  getChats: () => void;
+  sendMessage: () => void;
 };
 
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
@@ -44,16 +55,16 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
   // states
-  const [myself, setMyself] = useState<UserType | {}>({});
-  const [users, setUsers] = useState<any>(filterUsers); // all users
+  const [myself, setMyself] = useState<UserType | any>({});
   const [user, setUser] = useState<UserType[]>([]);
   const [friends, setFriends] = useState<UserType[]>([]); // user friends
   const [invite, setInvite] = useState<UserType[]>([]);
-  const [selectedUser, setSelectedUser] = useState(filterUsers[0]); // first user
+  const [selectedUser, setSelectedUser] = useState<UserType | any>({}); // first user
   const [userId, setUserId] = useState(""); // selected user id
-  const [chats, setChats] = useState([]); // user chats
+  const [isLoading, setIsLoading] = useState(true);
+  const [chats, setChats] = useState<any>([]); // user chats
   const [files, setFiles] = useState([]); // sended files
-  const [messages, setMessages] = useState(""); // input message
+  const [message, setMessage] = useState(""); // input message
   const [selectFiles, setSelectFiles] = useState([]); // selected files
 
   //hooks
@@ -84,7 +95,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
       }))[0];
       setMyself(data);
       data.friends.length > 0 && getUserFriends(data.friends);
-      data?.invite.length > 0 && getUserInvitations(data.invite);
+      data?.invite?.length > 0 && getUserInvitations(data.invite);
     });
   };
 
@@ -96,7 +107,11 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         id: doc.id,
       }));
       setFriends(data);
+      setSelectedUser(data[0]);
+      window.location.hash = `${data[0]?.uid}`;
+      setUserId(`${data[0]?.uid}`);
     });
+    setIsLoading(false);
   };
 
   const getUserInvitations = (id: string[]) => {
@@ -133,66 +148,107 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   };
 
   const getSelectedUser = (id: string) => {
-    const filter = users.filter((data: any) => data.id == id);
+    const filter: any = friends.filter((data: any) => data.uid == id);
     setSelectedUser(filter[0]);
   };
 
-  const updateUserProfile = (email: string, name: string) => {};
+  const updateUserProfile = async (
+    name?: string,
+    image?: string,
+    bio?: string
+  ) => {
+    const updatedFields: any = {};
 
-  const createChatDatabase = async () => {
-    // await setDoc(doc(db, "message", `${myId?.uid + userId?.uid}`), {
-    //   fistUserName: displayName,
-    //   secondUserName: userId?.name,
-    // });
+    if (name) updatedFields.name = name;
+    if (image) updatedFields.image = image;
+    if (bio) updatedFields.bio = bio;
+
+    if (Object.keys(updatedFields).length > 0) {
+      await updateDoc(
+        doc(database, "users", `${currentUser.email}`),
+        updatedFields
+      );
+    }
+  };
+
+  const createChatId = () => {
+    const combinedUid = [currentUser.uid, selectedUser.uid].sort().join("");
+    return combinedUid;
   };
 
   const getChats = () => {
-    //  const q = query(
-    //    collection(db, "message", `${myId?.uid + userId?.uid}`, "data"),
-    //    orderBy("timestemp", "asc")
-    //  );
-    //  const userData = onSnapshot(q, (snapshot) => {
-    //    setmessage(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    //  });
-    //        scroll(800);
+    try {
+      const q = query(
+        collection(database, "chats", `${createChatId()}`, "messagas"),
+        orderBy("timestemp", "asc"),
+        limit(20)
+      );
+      onSnapshot(q, (snapshot) => {
+        setChats(
+          snapshot.docs.map((doc: any) => ({ ...doc.data(), id: doc.id }))
+        );
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const sendNewMsg = async () => {
-    // const q = query(
-    //   collection(db, "message", `${myId?.uid + userId?.uid}`, "data")
-    // );
-    // if (!input && !image) {
-    //   toast.error("Please Write Someting");
-    // } else {
-    //   await addDoc(q, {
-    //     img: image,
-    //     msg: input,
-    //     timestemp: serverTimestamp(),
-    //     uid: currentUser.uid,
-    //     time: `${new Date()}`,
-    //   });
-    //   setinput("");
-    //   setimage("");
-    // }
+  const sendMessage = async () => {
+    try {
+      const q: any = query(
+        collection(database, "chats", `${createChatId()}`, "messagas")
+      );
+      if (!message && !selectFiles) {
+        return null;
+      } else {
+        await addDoc(q, {
+          images: [],
+          msg: message,
+          timestemp: serverTimestamp(),
+          uid: currentUser.uid,
+          time: `${new Date()}`,
+        });
+        setMessage("");
+        selectFiles && setSelectFiles([]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const deleteMsg = async () => {};
+  const createChatDatabase = () => {
+    setDoc(doc(database, "chats", `${createChatId()}`), {
+      first_user: myself.name,
+      second_user: selectedUser.name,
+    })
+      .then((res) => sendMessage())
+      .catch((err) => console.log(err));
+  };
+
+  const deleteMsg = async (id: string) => {
+    const q = doc(database, "chats", `${createChatId()}`, "messagas", id);
+    await deleteDoc(q);
+  };
 
   // effects
   useEffect(() => {
-    window.location.hash = `${selectedUser.id}`;
-    setUserId(`${selectedUser.id}`);
     getCurrentUser();
   }, []);
+  useEffect(() => {
+    setChats([]);
+    getChats();
+  }, [userId]);
 
   const value: TypeUserContextProvider = {
-    users,
     userId,
     setUserId,
     selectedUser,
     user,
     invite,
     friends,
+    isLoading,
+    chats,
+    myself,
     getSelectedUser,
     getAllUsers,
     inviteUser,
@@ -200,17 +256,13 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     getUserInvitations,
     acceptUserInvite,
     rejectUserInvite,
+    getChats,
+    createChatDatabase,
+    sendMessage,
+    message,
+    setMessage,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
 export default UserContextProvider;
-
-/*
-Notes:
-
-User friends: To save user friends, we will create a friends array on our doc and it will contines all our friends uid, then we will use the uid to get the friends data from user collections.
-User invites: Same as user friends.
-After acsepting invitation: we will delete the uid from invite array and add on the friends array.
-
-*/
