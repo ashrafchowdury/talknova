@@ -1,11 +1,10 @@
 "use client";
 import { Avatar } from ".";
 import Link from "next/link";
-import { useUI } from "@/provider";
-import { cn } from "@/lib/functions";
-import { useUsers } from "@/provider";
+import { useUI, useUsers } from "@/provider";
+import { cn, formatTimeByLastMsg } from "@/lib/functions";
 import { useRouter } from "next/navigation";
-import { formatTimeByLastMsg } from "@/lib/functions";
+import { Badge } from "@/packages/ui";
 
 const Users = ({ data }: any) => {
   const { windowSize } = useUI();
@@ -33,14 +32,15 @@ const Users = ({ data }: any) => {
           <p className=" font-bold mb-1 flex items-center">
             <span
               className={cn(
-                "w-[10px] h-[10px] rounded-full mr-[6px]",
+                "w-[9px] h-[9px] rounded-full mr-1",
                 data?.active ? "bg-green-500" : "bg-red-500"
               )}
             ></span>
-            {data.name}
+            {data.name}{" "}
+            {!data?.lastMsg && <Badge className=" ml-2 text-[10px]">New</Badge>}
           </p>
           <p className="w-[90%] md:w-[80%] text-xs sm:text-sm text-muted-foreground whitespace-nowrap overflow-hidden truncate">
-            {data?.lastMsg ?? "New Friend"}
+            {data?.lastMsg ?? `Start chat with ${data.name}`}
           </p>
         </div>
       </div>

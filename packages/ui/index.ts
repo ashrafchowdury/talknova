@@ -75,6 +75,7 @@ import {
   SheetDescription,
 } from "./sheet";
 import { Separator } from "./separator";
+import { Badge, badgeVariants } from "./badge";
 
 export {
   Button,
@@ -147,4 +148,6 @@ export {
   SheetTitle,
   SheetDescription,
   Separator,
+  Badge,
+  badgeVariants,
 };

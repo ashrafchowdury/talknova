@@ -16,11 +16,11 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
+  useToast,
 } from "@/packages/ui";
 import { InviteUsers } from "./ui";
 import { ChildrenType } from "@/types";
 import { useUsers } from "@/provider";
-import { useToast } from "@/packages/ui";
 
 const Invite = ({ children }: ChildrenType) => {
   const [selectedInvitation, setSelectedInvitation] = useState<string[]>([]);

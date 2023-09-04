@@ -26,7 +26,9 @@ export function formatTimeByLastMsg(dateStr: string): string {
     return `${hours} hours ago `;
   } else if (minutes >= 1) {
     return `${minutes} minutes`;
-  } else {
+  } else if (minutes < 1) {
     return `just now`;
+  } else {
+    return `New Friend`;
   }
 }

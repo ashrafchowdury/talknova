@@ -9,6 +9,7 @@ import Emojies from "./Emojies";
 import SecretKey from "./SecretKey";
 import Avatar from "./Avatar";
 import InviteUsers from "./InviteUsers";
+import ImageUpload from "./ImageUpload";
 
 export {
   InviteUsers,
@@ -22,4 +23,5 @@ export {
   Emojies,
   SecretKey,
   Avatar,
+  ImageUpload,
 };

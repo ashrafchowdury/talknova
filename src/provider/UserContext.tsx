@@ -33,6 +33,8 @@ type TypeUserContextProvider = {
   isLoading: boolean;
   chats: any;
   message: string;
+  selectFiles: any;
+  setSelectFiles: any;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   getSelectedUser: (id: string) => void;
@@ -300,6 +302,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     sendMessage,
     message,
     setMessage,
+    selectFiles,
+    setSelectFiles,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

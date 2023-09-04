@@ -1,17 +1,12 @@
 "use client";
 
 import { useEffect, Fragment } from "react";
-import {
-  GearIcon,
-  PaperPlaneIcon,
-  ImageIcon,
-  PlayIcon,
-} from "@radix-ui/react-icons";
+import { GearIcon, PaperPlaneIcon, PlayIcon } from "@radix-ui/react-icons";
 import { Button, Input } from "@/packages/ui";
 import { useUI } from "@/provider";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
-import { Message, BackSpace, Loader, Emojies, Avatar } from "./ui";
+import { Message, BackSpace, Loader, Emojies, Avatar, ImageUpload } from "./ui";
 import { useRouter } from "next/navigation";
 import { useUsers } from "@/provider";
 
@@ -99,18 +94,7 @@ const Chat = ({ className }: ClassType) => {
           />
           <div className="flex items-center space-x-1 md:space-x-3 absolute top-[7px] right-2">
             <Emojies />
-            <Button
-              title="Select Media"
-              variant="ghost"
-              className="py-[2px] px-2 hover:bg-slate-200 duration-300 relative overflow-hidden "
-            >
-              <ImageIcon className="w-3 md:w-4 h-3 md:h-4 cursor-pointer" />
-              <Input
-                type="file"
-                accept=".png, .jpg, .jpeg"
-                className=" opacity-0 absolute top-0 left-0 right-0 bottom-0 cursor-pointer"
-              />
-            </Button>
+            <ImageUpload />
             {message ? (
               <Button
                 title="Send Message"
