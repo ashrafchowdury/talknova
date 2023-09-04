@@ -48,7 +48,7 @@ const ImageUpload = () => {
         <DialogHeader>
           <DialogTitle>Send Files</DialogTitle>
           <DialogDescription>
-            You can select maximam 4 Images at one's
+            You can select maximam 4 Images at ones
           </DialogDescription>
         </DialogHeader>
         <section className="flex items-center justify-center border rounded-lg h-[300px] relative">
