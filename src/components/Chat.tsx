@@ -2,7 +2,7 @@
 
 import { useEffect, Fragment } from "react";
 import { GearIcon, PaperPlaneIcon, PlayIcon } from "@radix-ui/react-icons";
-import { Button, Input } from "@/packages/ui";
+import { Button, Input, Progress } from "@/packages/ui";
 import { useUI } from "@/provider";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
@@ -21,6 +21,7 @@ const Chat = ({ className }: ClassType) => {
     sendMessage,
     message,
     setMessage,
+    fileUploadProgress,
   } = useUsers();
 
   useEffect(() => {
@@ -62,7 +63,9 @@ const Chat = ({ className }: ClassType) => {
           </Button>
         </div>
       </nav>
-
+      {fileUploadProgress !== 0 && (
+        <Progress value={fileUploadProgress} className="w-full" />
+      )}
       <article className="chatInterface w-full h-[86.5vh] px-2 sm:px-6 md:px-8 break-all pt-16 pb-10 overflow-y-auto">
         {chats.length > 0 ? (
           <>
@@ -91,6 +94,7 @@ const Chat = ({ className }: ClassType) => {
             className=" !py-6 text-sm md:text-[16px] border border-black pr-36"
             onChange={(e) => setMessage(e.target.value)}
             value={message}
+            disabled={fileUploadProgress !== 0}
           />
           <div className="flex items-center space-x-1 md:space-x-3 absolute top-[7px] right-2">
             <Emojies />

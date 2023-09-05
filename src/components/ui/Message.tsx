@@ -1,5 +1,6 @@
 import Loader from "./Loader";
 
+import Image from "next/image";
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@/packages/ui";
 import { cn } from "@/lib/functions";
 import { useUI, useUsers } from "@/provider";
@@ -42,14 +43,25 @@ const Message = ({ data, position }: MessageType) => {
 
         <div
           className={cn(
-            "py-2 md:py-3 px-4 md:px-5 text-xs sm:text-sm md:text-[16px] rounded-lg relative",
+            "py-2 md:py-3 px-4 md:px-5 text-xs sm:text-sm md:text-[16px] rounded-lg relative flex items-center justify-center",
             msgPosition
               ? "!ml-4 !mr-2 bg-slate-300"
-              : "!mr-4 bg-black text-white"
+              : "!mr-4 bg-black text-white",
+            data?.images?.length > 0 && "px-3 md:px-4"
           )}
           // style={{ backgroundColor: userAppearance }}
         >
-          <span>{data.msg}</span>
+          {data?.images?.length > 0 && (
+            <Image
+              src={data?.images[0]}
+              alt="image"
+              width={300}
+              height={250}
+              loading="lazy"
+              className="w-[300px] rounded-lg"
+            />
+          )}
+          {data.msg.length > 0 && <span>{data.msg}</span>}
           <div
             className={cn(
               "absolute -bottom-[18px] flex items-center space-x-2",

@@ -19,8 +19,7 @@ import { useUsers } from "@/provider";
 
 const ImageUpload = () => {
   const [imagePreview, setImagePreview] = useState("");
-  const { selectedUser, userId, sendMessage, selectFiles, setSelectFiles } =
-    useUsers();
+  const { selectedUser, selectFiles, setSelectFiles, uploadFile } = useUsers();
 
   const handleImagePreview = (e: any) => {
     const fileInput = e.target;
@@ -28,6 +27,7 @@ const ImageUpload = () => {
       const reader = new FileReader();
       reader.onload = (e: any) => setImagePreview(e.target.result);
       reader.readAsDataURL(fileInput.files[0]);
+      setSelectFiles(fileInput.files[0]);
     } else {
       setImagePreview(""); // Clear the preview if no file is selected
     }
@@ -89,7 +89,13 @@ const ImageUpload = () => {
         </section>
         <DialogFooter>
           <DialogClose>
-            <Button className="w-full">Close</Button>
+            {imagePreview ? (
+              <Button className="w-full" onClick={() => uploadFile("users")}>
+                Send
+              </Button>
+            ) : (
+              <Button className="w-full">Close</Button>
+            )}
           </DialogClose>
         </DialogFooter>
       </DialogContent>

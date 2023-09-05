@@ -18,10 +18,17 @@ import {
   serverTimestamp,
   addDoc,
 } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 import { database } from "@/server";
 import { useAuth } from "./AuthContext";
 import { generateUid } from "@/lib/functions";
 import { useCookies } from "@/lib/hooks";
+import { toast } from "@/packages/ui/hooks/use-toast";
 
 type TypeUserContextProvider = {
   userId: string;
@@ -34,6 +41,7 @@ type TypeUserContextProvider = {
   chats: any;
   message: string;
   selectFiles: any;
+  fileUploadProgress: number;
   setSelectFiles: any;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
   setUserId: React.Dispatch<React.SetStateAction<string>>;
@@ -47,6 +55,7 @@ type TypeUserContextProvider = {
   createChatDatabase: () => void;
   getChats: () => void;
   sendMessage: () => void;
+  uploadFile: (fileName: string) => void;
 };
 
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
@@ -66,7 +75,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const [chats, setChats] = useState<any>([]); // user chats
   const [files, setFiles] = useState([]); // sended files
   const [message, setMessage] = useState(""); // input message
-  const [selectFiles, setSelectFiles] = useState([]); // selected files
+  const [selectFiles, setSelectFiles] = useState<any>(""); // selected files
+  const [fileUploadProgress, setFileUploadProgress] = useState(0);
 
   //hooks
   const { currentUser } = useAuth();
@@ -200,7 +210,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
           if (matchingData) {
             const msg = matchingData.lastMsg.split(" | ");
-            friend.lastMsg = `${msg[1] == uid ? "You:" : "They:"} ${msg[0]}`;
+            friend.lastMsg = `${msg[1] == uid ? "You:" : "They:"} ${
+              msg[0].length > 0 ? msg[0] : "File shared"
+            }`;
             friend.lastMsgTime = matchingData.lastMsgTime;
           }
 
@@ -230,27 +242,26 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
-  const sendMessage = async () => {
+  const sendMessage = async (file?: string) => {
     try {
       const q: any = query(
         collection(database, "chats", `${createChatId()}`, "messagas")
       );
-      if (!message && !selectFiles) {
+      if (!message && !file) {
         return null;
       } else {
         await addDoc(q, {
-          images: [],
+          images: file ? [file] : [],
           msg: message,
           timestemp: serverTimestamp(),
           uid: currentUser.uid,
-          time: `${new Date()}`,
         });
         await updateDoc(doc(database, "chats", `${createChatId()}`), {
           lastMsgTime: new Date().toISOString(),
           lastMsg: `${message} | ${uid}`,
         });
         setMessage("");
-        selectFiles && setSelectFiles([]);
+        selectFiles && setSelectFiles("");
       }
     } catch (error) {
       console.log(error);
@@ -259,8 +270,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   const createChatDatabase = () => {
     setDoc(doc(database, "chats", `${createChatId()}`), {
-      first_user: myself.name,
-      second_user: selectedUser.name,
+      users: `${myself.name} & ${selectedUser.name}`,
     })
       .then((res) => sendMessage())
       .catch((err) => console.log(err));
@@ -269,6 +279,34 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const deleteMsg = async (id: string) => {
     const q = doc(database, "chats", `${createChatId()}`, "messagas", id);
     await deleteDoc(q);
+  };
+
+  const uploadFile = (fileName: string) => {
+    const storage = getStorage();
+
+    try {
+      const storageRef = ref(storage, `${fileName}/ ${selectFiles.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, selectFiles);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          setFileUploadProgress(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+        },
+        (error) => {
+          toast({ title: "Someting want wrong!", variant: "destructive" });
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            sendMessage(downloadURL);
+            setFileUploadProgress(0);
+          });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // effects
@@ -289,6 +327,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     friends,
     isLoading,
     chats,
+    fileUploadProgress,
     myself,
     getSelectedUser,
     getAllUsers,
@@ -304,6 +343,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     setMessage,
     selectFiles,
     setSelectFiles,
+    uploadFile,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
