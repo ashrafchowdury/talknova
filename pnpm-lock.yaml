@@ -101,6 +101,9 @@ dependencies:
   react-hook-form:
     specifier: ^7.45.4
     version: 7.45.4(react@18.2.0)
+  react-mic:
+    specifier: ^12.4.6
+    version: 12.4.6(prop-types@15.8.1)(react@18.2.0)
   tailwind-merge:
     specifier: ^1.14.0
     version: 1.14.0
@@ -113,11 +116,17 @@ dependencies:
   typescript:
     specifier: 5.1.6
     version: 5.1.6
+  wavesurfer.js:
+    specifier: ^7.2.1
+    version: 7.2.1
   zod:
     specifier: ^3.22.1
     version: 3.22.1
 
 devDependencies:
+  "@types/react-mic":
+    specifier: ^12.4.3
+    version: 12.4.3
   husky:
     specifier: ^8.0.0
     version: 8.0.3
@@ -2315,7 +2324,6 @@ packages:
       {
         integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==,
       }
-    dev: false
 
   /@types/react-dom@18.2.7:
     resolution:
@@ -2326,6 +2334,15 @@ packages:
       "@types/react": 18.2.20
     dev: false
 
+  /@types/react-mic@12.4.3:
+    resolution:
+      {
+        integrity: sha512-PCp+Phe0WcFRPhDQjOfiONz2OJSef+ds+8g7vN/xqRntcfGKPCyr4ZaiICaNJ+8uZcoUaw7F1E15AEUOjRW4IQ==,
+      }
+    dependencies:
+      "@types/react": 18.2.20
+    dev: true
+
   /@types/react@18.2.20:
     resolution:
       {
@@ -2335,14 +2352,12 @@ packages:
       "@types/prop-types": 15.7.5
       "@types/scheduler": 0.16.3
       csstype: 3.1.2
-    dev: false
 
   /@types/scheduler@0.16.3:
     resolution:
       {
         integrity: sha512-5cJ8CB4yAx7BH1oMvdU0Jh9lrEXyPkar6F9G/ERswkCuvP4KQZfZkSjcMbAICCpQTN4OuZn8tz0HiKv9TGZgrQ==,
       }
-    dev: false
 
   /@typescript-eslint/parser@6.4.0(eslint@8.47.0)(typescript@5.1.6):
     resolution:
@@ -2922,7 +2937,6 @@ packages:
       {
         integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==,
       }
-    dev: false
 
   /damerau-levenshtein@1.0.8:
     resolution:
@@ -5058,6 +5072,19 @@ packages:
       scheduler: 0.23.0
     dev: false
 
+  /react-ga@2.7.0(prop-types@15.8.1)(react@18.2.0):
+    resolution:
+      {
+        integrity: sha512-AjC7UOZMvygrWTc2hKxTDvlMXEtbmA0IgJjmkhgmQQ3RkXrWR11xEagLGFGaNyaPnmg24oaIiaNPnEoftUhfXA==,
+      }
+    peerDependencies:
+      prop-types: ^15.6.0
+      react: ^15.6.2 || ^16.0
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+    dev: false
+
   /react-hook-form@7.45.4(react@18.2.0):
     resolution:
       {
@@ -5075,6 +5102,20 @@ packages:
       {
         integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==,
       }
+    dev: false
+
+  /react-mic@12.4.6(prop-types@15.8.1)(react@18.2.0):
+    resolution:
+      {
+        integrity: sha512-2/DZoz7thR2nJyekF10zBvs/7a8HhUQ4L8MV6BpC+Q/T8G1MvpRHGSHjSlVtnbzaCMDJ3R1MdThoLu15WuVh/g==,
+      }
+    peerDependencies:
+      prop-types: ^15.5.10
+      react: 16.x
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-ga: 2.7.0(prop-types@15.8.1)(react@18.2.0)
     dev: false
 
   /react-remove-scroll-bar@2.3.4(@types/react@18.2.20)(react@18.2.0):
@@ -5858,6 +5899,13 @@ packages:
     dependencies:
       glob-to-regexp: 0.4.1
       graceful-fs: 4.2.11
+    dev: false
+
+  /wavesurfer.js@7.2.1:
+    resolution:
+      {
+        integrity: sha512-62ZrNaBeVaVUzwWkQtc+yUnDpvBccRtcdjifNbn/ktxS/eEugXXWwdiImCjG+b7DiU2Jmuvh1obZWP8zGYUrZg==,
+      }
     dev: false
 
   /webidl-conversions@3.0.1:

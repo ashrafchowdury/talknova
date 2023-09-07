@@ -43,6 +43,12 @@ type TypeUserContextProvider = {
   selectFiles: any;
   fileUploadProgress: number;
   setSelectFiles: any;
+  audio: any;
+  isRecording: boolean;
+  isAudioPlaying: boolean;
+  setAudio: React.Dispatch<React.SetStateAction<any>>;
+  setIsRecording: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAudioPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   getSelectedUser: (id: string) => void;
@@ -77,6 +83,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const [message, setMessage] = useState(""); // input message
   const [selectFiles, setSelectFiles] = useState<any>(""); // selected files
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
+  const [audio, setAudio] = useState<any>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   //hooks
   const { currentUser } = useAuth();
@@ -327,6 +336,12 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     friends,
     isLoading,
     chats,
+    audio,
+    isRecording,
+    isAudioPlaying,
+    setAudio,
+    setIsRecording,
+    setIsAudioPlaying,
     fileUploadProgress,
     myself,
     getSelectedUser,

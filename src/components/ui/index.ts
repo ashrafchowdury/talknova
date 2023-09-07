@@ -10,6 +10,7 @@ import SecretKey from "./SecretKey";
 import Avatar from "./Avatar";
 import InviteUsers from "./InviteUsers";
 import ImageUpload from "./ImageUpload";
+import { AudioMessage, RecordAudio } from "./Audio";
 
 export {
   InviteUsers,
@@ -24,4 +25,6 @@ export {
   SecretKey,
   Avatar,
   ImageUpload,
+  AudioMessage,
+  RecordAudio,
 };

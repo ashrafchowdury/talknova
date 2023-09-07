@@ -6,9 +6,18 @@ import { Button, Input, Progress } from "@/packages/ui";
 import { useUI } from "@/provider";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
-import { Message, BackSpace, Loader, Emojies, Avatar, ImageUpload } from "./ui";
+import {
+  Message,
+  BackSpace,
+  Loader,
+  Emojies,
+  Avatar,
+  ImageUpload,
+  RecordAudio,
+} from "./ui";
 import { useRouter } from "next/navigation";
 import { useUsers } from "@/provider";
+import { AudioDemo } from "./ui/Audio";
 
 const Chat = ({ className }: ClassType) => {
   const { windowSize, userAppearance } = useUI();
@@ -22,6 +31,7 @@ const Chat = ({ className }: ClassType) => {
     message,
     setMessage,
     fileUploadProgress,
+    isRecording,
   } = useUsers();
 
   useEffect(() => {
@@ -77,6 +87,7 @@ const Chat = ({ className }: ClassType) => {
                 />
               </Fragment>
             ))}
+            <AudioDemo />
           </>
         ) : (
           <div className="w-full mt-20">
@@ -88,17 +99,29 @@ const Chat = ({ className }: ClassType) => {
       </article>
 
       <section className="w-full sticky z-20 bottom-2 md:bottom-3 bg-white">
-        <div className=" relative mx-3 md:mx-8">
-          <Input
-            placeholder="Type a Message..."
-            className=" !py-6 text-sm md:text-[16px] border border-black pr-36"
-            onChange={(e) => setMessage(e.target.value)}
-            value={message}
-            disabled={fileUploadProgress !== 0}
-          />
-          <div className="flex items-center space-x-1 md:space-x-3 absolute top-[7px] right-2">
-            <Emojies />
-            <ImageUpload />
+        <div className="relative mx-3 md:mx-8">
+          {!isRecording && (
+            <Input
+              placeholder="Type a Message..."
+              className=" !py-6 text-sm md:text-[16px] border border-black pr-36"
+              onChange={(e) => setMessage(e.target.value)}
+              value={message}
+              disabled={fileUploadProgress !== 0}
+            />
+          )}
+
+          <div
+            className={cn(
+              "flex items-center space-x-1 md:space-x-3 absolute top-[7px] right-2",
+              isRecording && "w-full -top-[9px]"
+            )}
+          >
+            {!isRecording && (
+              <>
+                <Emojies />
+                <ImageUpload />
+              </>
+            )}
             {message ? (
               <Button
                 title="Send Message"
@@ -111,13 +134,7 @@ const Chat = ({ className }: ClassType) => {
                 <PaperPlaneIcon className="w-3 md:w-4 h-3 md:h-4" />
               </Button>
             ) : (
-              <Button
-                title="Record Voice"
-                className="py-0 px-[10px]"
-                style={{ backgroundColor: userAppearance }}
-              >
-                <PlayIcon className="w-3 md:w-4 h-3 md:h-4" />
-              </Button>
+              <RecordAudio />
             )}
           </div>
         </div>

@@ -45,13 +45,16 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.45.4",
+    "react-mic": "^12.4.6",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.6",
     "typescript": "5.1.6",
+    "wavesurfer.js": "^7.2.1",
     "zod": "^3.22.1"
   },
   "devDependencies": {
+    "@types/react-mic": "^12.4.3",
     "husky": "^8.0.0",
     "prettier": "3.0.2"
   }
