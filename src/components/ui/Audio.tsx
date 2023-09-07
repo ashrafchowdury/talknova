@@ -9,7 +9,14 @@ import {
   CheckIcon,
 } from "@radix-ui/react-icons";
 import { Button, useToast } from "@/packages/ui";
+import dynamic from "next/dynamic";
 import { ReactMic } from "react-mic";
+const DynamicReactMic = dynamic(
+  () => import("react-mic").then((mod) => mod.ReactMic),
+  {
+    ssr: false, // Disable server-side rendering
+  }
+);
 import { cn } from "@/lib/functions";
 import { useUsers } from "@/provider";
 import { Avatar } from ".";
@@ -192,7 +199,7 @@ export const RecordAudio = () => {
           <StopIcon className="w-5 md:w-6 h-5 md:h-6 text-white" />
         </Button>
 
-        <ReactMic
+        <DynamicReactMic
           record={isRecording}
           className=" h-[50px] w-full"
           onStop={(file: any) => setAudio(file)}
