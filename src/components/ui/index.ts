@@ -1,5 +1,4 @@
 import Message from "./Message";
-import Notification from "./Notification";
 import Users from "./Users";
 import ThemeSelector from "./ThemeSelector";
 import ToggleSwitch from "./ToggleSwitch";
@@ -15,7 +14,6 @@ import { AudioMessage, RecordAudio } from "./Audio";
 export {
   InviteUsers,
   Message,
-  Notification,
   Users,
   ThemeSelector,
   ToggleSwitch,

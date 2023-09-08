@@ -13,7 +13,7 @@ import {
 } from "@/packages/ui";
 import { BellIcon, TrashIcon, CheckIcon } from "@radix-ui/react-icons";
 import { useUsers } from "@/provider";
-import { Avatar } from ".";
+import { Avatar } from "./ui";
 
 const Notification = () => {
   const { getUserInvitations, invite, acceptUserInvite } = useUsers();

@@ -1,13 +1,13 @@
 "use client";
 import { useState, Fragment } from "react";
-import { Notification, Users } from "@/components/ui";
+import { Users } from "@/components/ui";
+import { Invite, Notification } from ".";
 import {
   GearIcon,
   PlusCircledIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
 import { Button, Input } from "@/packages/ui";
-import { Invite } from ".";
 import Link from "next/link";
 import { useUsers } from "@/provider";
 
