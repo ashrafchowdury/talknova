@@ -105,7 +105,7 @@ const Chat = ({ className }: ClassType) => {
               placeholder="Type a Message..."
               className=" !py-6 text-sm md:text-[16px] border border-black pr-36"
               onChange={(e) => setMessage(e.target.value)}
-              value={message}
+              value={typeof message === "string" ? message : ""}
               disabled={fileUploadProgress !== 0}
             />
           )}

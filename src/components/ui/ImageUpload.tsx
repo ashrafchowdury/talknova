@@ -16,21 +16,40 @@ import {
 } from "@/packages/ui";
 import { PaperPlaneIcon, ImageIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { useUsers } from "@/provider";
+import { cn } from "@/lib/functions";
 
 const ImageUpload = () => {
-  const [imagePreview, setImagePreview] = useState("");
-  const { selectedUser, selectFiles, setSelectFiles, uploadFile } = useUsers();
+  const [imagePreview, setImagePreview] = useState([]);
+  const { selectedUser, selectFiles, setSelectFiles, uploadFile, message } =
+    useUsers();
 
-  const handleImagePreview = (e: any) => {
-    const fileInput = e.target;
-    if (fileInput.files && fileInput.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => setImagePreview(e.target.result);
-      reader.readAsDataURL(fileInput.files[0]);
-      setSelectFiles(fileInput.files[0]);
+  const handleImagePreviews = (e: any) => {
+    const selectedFiles = e.target.files;
+    const MAX_PREVIEW_COUNT = 4;
+
+    if (selectedFiles.length > 0 && selectedFiles.length <= MAX_PREVIEW_COUNT) {
+      const imagePreviews: any = [];
+      const selectedFilesArray = Array.from(selectedFiles);
+      const processFile = (file: any) => {
+        const reader = new FileReader();
+        reader.onload = (event: any) => {
+          imagePreviews.push(event.target.result);
+          if (imagePreviews.length === selectedFilesArray.length) {
+            setImagePreview(imagePreviews);
+            setSelectFiles([...selectedFiles]);
+          }
+        };
+        reader.readAsDataURL(file);
+      };
+      selectedFilesArray.forEach((file) => processFile(file));
     } else {
-      setImagePreview(""); // Clear the preview if no file is selected
+      setImagePreview([]);
+      setSelectFiles([]);
     }
+  };
+  const handleRemoveImage = (data: string) => {
+    const trash = imagePreview.filter((item) => data !== item);
+    setImagePreview(trash);
   };
 
   return (
@@ -51,24 +70,39 @@ const ImageUpload = () => {
             You can select maximam 4 Images at ones
           </DialogDescription>
         </DialogHeader>
-        <section className="flex items-center justify-center border rounded-lg h-[300px] relative">
-          {imagePreview ? (
-            <div className="relative w-full h-[300px]">
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-6 md:w-7 h-6 md:h-7 absolute z-50 top-2 right-2 bg-white opacity-60 hover:opacity-80"
-                onClick={() => setImagePreview("")}
-              >
-                <Cross2Icon className="w-3 md:w-4 h-3 md:h-4" />
-              </Button>
-              <Image
-                src={imagePreview}
-                fill={true}
-                alt="Preview"
-                className="rounded-lg object-cover"
-              />
-            </div>
+        <section
+          className={cn(
+            "flex items-center justify-center border rounded-lg h-[300px] relative gap-2",
+            imagePreview.length == 4 && "flex-wrap"
+          )}
+        >
+          {imagePreview.length > 0 ? (
+            <>
+              {imagePreview.map((data) => (
+                <div
+                  className={cn(
+                    "relative w-full h-[300px]",
+                    imagePreview.length == 4 && "w-[250px] h-[135px]"
+                  )}
+                  key={data}
+                >
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-6 md:w-7 h-6 md:h-7 absolute z-50 top-2 right-2 bg-white opacity-60 hover:opacity-80"
+                    onClick={() => handleRemoveImage(data)}
+                  >
+                    <Cross2Icon className="w-3 md:w-4 h-3 md:h-4" />
+                  </Button>
+                  <Image
+                    src={data}
+                    fill={true}
+                    alt="Preview"
+                    className="rounded-lg object-cover"
+                  />
+                </div>
+              ))}
+            </>
           ) : (
             <>
               <div className="flex flex-col items-center justify-center absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]">
@@ -81,7 +115,7 @@ const ImageUpload = () => {
                 type="file"
                 accept=".png, .jpg, .jpeg"
                 className="opacity-0 border w-full h-[300px] cursor-pointer"
-                onChange={handleImagePreview}
+                onChange={handleImagePreviews}
                 multiple
               />
             </>

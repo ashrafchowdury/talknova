@@ -39,17 +39,17 @@ type TypeUserContextProvider = {
   myself: UserType;
   isLoading: boolean;
   chats: any;
-  message: string;
-  selectFiles: any;
+  message: string | string[] | null;
+  selectFiles: string[] | [];
   fileUploadProgress: number;
-  setSelectFiles: any;
+  setSelectFiles: React.Dispatch<React.SetStateAction<string[] | []>>;
   audio: any;
   isRecording: boolean;
   isAudioPlaying: boolean;
   setAudio: React.Dispatch<React.SetStateAction<any>>;
   setIsRecording: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAudioPlaying: React.Dispatch<React.SetStateAction<boolean>>;
-  setMessage: React.Dispatch<React.SetStateAction<string>>;
+  setMessage: React.Dispatch<React.SetStateAction<string | string[] | null>>;
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   getSelectedUser: (id: string) => void;
   getAllUsers: () => void;
@@ -80,8 +80,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<any>([]); // user chats
   const [files, setFiles] = useState([]); // sended files
-  const [message, setMessage] = useState(""); // input message
-  const [selectFiles, setSelectFiles] = useState<any>(""); // selected files
+  const [message, setMessage] = useState<string | string[] | null>(null); // input message
+  const [selectFiles, setSelectFiles] = useState<string[] | []>([]); // selected files
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
   const [audio, setAudio] = useState<any>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -216,15 +216,11 @@ const UserContextProvider: React.FC<ChildrenType> = ({
             const users = item.users.split(" & ");
             return users.includes(friend.name);
           });
-
           if (matchingData) {
             const msg = matchingData.lastMsg.split(" | ");
-            friend.lastMsg = `${msg[1] == uid ? "You:" : "They:"} ${
-              msg[0].length > 0 ? msg[0] : "File shared"
-            }`;
+            friend.lastMsg = `${msg[1] == uid ? "You:" : "They:"} ${msg[0]}`;
             friend.lastMsgTime = matchingData.lastMsgTime;
           }
-
           return friend;
         });
         setFriends(friendsWithMsgs);
@@ -251,26 +247,34 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
-  const sendMessage = async (file?: string) => {
+  const sendMessage = async (files?: string) => {
     try {
       const q: any = query(
         collection(database, "chats", `${createChatId()}`, "messagas")
       );
-      if (!message && !file) {
+      if (!message && !files) {
         return null;
       } else {
+        let msg: any;
+        let lastMsg: any;
+        if (typeof message === "string") {
+          msg = { msg: message };
+          lastMsg = message;
+        } else if (Array.isArray(files)) {
+          msg = { files: files };
+          lastMsg = "Send Images";
+        }
+
         await addDoc(q, {
-          images: file ? [file] : [],
-          msg: message,
+          send: msg,
           timestemp: serverTimestamp(),
           uid: currentUser.uid,
         });
         await updateDoc(doc(database, "chats", `${createChatId()}`), {
           lastMsgTime: new Date().toISOString(),
-          lastMsg: `${message} | ${uid}`,
+          lastMsg: `${lastMsg} | ${uid}`,
         });
-        setMessage("");
-        selectFiles && setSelectFiles("");
+        setMessage(null);
       }
     } catch (error) {
       console.log(error);
@@ -290,31 +294,51 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     await deleteDoc(q);
   };
 
-  const uploadFile = (fileName: string) => {
+  const uploadFile = (filePath: string) => {
     const storage = getStorage();
 
     try {
-      const storageRef = ref(storage, `${fileName}/ ${selectFiles.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, selectFiles);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          setFileUploadProgress(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+      // Create an array to store the promises of each upload task
+      const uploadPromises = selectFiles.map((item: any) => {
+        const storageRef = ref(storage, `${filePath}/${item.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, item);
+
+        return new Promise((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              setFileUploadProgress(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              );
+            },
+            (error) => {
+              toast({ title: "Something went wrong!", variant: "destructive" });
+              reject(error);
+            },
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref)
+                .then((downloadURL) => {
+                  setFileUploadProgress(0);
+                  resolve(downloadURL);
+                })
+                .catch((error) => {
+                  reject(error);
+                });
+            }
           );
-        },
-        (error) => {
-          toast({ title: "Someting want wrong!", variant: "destructive" });
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            sendMessage(downloadURL);
-            setFileUploadProgress(0);
-          });
-        }
-      );
+        });
+      });
+
+      Promise.all(uploadPromises) // Wait for all upload tasks to complete
+        .then((downloadURLs: any) => {
+          sendMessage(downloadURLs); // All uploads are done, and downloadURLs contains all the file URLs
+          setSelectFiles([]);
+        })
+        .catch((error) => {
+          toast({ title: "Something went wrong!", variant: "destructive" });
+        });
     } catch (error) {
-      console.log(error);
+      toast({ title: "Something went wrong!", variant: "destructive" });
     }
   };
 

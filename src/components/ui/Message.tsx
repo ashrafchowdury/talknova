@@ -1,7 +1,22 @@
 import Loader from "./Loader";
 
 import Image from "next/image";
-import { Button, Popover, PopoverContent, PopoverTrigger } from "@/packages/ui";
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+  useToast,
+  Input,
+} from "@/packages/ui";
 import { cn } from "@/lib/functions";
 import { useUI, useUsers } from "@/provider";
 import {
@@ -47,21 +62,12 @@ const Message = ({ data, position }: MessageType) => {
             msgPosition
               ? "!ml-4 !mr-2 bg-slate-300"
               : "!mr-4 bg-black text-white",
-            data?.images?.length > 0 && "px-3 md:px-4"
+            data?.send?.files && "px-3 md:px-4"
           )}
           // style={{ backgroundColor: userAppearance }}
         >
-          {data?.images?.length > 0 && (
-            <Image
-              src={data?.images[0]}
-              alt="image"
-              width={300}
-              height={250}
-              loading="lazy"
-              className="w-[300px] rounded-lg"
-            />
-          )}
-          {data.msg.length > 0 && <span>{data.msg}</span>}
+          {data?.send?.files && <FileMessage data={data?.send?.files} />}
+          {data?.send?.msg && <span>{data.send.msg}</span>}
           <div
             className={cn(
               "absolute -bottom-[18px] flex items-center space-x-2",
@@ -82,6 +88,62 @@ const Message = ({ data, position }: MessageType) => {
         </div>
       </div>
     </div>
+  );
+};
+
+export const FileMessage = ({ data }: any) => {
+  return (
+    <>
+      {data.length == 1 ? (
+        <Image
+          src={data[0]}
+          alt="image"
+          width={300}
+          height={250}
+          loading="lazy"
+          className="w-[300px] rounded-lg"
+        />
+      ) : (
+        <Dialog>
+          <DialogTrigger className="relative">
+            <Image
+              src={data[0]}
+              alt="image"
+              width={300}
+              height={250}
+              loading="lazy"
+              className="w-[300px] rounded-lg"
+            />
+            <div className=" text-xs absolute top-2 left-2 py-[3px] px-2 rounded-sm bg-white opacity-70">
+              {data.length}
+            </div>
+          </DialogTrigger>
+          <DialogContent className="w-[95%] md:max-w-[780px]">
+            <DialogHeader>
+              <DialogTitle>Sended Files</DialogTitle>
+            </DialogHeader>
+            <section className="flex flex-wrap items-center justify-center border rounded-lg w-full h-auto max-h-[500px] overflow-y-auto relative gap-3 py-4 px-3 mb-7">
+              {data.map((item: string, ind: number) => (
+                <Image
+                  src={item}
+                  alt="image"
+                  width={300}
+                  height={250}
+                  loading="lazy"
+                  className="w-[46%] sm:w-[48%] rounded-lg"
+                  key={ind}
+                />
+              ))}
+            </section>
+            <DialogFooter>
+              <DialogClose>
+                <Button className="w-full">Close</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 };
 

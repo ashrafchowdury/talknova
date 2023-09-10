@@ -25,3 +25,22 @@ const onData = (recordedData: any) => {
   const { chunk } = recordedData;
   // setAudioChunks((prevChunks: any) => [...prevChunks, chunk]);
 };
+
+const onStop = async (file: any) => {
+  try {
+    const response = await fetch(file.blobURL);
+    const audioData = await response.arrayBuffer();
+    const blob: any = new Blob([audioData], { type: "audio/mpeg" }); // Change the type as needed
+    console.log(blob);
+  } catch (error) {
+    console.error("Error converting audio to Blob: ", error);
+  }
+};
+const playAudioFromBlob = (audioBlob: any) => {
+  if (audioBlob) {
+    const audioElement = new Audio(URL.createObjectURL(audioBlob));
+    audioElement.play();
+  } else {
+    console.error("No audio Blob available");
+  }
+};
