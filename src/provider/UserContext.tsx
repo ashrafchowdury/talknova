@@ -62,6 +62,7 @@ type TypeUserContextProvider = {
   getChats: () => void;
   sendMessage: () => void;
   uploadFile: (fileName: string) => void;
+  deleteMsg: (id: string) => void;
 };
 
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
@@ -291,7 +292,11 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   const deleteMsg = async (id: string) => {
     const q = doc(database, "chats", `${createChatId()}`, "messagas", id);
-    await deleteDoc(q);
+    try {
+      await deleteDoc(q);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const uploadFile = (filePath: string) => {
@@ -383,6 +388,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     selectFiles,
     setSelectFiles,
     uploadFile,
+    deleteMsg,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

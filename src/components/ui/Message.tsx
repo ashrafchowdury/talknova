@@ -101,7 +101,7 @@ export const FileMessage = ({ data }: any) => {
           width={300}
           height={250}
           loading="lazy"
-          className="w-[300px] rounded-lg"
+          className="w-full sm:w-[300px] rounded-lg"
         />
       ) : (
         <Dialog>
@@ -112,9 +112,9 @@ export const FileMessage = ({ data }: any) => {
               width={300}
               height={250}
               loading="lazy"
-              className="w-[300px] rounded-lg"
+              className="w-full sm:w-[300px] rounded-lg"
             />
-            <div className=" text-xs absolute top-2 left-2 py-[3px] px-2 rounded-sm bg-white opacity-70">
+            <div className=" text-xs absolute top-2 left-2 py-[3px] px-2 rounded-sm bg-white opacity-70 text-black">
               {data.length}
             </div>
           </DialogTrigger>
@@ -148,24 +148,25 @@ export const FileMessage = ({ data }: any) => {
 };
 
 const MessageMenu = ({ data, position }: any) => {
+  const { deleteMsg } = useUsers();
   return (
     <Popover>
-      <PopoverTrigger>
-        <Button
-          variant="ghost"
-          className={cn(
-            "py-0 px-1 absolute top-[50%] transform translate-y-[-50%] invisible group-hover/item:visible",
-            position ? "-left-6" : "-right-6"
-          )}
-        >
+      <PopoverTrigger
+        className={cn(
+          "absolute top-[50%] transform translate-y-[-50%]",
+          position ? "-left-6" : "-right-6"
+        )}
+      >
+        <Button variant="ghost" className="py-0 px-1">
           <DotsVerticalIcon className="w-4 h-4 text-black" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
         className={cn(
           "w-full p-0 -mt-0 flex items-center space-x-1",
-          position ? "" : "-translate-x-1"
+          position ? "-translate-y-3" : "-translate-y-3"
         )}
+        align={position ? "start" : "end"}
       >
         <Button
           variant="ghost"
@@ -180,6 +181,7 @@ const MessageMenu = ({ data, position }: any) => {
         <Button
           variant="ghost"
           className={cn("py-0 px-2", !position && "hidden")}
+          onClick={() => deleteMsg(data.id)}
         >
           <TrashIcon className="w-[14px] md:w-[18px] h-[14px] md:h-[18px]" />
         </Button>
