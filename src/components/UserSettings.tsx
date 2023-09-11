@@ -1,14 +1,14 @@
-import {
-  Button,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Switch,
-} from "@/packages/ui";
+import { Button, Skeleton } from "@/packages/ui";
 import { ImageIcon, DashboardIcon, FileTextIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
-import { ThemeSelector, ToggleSwitch, BackSpace, SecretKey } from "./ui";
+import {
+  ThemeSelector,
+  ToggleSwitch,
+  BackSpace,
+  SecretKey,
+  Avatar,
+} from "./ui";
 import { useUsers } from "@/provider";
 
 const UserSettings = ({ className }: ClassType) => {
@@ -21,14 +21,22 @@ const UserSettings = ({ className }: ClassType) => {
       </nav>
 
       <div className="flex flex-col items-center justify-center mt-6 px-4">
-        <Avatar className="w-24 h-24">
-          <AvatarImage src={selectedUser?.image} alt={selectedUser?.name} />
-        </Avatar>
+        <Avatar
+          img={selectedUser?.image}
+          fallback={selectedUser?.name}
+          className="w-24 h-24 text-3xl"
+        />
 
         <p className="text-xl font-bold mt-2 mb-1">{selectedUser?.name}</p>
         <p className="w-[90%] text-sm text-center opacity-60">
           {selectedUser?.bio}
         </p>
+        {!selectedUser?.name && (
+          <>
+            <Skeleton className="h-5 w-20" />
+            <Skeleton className="h-12 w-[90%]" />
+          </>
+        )}
       </div>
 
       <div className="w-full mt-7 px-4">

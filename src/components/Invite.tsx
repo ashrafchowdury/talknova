@@ -18,7 +18,7 @@ import {
   DialogClose,
   useToast,
 } from "@/packages/ui";
-import { InviteUsers } from "./ui";
+import { InviteUsers, InviteUsersSkeleton } from "./ui";
 import { ChildrenType } from "@/types";
 import { useUsers } from "@/provider";
 
@@ -85,6 +85,7 @@ const Invite = ({ children }: ChildrenType) => {
               )}
 
               <CommandGroup heading="Suggestions" className="py-1 md:py-2">
+                {user.length == 0 && <InviteUsersSkeleton />}
                 {user
                   .filter(
                     (data) => !friends.find((item) => item.uid == data.uid)

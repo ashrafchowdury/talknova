@@ -8,14 +8,12 @@ import {
   PopoverTrigger,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
   DialogClose,
-  useToast,
-  Input,
+  Skeleton,
 } from "@/packages/ui";
 import { cn } from "@/lib/functions";
 import { useUI, useUsers } from "@/provider";
@@ -37,6 +35,27 @@ const Message = ({ data, position }: MessageType) => {
   const { userAppearance } = useUI();
   const { selectedUser, myself } = useUsers();
   const msgPosition = position == "left";
+
+  // Format date
+  const formatTimestamp = (timestamp: any) => {
+    try {
+      const date = timestamp?.toDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const amOrPm = hours >= 12 ? "PM" : "AM"; // Determine AM or PM
+      const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+      const formattedDate = `${String(date.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}/${String(date.getDate()).padStart(2, "0")} ${String(
+        formattedHours
+      ).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${amOrPm}`;
+      return formattedDate;
+    } catch (error) {
+      return "";
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -62,7 +81,7 @@ const Message = ({ data, position }: MessageType) => {
             msgPosition
               ? "!ml-4 !mr-2 bg-slate-300"
               : "!mr-4 bg-black text-white",
-            data?.send?.files && "px-3 md:px-4"
+            data?.send?.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent"
           )}
           // style={{ backgroundColor: userAppearance }}
         >
@@ -77,11 +96,11 @@ const Message = ({ data, position }: MessageType) => {
             <div
               className={cn("relative", msgPosition ? "right-1" : " hidden")}
             >
-              <CheckIcon className="w-3 sm:w-4 h-3 sm:h-4" />
-              <CheckIcon className="w-3 sm:w-4 h-3 sm:h-4 absolute top-0 left-[4px]" />
+              <CheckIcon className="w-2 sm:w-3 h-2 sm:h-3" />
+              <CheckIcon className="w-2 sm:w-3 h-2 sm:h-3 absolute top-0 left-[4px]" />
             </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
-              11:30PM
+            <p className="text-[9px] sm:text-[10px] text-muted-foreground whitespace-nowrap">
+              {formatTimestamp(data.timestemp)}
             </p>
           </div>
           <MessageMenu data={data} position={msgPosition} />
@@ -90,6 +109,7 @@ const Message = ({ data, position }: MessageType) => {
     </div>
   );
 };
+export default Message;
 
 export const FileMessage = ({ data }: any) => {
   return (
@@ -147,7 +167,7 @@ export const FileMessage = ({ data }: any) => {
   );
 };
 
-const MessageMenu = ({ data, position }: any) => {
+export const MessageMenu = ({ data, position }: any) => {
   const { deleteMsg } = useUsers();
   return (
     <Popover>
@@ -190,7 +210,29 @@ const MessageMenu = ({ data, position }: any) => {
   );
 };
 
-export default Message;
+export const MessageSkeleton = () => {
+  const skeleton = [1, 2, 3, 4, 5, 6, 7, 8];
+  return (
+    <>
+      <section className="w-full mt-6">
+        {skeleton.map((item, index) => (
+          <Skeleton
+            className={cn(
+              "my-[6px]",
+              index % 2 !== 0
+                ? " float-right clear-both w-48"
+                : " float-left clear-both w-60"
+            )}
+            key={item}
+          >
+            <Skeleton className="h-10 w-full rounded-md" />
+          </Skeleton>
+        ))}
+      </section>
+    </>
+  );
+};
+
 {
   /* <div
         className="h-[34px] md:h-10 w-16 rounded-lg bg-black text-white my-2 md:my-3 flex items-center justify-center"

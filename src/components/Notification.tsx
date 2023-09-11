@@ -10,13 +10,14 @@ import {
   SheetTitle,
   SheetDescription,
   Separator,
+  Skeleton,
 } from "@/packages/ui";
 import { BellIcon, TrashIcon, CheckIcon } from "@radix-ui/react-icons";
 import { useUsers } from "@/provider";
 import { Avatar } from "./ui";
 
 const Notification = () => {
-  const { getUserInvitations, invite, acceptUserInvite } = useUsers();
+  const { getUserInvitations, invite, acceptUserInvite, myself } = useUsers();
 
   return (
     <Sheet>
@@ -41,7 +42,9 @@ const Notification = () => {
             </SheetDescription>
           </SheetHeader>
           <section className="py-4 mt-3">
-            {invite.length > 0 ? (
+            {myself?.invite?.length > 0 && invite.length == 0 ? (
+              <NotificattionUsersSkeleton />
+            ) : (
               <>
                 {invite.map((data) => (
                   <>
@@ -84,7 +87,8 @@ const Notification = () => {
                   </>
                 ))}
               </>
-            ) : (
+            )}
+            {myself?.invite?.length == 0 && (
               <div className="flex flex-col space-y-3 items-center justify-center h-20">
                 <p className="text-sm text-muted-foreground">No Notification</p>
               </div>
@@ -105,3 +109,29 @@ const Notification = () => {
   );
 };
 export default Notification;
+
+export const NotificattionUsersSkeleton = () => {
+  const number_of_skeletons = [1, 2, 3, 4];
+  return (
+    <>
+      {number_of_skeletons.map((item) => (
+        <Skeleton
+          className="w-full flex items-center justify-between p-2 md:p-3 rounded-lg my-2 md:my-3"
+          key={item}
+        >
+          <div className="w-full flex items-center space-x-2">
+            <Skeleton className="h-8 md:h-10 w-10 md:w-12 rounded-full" />
+            <div className="w-full space-y-2">
+              <Skeleton className="h-3 md:h-4 w-[60%] md:w-[120px]" />
+              <Skeleton className="h-2 md:h-3 w-[75%] md:w-[160px]" />
+            </div>
+          </div>
+          <div className="flex space-x-1">
+            <Skeleton className="h-7 md:h-8 w-7 md:w-8 rounded-md" />
+            <Skeleton className="h-7 md:h-8 w-7 md:w-8 rounded-md" />
+          </div>
+        </Skeleton>
+      ))}
+    </>
+  );
+};

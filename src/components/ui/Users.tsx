@@ -1,10 +1,9 @@
 "use client";
 import { Avatar } from ".";
-import Link from "next/link";
 import { useUI, useUsers } from "@/provider";
 import { cn, formatTimeByLastMsg } from "@/lib/functions";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/packages/ui";
+import { Badge, Skeleton } from "@/packages/ui";
 
 const Users = ({ data }: any) => {
   const { windowSize } = useUI();
@@ -52,3 +51,24 @@ const Users = ({ data }: any) => {
 };
 
 export default Users;
+
+export const UsersSkeleton = () => {
+  const number_of_skeletons = [1, 2, 3, 4];
+  return (
+    <>
+      {number_of_skeletons.map((item) => (
+        <Skeleton
+          className="w-full flex items-center space-x-2 relative p-2 md:p-3 rounded-lg my-3 md:my-4"
+          key={item}
+        >
+          <Skeleton className="h-10 md:h-12 w-10 md:w-12 rounded-full" />
+          <div className="w-full space-y-2">
+            <Skeleton className="h-4 w-[60%] md:w-[180px]" />
+            <Skeleton className="h-3 w-[85%] md:w-[220px]" />
+          </div>
+          <Skeleton className="h-2 w-[50px] absolute top-4 right-2" />
+        </Skeleton>
+      ))}
+    </>
+  );
+};

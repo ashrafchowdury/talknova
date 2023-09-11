@@ -1,6 +1,6 @@
 "use client";
 import { useState, Fragment } from "react";
-import { Users } from "@/components/ui";
+import { Users, UsersSkeleton } from "@/components/ui";
 import { Invite, Notification } from ".";
 import {
   GearIcon,
@@ -13,7 +13,7 @@ import { useUsers } from "@/provider";
 
 const ListOfUsers = () => {
   const [searchUsers, setSearchUsers] = useState("");
-  const { friends } = useUsers();
+  const { friends, myself } = useUsers();
   const shortUser = () => {
     const now = new Date();
     const changeTimeFormat = friends.map((item: any) => ({
@@ -66,16 +66,22 @@ const ListOfUsers = () => {
         </section>
 
         <section className="w-full md:w-[98%] mt-8">
-          {shortUser()
-            .filter(
-              (data: any) =>
-                data.name?.toLowerCase().includes(searchUsers.toLowerCase())
-            )
-            .map((data: any) => (
-              <Fragment key={data.uid}>
-                <Users data={data} />
-              </Fragment>
-            ))}
+          {myself.friends?.length > 0 && friends.length == 0 ? (
+            <UsersSkeleton />
+          ) : (
+            <>
+              {shortUser()
+                .filter(
+                  (data: any) =>
+                    data.name?.toLowerCase().includes(searchUsers.toLowerCase())
+                )
+                .map((data: any) => (
+                  <Fragment key={data.uid}>
+                    <Users data={data} />
+                  </Fragment>
+                ))}
+            </>
+          )}
         </section>
       </div>
 

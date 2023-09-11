@@ -77,25 +77,23 @@ const Chat = ({ className }: ClassType) => {
         <Progress value={fileUploadProgress} className="w-full" />
       )}
       <article className="chatInterface w-full h-[86.5vh] px-2 sm:px-6 md:px-8 break-all pt-16 pb-10 overflow-y-auto">
-        {chats.length > 0 ? (
-          <>
-            {chats.map((data: any) => (
-              <Fragment key={data.id}>
-                <Message
-                  data={data}
-                  position={data.uid == selectedUser.uid ? "right" : "left"}
-                />
-              </Fragment>
-            ))}
-            <AudioDemo />
-          </>
-        ) : (
+        {chats.length == 0 && (
           <div className="w-full mt-20">
             <p className="text-xl md:text-3xl text-center font-bold text-muted-foreground opacity-80">
               Welcome to {selectedUser.name} Chat 🎉
             </p>
           </div>
         )}
+
+        {chats.map((data: any) => (
+          <Fragment key={data.id}>
+            <Message
+              data={data}
+              position={data.uid == selectedUser.uid ? "right" : "left"}
+            />
+          </Fragment>
+        ))}
+        <AudioDemo />
       </article>
 
       <section className="w-full sticky z-20 bottom-2 md:bottom-3 bg-white">

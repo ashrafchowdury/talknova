@@ -1,5 +1,5 @@
 "use client";
-import { useState, Fragment } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import {
   Button,
@@ -14,14 +14,13 @@ import {
   useToast,
   Input,
 } from "@/packages/ui";
-import { PaperPlaneIcon, ImageIcon, Cross2Icon } from "@radix-ui/react-icons";
+import { ImageIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { useUsers } from "@/provider";
 import { cn } from "@/lib/functions";
 
 const ImageUpload = () => {
-  const [imagePreview, setImagePreview] = useState([]);
-  const { selectedUser, selectFiles, setSelectFiles, uploadFile, message } =
-    useUsers();
+  const [imagePreview, setImagePreview] = useState<any>([]);
+  const { selectFiles, setSelectFiles, uploadFile } = useUsers();
 
   const handleImagePreviews = (e: any) => {
     const selectedFiles = e.target.files;
@@ -33,7 +32,10 @@ const ImageUpload = () => {
       const processFile = (file: any) => {
         const reader = new FileReader();
         reader.onload = (event: any) => {
-          imagePreviews.push(event.target.result);
+          imagePreviews.push({
+            name: file.name,
+            data: event.target.result,
+          });
           if (imagePreviews.length === selectedFilesArray.length) {
             setImagePreview(imagePreviews);
             setSelectFiles([...selectedFiles]);
@@ -47,9 +49,13 @@ const ImageUpload = () => {
       setSelectFiles([]);
     }
   };
+
   const handleRemoveImage = (data: string) => {
-    const trash = imagePreview.filter((item) => data !== item);
-    setImagePreview(trash);
+    const preview = imagePreview.filter((item: any) => data !== item.name);
+    const file = selectFiles.filter((item: any) => data !== item.name);
+
+    setImagePreview(preview);
+    setSelectFiles(file);
   };
 
   return (
@@ -78,24 +84,24 @@ const ImageUpload = () => {
         >
           {imagePreview.length > 0 ? (
             <>
-              {imagePreview.map((data) => (
+              {imagePreview.map((data: any) => (
                 <div
                   className={cn(
                     "relative w-full h-[300px]",
                     imagePreview.length == 4 && "w-[250px] h-[135px]"
                   )}
-                  key={data}
+                  key={data.name}
                 >
                   <Button
                     variant="outline"
                     size="icon"
                     className="w-6 md:w-7 h-6 md:h-7 absolute z-50 top-2 right-2 bg-white opacity-60 hover:opacity-80"
-                    onClick={() => handleRemoveImage(data)}
+                    onClick={() => handleRemoveImage(data.name)}
                   >
                     <Cross2Icon className="w-3 md:w-4 h-3 md:h-4" />
                   </Button>
                   <Image
-                    src={data}
+                    src={data.data}
                     fill={true}
                     alt="Preview"
                     className="rounded-lg object-cover"
