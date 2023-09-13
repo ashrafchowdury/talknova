@@ -62,6 +62,7 @@ type TypeUserContextProvider = {
   getChats: () => void;
   sendMessage: () => void;
   uploadFile: (fileName: string) => void;
+  uploadAudio: (item: any) => void;
   deleteMsg: (id: string) => void;
 };
 
@@ -248,7 +249,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
-  const sendMessage = async (files?: string) => {
+  const sendMessage = async (files?: any) => {
     try {
       const q: any = query(
         collection(database, "chats", `${createChatId()}`, "messagas")
@@ -264,6 +265,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         } else if (Array.isArray(files)) {
           msg = { files: files };
           lastMsg = "Send Images";
+        } else if (typeof files === "string") {
+          msg = { audio: `${files}` };
+          lastMsg = "Audio message";
         }
 
         await addDoc(q, {
@@ -278,7 +282,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         setMessage(null);
       }
     } catch (error) {
-      console.log(error);
+      toast({ title: "Something went wrong!", variant: "destructive" });
     }
   };
 
@@ -347,6 +351,37 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
+  const uploadAudio = (item: any) => {
+    const storage = getStorage();
+    try {
+      const storageRef = ref(storage, `audios/${generateUid}.webm`);
+      const uploadTask = uploadBytesResumable(storageRef, item);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          setFileUploadProgress(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+        },
+        (error) => {
+          toast({ title: "Something went wrong!", variant: "destructive" });
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then((downloadURL) => {
+              sendMessage(downloadURL);
+              setFileUploadProgress(0);
+              setAudio(null);
+            })
+            .catch((error) => console.log(error));
+        }
+      );
+    } catch (error) {
+      toast({ title: "Something went wrong!", variant: "destructive" });
+    }
+  };
+
   // effects
   useEffect(() => {
     getCurrentUser();
@@ -389,6 +424,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     setSelectFiles,
     uploadFile,
     deleteMsg,
+    uploadAudio,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

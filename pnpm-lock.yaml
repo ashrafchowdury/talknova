@@ -116,9 +116,6 @@ dependencies:
   typescript:
     specifier: 5.1.6
     version: 5.1.6
-  wavesurfer.js:
-    specifier: ^7.2.1
-    version: 7.2.1
   zod:
     specifier: ^3.22.1
     version: 3.22.1
@@ -5899,13 +5896,6 @@ packages:
     dependencies:
       glob-to-regexp: 0.4.1
       graceful-fs: 4.2.11
-    dev: false
-
-  /wavesurfer.js@7.2.1:
-    resolution:
-      {
-        integrity: sha512-62ZrNaBeVaVUzwWkQtc+yUnDpvBccRtcdjifNbn/ktxS/eEugXXWwdiImCjG+b7DiU2Jmuvh1obZWP8zGYUrZg==,
-      }
     dev: false
 
   /webidl-conversions@3.0.1:

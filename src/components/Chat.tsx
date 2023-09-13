@@ -17,7 +17,6 @@ import {
 } from "./ui";
 import { useRouter } from "next/navigation";
 import { useUsers } from "@/provider";
-import { AudioDemo } from "./ui/Audio";
 
 const Chat = ({ className }: ClassType) => {
   const { windowSize, userAppearance } = useUI();
@@ -93,7 +92,6 @@ const Chat = ({ className }: ClassType) => {
             />
           </Fragment>
         ))}
-        <AudioDemo />
       </article>
 
       <section className="w-full sticky z-20 bottom-2 md:bottom-3 bg-white">
@@ -123,7 +121,8 @@ const Chat = ({ className }: ClassType) => {
             {message ? (
               <Button
                 title="Send Message"
-                className="py-0 px-3"
+                size="icon"
+                className="w-8 md:w-9 h-8 md:h-9"
                 style={{ backgroundColor: userAppearance }}
                 onClick={() =>
                   chats.length > 0 ? sendMessage() : createChatDatabase()

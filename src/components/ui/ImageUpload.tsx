@@ -66,7 +66,7 @@ const ImageUpload = () => {
           variant="ghost"
           className="py-[2px] px-2 hover:bg-slate-200 duration-300"
         >
-          <ImageIcon className="w-3 md:w-4 h-3 md:h-4 cursor-pointer" />
+          <ImageIcon className="w-[14px] sm:w-4 h-[14px] sm:h-4 cursor-pointer" />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[95%] sm:max-w-[580px]">

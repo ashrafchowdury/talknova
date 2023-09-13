@@ -24,7 +24,7 @@ import {
   LoopIcon,
   CheckIcon,
 } from "@radix-ui/react-icons";
-import { Avatar } from ".";
+import { Avatar, AudioMessage } from ".";
 
 type MessageType = {
   data?: any;
@@ -81,10 +81,14 @@ const Message = ({ data, position }: MessageType) => {
             msgPosition
               ? "!ml-4 !mr-2 bg-slate-300"
               : "!mr-4 bg-black text-white",
-            data?.send?.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent"
+            data?.send?.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
+            data?.send?.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent"
           )}
           // style={{ backgroundColor: userAppearance }}
         >
+          {data?.send?.audio && (
+            <AudioMessage data={data?.send?.audio} position={msgPosition} />
+          )}
           {data?.send?.files && <FileMessage data={data?.send?.files} />}
           {data?.send?.msg && <span>{data.send.msg}</span>}
           <div

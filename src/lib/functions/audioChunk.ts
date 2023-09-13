@@ -26,20 +26,32 @@ const onData = (recordedData: any) => {
   // setAudioChunks((prevChunks: any) => [...prevChunks, chunk]);
 };
 
-const onStop = async (file: any) => {
+const onStop = async (data: any) => {
   try {
-    const response = await fetch(file.blobURL);
+    const response = await fetch(data);
     const audioData = await response.arrayBuffer();
-    const blob: any = new Blob([audioData], { type: "audio/mpeg" }); // Change the type as needed
-    console.log(blob);
+    const uint8Array: any = new Uint8Array(audioData); // Convert the ArrayBuffer to a Uint8Array
+    const base64String: any = btoa(
+      // Convert the Uint8Array to a Base64 string
+      String.fromCharCode.apply(null, uint8Array)
+    );
+    console.log(base64String);
   } catch (error) {
     console.error("Error converting audio to Blob: ", error);
   }
 };
-const playAudioFromBlob = (audioBlob: any) => {
-  if (audioBlob) {
-    const audioElement = new Audio(URL.createObjectURL(audioBlob));
-    audioElement.play();
+const playAudioFromBlob = (audioTest: any) => {
+  if (audioTest) {
+    const base64String = `data:audio/webm;base64,${audioTest}`;
+    const base64Data = base64String.split(",")[1];
+    const binaryString = atob(base64Data); // Convert the Base64 string to a Uint8Array
+    const uint8Array = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      uint8Array[i] = binaryString.charCodeAt(i);
+    }
+    const blob = new Blob([uint8Array], { type: "audio/webm" }); // Create a Blob from the Uint8Array
+    const audioURL = URL.createObjectURL(blob); // Create an Object URL for the Blob
+    console.log(blob);
   } else {
     console.error("No audio Blob available");
   }
