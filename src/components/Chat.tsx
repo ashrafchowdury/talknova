@@ -109,7 +109,7 @@ const Chat = ({ className }: ClassType) => {
           <div
             className={cn(
               "flex items-center space-x-1 md:space-x-3 absolute top-[7px] right-2",
-              isRecording && "w-full -top-[9px]"
+              isRecording && "w-full -top-2 right-0"
             )}
           >
             {!isRecording && (

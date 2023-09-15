@@ -20,9 +20,10 @@ import { cn } from "@/lib/functions";
 import { useUsers } from "@/provider";
 
 export const AudioMessage = ({ data, position }: any) => {
+  const [audioPlaying, setAudioPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const { isAudioPlaying, setIsAudioPlaying, isRecording } = useUsers();
+  const { setIsAudioPlaying, isRecording } = useUsers();
   const audioRef: any = useRef(null);
 
   // Update current time as audio plays
@@ -32,7 +33,7 @@ export const AudioMessage = ({ data, position }: any) => {
       setCurrentTime(audioElement.currentTime);
       setDuration(audioRef.current.duration);
       if (audioElement.ended) {
-        setIsAudioPlaying(false); // Set isPlaying to false when audio finishes
+        setAudioPlaying(false); // Set isPlaying to false when audio finishes
         setCurrentTime(0);
       }
     };
@@ -42,14 +43,15 @@ export const AudioMessage = ({ data, position }: any) => {
     };
   }, []);
 
-  const togglePlayback = () => {
-    if (isAudioPlaying) {
+  const togglePlayback = (dd: any) => {
+    if (audioPlaying) {
       audioRef.current.pause();
     } else {
       audioRef.current.play();
     }
-    setIsAudioPlaying(!isAudioPlaying);
+    setAudioPlaying(!audioPlaying);
     setDuration(audioRef.current.duration);
+    setIsAudioPlaying(!audioPlaying);
   };
 
   // Update audio playback time when progress bar is clicked
@@ -59,7 +61,7 @@ export const AudioMessage = ({ data, position }: any) => {
       (e.nativeEvent.offsetX / e.target.offsetWidth) * duration;
     audioRef.current.currentTime = clickedTime;
     setCurrentTime(clickedTime);
-    setIsAudioPlaying(true);
+    setAudioPlaying(true);
     audioRef.current.play();
   };
 
@@ -81,19 +83,25 @@ export const AudioMessage = ({ data, position }: any) => {
     >
       <audio ref={audioRef} src={data} className=" hidden" />
       <div className="w-full flex items-center space-x-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-5 md:w-6 h-5 md:h-6 hover:bg-transparent"
-          onClick={togglePlayback}
-        >
-          {isAudioPlaying ? (
-            <PauseIcon className="w-5 md:w-6 h-5 md:h-6" />
-          ) : (
+        {!audioPlaying ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-5 md:w-6 h-5 md:h-6 hover:bg-transparent"
+            onClick={() => togglePlayback(data)}
+          >
             <PlayIcon className="w-5 md:w-6 h-5 md:h-6" />
-          )}
-        </Button>
-
+          </Button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-5 md:w-6 h-5 md:h-6 hover:bg-transparent"
+            onClick={() => togglePlayback(data)}
+          >
+            <PauseIcon className="w-5 md:w-6 h-5 md:h-6" />
+          </Button>
+        )}
         <div
           className={cn(
             "h-[6px] w-full rounded-sm cursor-pointer",
@@ -205,7 +213,7 @@ export const RecordAudio = () => {
 
       <section
         className={cn(
-          "w-full h-[60px] hidden bg-black rounded-lg flex-row-reverse items-center justify-between space-x-3 pr-4 pl-1",
+          "w-full h-[50px] md:h-[60px] hidden bg-black rounded-lg flex-row-reverse items-center justify-between space-x-1 sm:space-x-2 md:space-x-3 pr-2 sm:pr-4 pl-1 mb-2 sm:mb-0",
           isRecording && "flex"
         )}
       >
@@ -220,7 +228,7 @@ export const RecordAudio = () => {
 
         <DynamicReactMic
           record={isRecording}
-          className=" h-[50px] w-full"
+          className=" h-[50px] w-[60%] sm:w-full"
           onStop={(file: any) => setAudio(file.blob)}
           strokeColor="white"
           backgroundColor="black"
@@ -234,7 +242,7 @@ export const RecordAudio = () => {
         <Button
           variant="destructive"
           size="icon"
-          className="w-8 md:w-9 h-7 md:h-8 mr-2"
+          className="w-7 md:w-9 h-7 md:h-8 mr-2"
           onClick={deleteRecording}
         >
           <TrashIcon className="w-4 md:w-5 h-4 md:h-5 text-white" />
