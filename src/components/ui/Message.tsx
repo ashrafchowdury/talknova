@@ -1,5 +1,6 @@
 import Loader from "./Loader";
 
+import { useState } from "react";
 import Image from "next/image";
 import {
   Button,
@@ -79,8 +80,8 @@ const Message = ({ data, position }: MessageType) => {
           className={cn(
             "py-2 md:py-3 px-4 md:px-5 text-xs sm:text-sm md:text-[16px] rounded-lg relative flex items-center justify-center",
             msgPosition
-              ? "!ml-4 !mr-2 bg-slate-300"
-              : "!mr-4 bg-black text-white",
+              ? "!ml-4 !mr-2 bg-slate-300 dark:bg-slate-800"
+              : "!mr-4 bg-black text-white dark:bg-white dark:text-black",
             data?.send?.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
             data?.send?.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent"
           )}
@@ -172,17 +173,27 @@ export const FileMessage = ({ data }: any) => {
 };
 
 export const MessageMenu = ({ data, position }: any) => {
+  const [isCopied, setIsCopied] = useState(false);
   const { deleteMsg } = useUsers();
+
+  const copyIconCoponent = () => {
+    if (isCopied) {
+      setTimeout(() => setIsCopied(false), 2000);
+      return <CheckIcon className="w-3 md:w-4 h-3 md:h-4 text-green-500" />;
+    } else {
+      return <CopyIcon className="w-3 md:w-4 h-3 md:h-4" />;
+    }
+  };
   return (
     <Popover>
       <PopoverTrigger
         className={cn(
           "absolute top-[50%] transform translate-y-[-50%]",
-          position ? "-left-6" : "-right-6"
+          position ? "-left-6" : "-right-6 hidden"
         )}
       >
-        <Button variant="ghost" className="py-0 px-1">
-          <DotsVerticalIcon className="w-4 h-4 text-black" />
+        <Button variant="ghost" className="py-0 px-1 hover:bg-transparent">
+          <DotsVerticalIcon className="w-4 h-4 text-black dark:text-white" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -192,13 +203,19 @@ export const MessageMenu = ({ data, position }: any) => {
         )}
         align={position ? "start" : "end"}
       >
-        <Button
-          variant="ghost"
-          className="!py-0 px-2"
-          onClick={() => navigator.clipboard.writeText(data?.msg)}
-        >
-          <CopyIcon className="w-3 md:w-4 h-3 md:h-4" />
-        </Button>
+        {data.send.msg && (
+          <Button
+            variant="ghost"
+            className="!py-0 px-2"
+            onClick={() => {
+              navigator.clipboard.writeText(data.send.msg);
+              setIsCopied(true);
+            }}
+          >
+            {copyIconCoponent()}
+          </Button>
+        )}
+
         <Button variant="ghost" className="py-0 px-2">
           <LoopIcon className="w-[14px] md:w-[18px] h-[14px] md:h-[18px]" />
         </Button>

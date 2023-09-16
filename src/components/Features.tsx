@@ -19,12 +19,12 @@ const Features = () => {
         defaultValue="text-chat"
         className="w-full md:w-[95%] mt-12 sm:mt-20 mb-20"
       >
-        <TabsList className="w-[95%] xl:w-[800px] overflow-x-auto">
+        <TabsList className="w-full h-auto overflow-x-auto mb-2">
           {features.map((data) => (
             <TabsTrigger
               value={data.id}
               key={data.id}
-              className="w-full capitalize font-semibold focus-visible:ring-0"
+              className="w-full capitalize font-semibold focus-visible:ring-0 py-2"
             >
               {data.title}
             </TabsTrigger>
@@ -45,7 +45,8 @@ const Features = () => {
                   width={1300}
                   height={500}
                   alt="preview image"
-                  className=" rounded-lg object-cover"
+                  loading="lazy"
+                  className="w-full h-[250px] sm:h-[400px] lg:h-[600px] rounded-lg object-cover"
                 />
               </CardContent>
             </Card>

@@ -53,7 +53,7 @@ const Register = () => {
         </DialogTrigger>
         <DialogContent className="w-[95%] sm:w-[400px] border-none px-4 py-10 sm:p-12">
           <Tabs defaultValue="login" className="w-full sm:w-[400px] mx-auto">
-            <TabsList className="w-full h-auto bg-slate-200">
+            <TabsList className="w-full h-auto">
               <TabsTrigger value="signup" className="w-full py-2">
                 Sign Up
               </TabsTrigger>
@@ -144,10 +144,10 @@ const Register = () => {
                         className="px-8"
                       />
                     </div>
-                    <TabsList className="w-auto h-auto">
+                    <TabsList className="w-auto h-auto bg-transparent">
                       <TabsTrigger
                         value="forget"
-                        className=" bg-transparent p-0"
+                        className="bg-transparent p-0"
                       >
                         Forget Password!
                       </TabsTrigger>

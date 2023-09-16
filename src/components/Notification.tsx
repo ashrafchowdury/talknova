@@ -25,7 +25,7 @@ const Notification = () => {
         <Button
           variant="ghost"
           title="Notifications"
-          className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
+          className="py-[2px] px-2 mx-1 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
         >
           <BellIcon className="w-5 h-5" />
         </Button>

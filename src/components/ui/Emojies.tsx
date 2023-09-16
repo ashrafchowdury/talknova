@@ -8,7 +8,7 @@ const Emojies = () => {
         <Button
           title="Emoji"
           variant="ghost"
-          className="py-[2px] px-2 hover:bg-slate-200 duration-300"
+          className="py-[2px] px-2 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
         >
           <MixIcon className="w-[14px] sm:w-4 h-[14px] sm:h-4" />
         </Button>

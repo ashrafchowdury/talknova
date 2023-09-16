@@ -34,7 +34,7 @@ const UserSettings = ({ className }: ClassType) => {
         {!selectedUser?.name && (
           <>
             <Skeleton className="h-5 w-20" />
-            <Skeleton className="h-12 w-[90%]" />
+            <Skeleton className="h-10 w-[90%] mt-2" />
           </>
         )}
       </div>
@@ -46,21 +46,21 @@ const UserSettings = ({ className }: ClassType) => {
           <Button
             variant="outline"
             title="Shared Imgaes"
-            className="h-14 w-full hover:bg-slate-200 duration-300"
+            className="h-14 w-full hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
           >
             <ImageIcon className="w-7 h-7" />
           </Button>
           <Button
             variant="outline"
             title="Shared Files"
-            className="h-14 w-full hover:bg-slate-200 duration-300"
+            className="h-14 w-full hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
           >
             <FileTextIcon className="w-7 h-7" />
           </Button>
           <Button
             variant="outline"
             title="Share QR-Code"
-            className="h-14 w-full hover:bg-slate-200 duration-300"
+            className="h-14 w-full hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
           >
             <DashboardIcon className="w-7 h-7" />
           </Button>

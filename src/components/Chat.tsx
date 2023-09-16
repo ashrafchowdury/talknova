@@ -22,10 +22,12 @@ import {
 } from "./ui";
 import { useRouter } from "next/navigation";
 import { useUsers } from "@/provider";
+import { useTheme } from "next-themes";
 
 const Chat = ({ className }: ClassType) => {
   const { windowSize, userAppearance } = useUI();
   const router = useRouter();
+  const { theme } = useTheme();
   const {
     selectedUser,
     userId,
@@ -45,7 +47,7 @@ const Chat = ({ className }: ClassType) => {
 
   return (
     <main className={cn(" border-x md:mt-2 relative", className)}>
-      <nav className="h-[60px] px-2 sm:px-6 md:px-8 border-b flex items-center justify-between sticky z-20 top-0 bg-white">
+      <nav className="h-[60px] px-2 sm:px-6 md:px-8 border-b flex items-center justify-between sticky z-20 top-0 bg-inherit">
         <BackSpace />
         <div className="flex items-center">
           <Avatar
@@ -54,11 +56,15 @@ const Chat = ({ className }: ClassType) => {
             className=" w-10 h-10"
           />
           <div className="ml-2">
-            <p className="text-[16px] md:text-lg font-bold ">
+            <p className="text-[16px] md:text-lg font-bold">
               {selectedUser?.name}
             </p>
             <p className="text-xs md:text-sm opacity-60 -mt-1 flex items-end ">
-              Typing <Loader variant="black" className="opacity-50 ml-[2px]" />
+              Typing{" "}
+              <Loader
+                variant={theme == "light" ? "black" : "white"}
+                className="opacity-50 ml-[2px]"
+              />
             </p>
           </div>
         </div>
@@ -67,7 +73,7 @@ const Chat = ({ className }: ClassType) => {
           <Button
             variant="ghost"
             title="Settings"
-            className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
+            className="py-[2px] px-2 mx-1 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
             onClick={() =>
               windowSize < 1350 &&
               router.push(`/user-settings#${selectedUser?.id}`)
@@ -99,12 +105,12 @@ const Chat = ({ className }: ClassType) => {
         ))}
       </article>
 
-      <section className="w-full sticky z-20 bottom-2 md:bottom-3 bg-white">
+      <section className="w-full sticky z-20 bottom-2 md:bottom-3 bg-inherit">
         <div className="relative mx-3 md:mx-8">
           {!isRecording && (
             <Input
               placeholder="Type a Message..."
-              className=" !py-6 text-sm md:text-[16px] border border-black pr-36"
+              className=" !py-6 text-sm md:text-[16px] pr-36"
               onChange={(e) => setMessage(e.target.value)}
               value={typeof message === "string" ? message : ""}
               disabled={fileUploadProgress !== 0}
@@ -124,7 +130,7 @@ const Chat = ({ className }: ClassType) => {
                   <Button
                     title="Select Media"
                     variant="ghost"
-                    className="py-[2px] px-2 hover:bg-slate-200 duration-300"
+                    className="py-[2px] px-2 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
                   >
                     <ImageIcon className="w-[14px] sm:w-4 h-[14px] sm:h-4 cursor-pointer" />
                   </Button>
@@ -136,7 +142,6 @@ const Chat = ({ className }: ClassType) => {
                 title="Send Message"
                 size="icon"
                 className="w-8 md:w-9 h-8 md:h-9"
-                style={{ backgroundColor: userAppearance }}
                 onClick={() =>
                   chats.length > 0 ? sendMessage() : createChatDatabase()
                 }

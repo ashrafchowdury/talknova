@@ -38,7 +38,7 @@ const ListOfUsers = () => {
               <Button
                 variant="ghost"
                 title="Invite Friends"
-                className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
+                className="py-[2px] px-2 mx-1 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
               >
                 <PlusCircledIcon className="w-5 h-5" />
               </Button>
@@ -46,7 +46,7 @@ const ListOfUsers = () => {
             <Button
               variant="ghost"
               title="Settings"
-              className="py-[2px] px-2 mx-1 hover:bg-slate-200 duration-300"
+              className="py-[2px] px-2 mx-1 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
             >
               <Link href="/settings">
                 <GearIcon className="w-5 h-5" />
