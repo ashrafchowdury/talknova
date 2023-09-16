@@ -61,9 +61,10 @@ type TypeUserContextProvider = {
   createChatDatabase: () => void;
   getChats: () => void;
   sendMessage: () => void;
-  uploadFile: (fileName: string) => void;
+  uploadFile: (type: "message" | "profile") => void;
   uploadAudio: (item: any) => void;
   deleteMsg: (id: string) => void;
+  updateUserProfile: (name?: string, image?: string, bio?: string) => void;
 };
 
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
@@ -181,8 +182,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   };
 
   const updateUserProfile = async (
-    name?: string,
     image?: string,
+    name?: string,
     bio?: string
   ) => {
     const updatedFields: any = {};
@@ -192,10 +193,15 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     if (bio) updatedFields.bio = bio;
 
     if (Object.keys(updatedFields).length > 0) {
-      await updateDoc(
-        doc(database, "users", `${currentUser.email}`),
-        updatedFields
-      );
+      try {
+        await updateDoc(
+          doc(database, "users", `${currentUser.email}`),
+          updatedFields
+        );
+        toast({ title: "Profile updated successfully" });
+      } catch (error) {
+        toast({ title: "Something went wrong!", variant: "destructive" });
+      }
     }
   };
 
@@ -303,13 +309,16 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
-  const uploadFile = (filePath: string) => {
+  const uploadFile = (type: string) => {
     const storage = getStorage();
 
     try {
       // Create an array to store the promises of each upload task
       const uploadPromises = selectFiles.map((item: any) => {
-        const storageRef = ref(storage, `${filePath}/${item.name}`);
+        const storageRef = ref(
+          storage,
+          `${type == "message" ? "users" : "profile"}/${item.name}`
+        );
         const uploadTask = uploadBytesResumable(storageRef, item);
 
         return new Promise((resolve, reject) => {
@@ -340,7 +349,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
       Promise.all(uploadPromises) // Wait for all upload tasks to complete
         .then((downloadURLs: any) => {
-          sendMessage(downloadURLs); // All uploads are done, and downloadURLs contains all the file URLs
+          type == "message"
+            ? sendMessage(downloadURLs)
+            : updateUserProfile(downloadURLs[0]); // All uploads are done, and downloadURLs contains all the file URLs
           setSelectFiles([]);
         })
         .catch((error) => {
@@ -425,6 +436,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     uploadFile,
     deleteMsg,
     uploadAudio,
+    updateUserProfile,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

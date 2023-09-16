@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, Fragment } from "react";
-import { GearIcon, PaperPlaneIcon, PlayIcon } from "@radix-ui/react-icons";
+import {
+  GearIcon,
+  PaperPlaneIcon,
+  PlayIcon,
+  ImageIcon,
+} from "@radix-ui/react-icons";
 import { Button, Input, Progress } from "@/packages/ui";
 import { useUI } from "@/provider";
 import { cn } from "@/lib/functions";
@@ -115,7 +120,15 @@ const Chat = ({ className }: ClassType) => {
             {!isRecording && (
               <>
                 <Emojies />
-                <ImageUpload />
+                <ImageUpload type="message">
+                  <Button
+                    title="Select Media"
+                    variant="ghost"
+                    className="py-[2px] px-2 hover:bg-slate-200 duration-300"
+                  >
+                    <ImageIcon className="w-[14px] sm:w-4 h-[14px] sm:h-4 cursor-pointer" />
+                  </Button>
+                </ImageUpload>
               </>
             )}
             {message ? (

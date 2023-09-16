@@ -18,7 +18,12 @@ import { ImageIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { useUsers } from "@/provider";
 import { cn } from "@/lib/functions";
 
-const ImageUpload = () => {
+type ImageComponentType = {
+  type: "message" | "profile";
+  children: React.ReactNode;
+};
+
+const ImageUpload = ({ children, type }: ImageComponentType) => {
   const [imagePreview, setImagePreview] = useState<any>([]);
   const { selectFiles, setSelectFiles, uploadFile } = useUsers();
 
@@ -60,21 +65,17 @@ const ImageUpload = () => {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          title="Select Media"
-          variant="ghost"
-          className="py-[2px] px-2 hover:bg-slate-200 duration-300"
-        >
-          <ImageIcon className="w-[14px] sm:w-4 h-[14px] sm:h-4 cursor-pointer" />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="w-[95%] sm:max-w-[580px]">
         <DialogHeader>
-          <DialogTitle>Send Files</DialogTitle>
-          <DialogDescription>
-            You can select maximam 4 Images at ones
-          </DialogDescription>
+          <DialogTitle>
+            {type == "message" ? "Send Files" : "Update Picture"}
+          </DialogTitle>
+          {type == "message" && (
+            <DialogDescription>
+              You can select maximam 4 Images at ones
+            </DialogDescription>
+          )}
         </DialogHeader>
         <section
           className={cn(
@@ -114,7 +115,7 @@ const ImageUpload = () => {
               <div className="flex flex-col items-center justify-center absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]">
                 <ImageIcon className="w-3 md:w-10 h-3 md:h-10 cursor-pointer opacity-70 text-muted-foreground" />
                 <p className="text-xl font-semibold mt-2 opacity-70 text-muted-foreground whitespace-nowrap">
-                  Upload Image
+                  Select Image
                 </p>
               </div>
               <Input
@@ -122,7 +123,7 @@ const ImageUpload = () => {
                 accept=".png, .jpg, .jpeg"
                 className="opacity-0 border w-full h-[300px] cursor-pointer"
                 onChange={handleImagePreviews}
-                multiple
+                multiple={type == "message" ? true : false}
               />
             </>
           )}
@@ -130,7 +131,7 @@ const ImageUpload = () => {
         <DialogFooter>
           <DialogClose>
             {imagePreview ? (
-              <Button className="w-full" onClick={() => uploadFile("users")}>
+              <Button className="w-full" onClick={() => uploadFile(type)}>
                 Send
               </Button>
             ) : (
