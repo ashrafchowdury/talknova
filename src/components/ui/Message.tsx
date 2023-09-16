@@ -203,12 +203,12 @@ export const MessageMenu = ({ data, position }: any) => {
         )}
         align={position ? "start" : "end"}
       >
-        {data.send.msg && (
+        {data?.send?.msg && (
           <Button
             variant="ghost"
             className="!py-0 px-2"
             onClick={() => {
-              navigator.clipboard.writeText(data.send.msg);
+              navigator.clipboard.writeText(data?.send?.msg);
               setIsCopied(true);
             }}
           >
