@@ -1,8 +1,18 @@
 "use client";
+
+import { useEffect } from "react";
 import { Navbar, Register, Features } from "@/components";
 import { Button } from "@/packages/ui";
+import { useCookies } from "@/lib/hooks";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { uid } = useCookies();
+  const router = useRouter();
+  useEffect(() => {
+    if (uid) router.push("/users");
+  }, []);
+
   return (
     <main className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[1050px] xl:w-[1250px] mx-auto">
       <Navbar />

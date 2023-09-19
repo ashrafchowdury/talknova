@@ -18,7 +18,6 @@ import { useToast } from "@/packages/ui";
 import { ChildrenType } from "@/types";
 import { useRouter } from "next/navigation";
 import { useCookies } from "@/lib/hooks";
-// import { useUsers } from ".";
 
 type AuthUserType = {
   displayName: string;

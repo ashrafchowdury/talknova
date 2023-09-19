@@ -91,7 +91,6 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   //hooks
-  const { currentUser } = useAuth();
   const { uid } = useCookies();
 
   //functions
@@ -102,9 +101,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         ...doc.data(),
         id: doc.id,
       }));
-      const filterData = data.filter(
-        (item: UserType) => item.uid !== currentUser.uid
-      );
+      const filterData = data.filter((item: UserType) => item.uid !== uid);
       setUser(filterData);
     });
   };
@@ -160,7 +157,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   };
 
   const acceptUserInvite = async (id: string, userEmail: string) => {
-    await updateDoc(doc(database, "users", `${currentUser.email}`), {
+    await updateDoc(doc(database, "users", `${myself.id}`), {
       friends: arrayUnion(id),
       invite: arrayRemove(id),
     });
@@ -171,7 +168,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   };
 
   const rejectUserInvite = async (id: string) => {
-    await updateDoc(doc(database, "users", `${currentUser.email}`), {
+    await updateDoc(doc(database, "users", `${myself.id}`), {
       invite: arrayRemove(id),
     });
   };
@@ -194,10 +191,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
     if (Object.keys(updatedFields).length > 0) {
       try {
-        await updateDoc(
-          doc(database, "users", `${currentUser.email}`),
-          updatedFields
-        );
+        await updateDoc(doc(database, "users", `${myself.id}`), updatedFields);
         toast({ title: "Profile updated successfully" });
       } catch (error) {
         toast({ title: "Something went wrong!", variant: "destructive" });
@@ -206,7 +200,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   };
 
   const createChatId = () => {
-    const combinedUid = [currentUser.uid, selectedUser.uid].sort().join("");
+    const combinedUid = [uid, selectedUser.uid].sort().join("");
     return combinedUid;
   };
 
@@ -279,7 +273,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         await addDoc(q, {
           send: msg,
           timestemp: serverTimestamp(),
-          uid: currentUser.uid,
+          uid: uid,
         });
         await updateDoc(doc(database, "chats", `${createChatId()}`), {
           lastMsgTime: new Date().toISOString(),

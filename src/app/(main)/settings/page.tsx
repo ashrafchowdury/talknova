@@ -13,7 +13,7 @@ import { useAuth, useUsers } from "@/provider";
 
 const Settings = () => {
   const [detailes, setDetailes] = useState({ name: "", bio: "" });
-  const { logout, isLoading, currentUser } = useAuth();
+  const { logout, isLoading } = useAuth();
   const { updateUserProfile, myself } = useUsers();
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
