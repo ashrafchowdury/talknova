@@ -8,6 +8,7 @@ import {
   BackSpace,
   SecretKey,
   Avatar,
+  AllImages,
 } from "./ui";
 import { useUsers } from "@/provider";
 
@@ -43,26 +44,13 @@ const UserSettings = ({ className }: ClassType) => {
         <p className="mb-4 font-medium opacity-60">Medias</p>
 
         <div className="flex items-center space-x-3">
-          <Button
-            variant="outline"
-            title="Shared Imgaes"
-            className="h-14 w-full hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
-          >
-            <ImageIcon className="w-7 h-7" />
-          </Button>
+          <AllImages />
           <Button
             variant="outline"
             title="Shared Files"
-            className="h-14 w-full hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
+            className="h-14 w-[95%] hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
           >
             <FileTextIcon className="w-7 h-7" />
-          </Button>
-          <Button
-            variant="outline"
-            title="Share QR-Code"
-            className="h-14 w-full hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
-          >
-            <DashboardIcon className="w-7 h-7" />
           </Button>
         </div>
       </div>

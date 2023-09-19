@@ -10,6 +10,7 @@ import Avatar from "./Avatar";
 import InviteUsers, { InviteUsersSkeleton } from "./InviteUsers";
 import ImageUpload from "./ImageUpload";
 import { AudioMessage, RecordAudio } from "./Audio";
+import AllImages from "./AllImages";
 
 export {
   InviteUsers,
@@ -28,4 +29,5 @@ export {
   ImageUpload,
   AudioMessage,
   RecordAudio,
+  AllImages,
 };
