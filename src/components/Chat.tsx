@@ -48,7 +48,7 @@ const Chat = ({ className }: ClassType) => {
   return (
     <main className={cn(" border-x md:mt-2 relative", className)}>
       <nav className="h-[60px] px-2 sm:px-6 md:px-8 border-b flex items-center justify-between sticky z-20 top-0 bg-background">
-        <BackSpace />
+        <BackSpace href="/users" />
         <div className="flex items-center">
           <Avatar
             img={selectedUser?.image}

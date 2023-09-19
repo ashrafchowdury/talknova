@@ -91,6 +91,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
         toast({ variant: "destructive", title: "Something went wrong!" });
       }
     }
+    setIsLoading(false);
   };
 
   const singup = async (name: string, email: string, password: string) => {

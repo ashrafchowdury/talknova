@@ -1,3 +1,5 @@
+"use client";
+
 import { Button, Skeleton } from "@/packages/ui";
 import { ImageIcon, DashboardIcon, FileTextIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/functions";
@@ -10,14 +12,18 @@ import {
   Avatar,
   AllImages,
 } from "./ui";
-import { useUsers } from "@/provider";
+import { useUsers, useUI } from "@/provider";
 
 const UserSettings = ({ className }: ClassType) => {
   const { selectedUser } = useUsers();
+  const { windowSize } = useUI();
   return (
     <section className={cn("h-auto lg:h-[98vh]", className)}>
       <nav className="h-[60px] md:mt-2 xl:px-8 border-b flex items-center justify-start">
-        <BackSpace className="flex xl:hidden" />
+        <BackSpace
+          className="flex xl:hidden"
+          href={windowSize < 1025 ? "/chats" : "/users"}
+        />
         <p className=" text-xl font-bold ml-3 xl:ml-0">Settings</p>
       </nav>
 

@@ -49,7 +49,7 @@ const Settings = () => {
   return (
     <main className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[1050px] mx-auto">
       <nav className="h-[60px] border-b flex items-center justify-start">
-        <BackSpace />
+        <BackSpace href="/users" />
         <p className=" text-xl font-bold ml-3">Settings</p>
       </nav>
 
