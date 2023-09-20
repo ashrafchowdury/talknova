@@ -83,14 +83,16 @@ const Message = ({ data, position }: MessageType) => {
               ? "!ml-4 !mr-2 bg-slate-300 dark:bg-slate-800"
               : "!mr-4 bg-black text-white dark:bg-white dark:text-black",
             data?.send?.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
-            data?.send?.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent"
+            data?.send?.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
+            msgPosition ? "" : userAppearance
           )}
-          // style={{ backgroundColor: userAppearance }}
         >
           {data?.send?.audio && (
             <AudioMessage data={data?.send?.audio} position={msgPosition} />
           )}
-          {data?.send?.files && <FileMessage data={data?.send?.files} />}
+          {data?.send?.files && (
+            <FileMessage data={data?.send?.files} position={msgPosition} />
+          )}
           {data?.send?.msg && <span>{data.send.msg}</span>}
           <div
             className={cn(
@@ -116,7 +118,8 @@ const Message = ({ data, position }: MessageType) => {
 };
 export default Message;
 
-export const FileMessage = ({ data }: any) => {
+export const FileMessage = ({ data, position }: any) => {
+  const { userAppearance } = useUI();
   return (
     <>
       {data.length == 1 ? (
@@ -162,7 +165,14 @@ export const FileMessage = ({ data }: any) => {
             </section>
             <DialogFooter>
               <DialogClose>
-                <Button className="w-full">Close</Button>
+                <Button
+                  className={cn(
+                    "w-full bg-black dark:bg-white",
+                    position ? "" : userAppearance
+                  )}
+                >
+                  Close
+                </Button>
               </DialogClose>
             </DialogFooter>
           </DialogContent>

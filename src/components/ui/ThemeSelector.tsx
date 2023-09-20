@@ -7,14 +7,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/packages/ui";
-import { useUI } from "@/provider";
+import { useUI, useUsers } from "@/provider";
+import { themes } from "@/lib/helpers";
+import { cn } from "@/lib/functions";
+import { useTheme } from "next-themes";
+import { useLS } from "@/lib/hooks";
 
 const ThemeSelector = () => {
   const { userAppearance, setUserAppearance } = useUI();
+  const { selectedUser } = useUsers();
+  const { theme } = useTheme();
+  const { setItem } = useLS();
+
+  const handleChangeTheme = (e: any) => {
+    setUserAppearance(e);
+    setItem(selectedUser.uid, e);
+  };
   return (
     <Select
-      onValueChange={(e) => setUserAppearance(e)}
-      defaultValue={userAppearance}
+      onValueChange={handleChangeTheme}
+      defaultValue={
+        userAppearance ?? theme == "light" ? themes[0].value : themes[1].value
+      }
     >
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Select Colours" />
@@ -22,36 +36,16 @@ const ThemeSelector = () => {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Colours</SelectLabel>
-          <SelectItem value="black">
-            <div className="w-full flex items-center justify-between">
-              <div className="w-3 h-3 rounded-sm bg-black mr-2"></div>
-              Black
-            </div>
-          </SelectItem>
-          <SelectItem value="blue">
-            <div className="w-full flex items-center justify-between">
-              <div className="w-3 h-3 rounded-sm bg-blue-500 mr-2"></div>
-              Blue
-            </div>
-          </SelectItem>
-          <SelectItem value="red">
-            <div className="w-full flex items-center justify-between">
-              <div className="w-3 h-3 rounded-sm bg-red-500 mr-2"></div>
-              Red Rose
-            </div>
-          </SelectItem>
-          <SelectItem value="green">
-            <div className="w-full flex items-center justify-between">
-              <div className="w-3 h-3 rounded-sm bg-green-600 mr-2"></div>
-              Green Leave
-            </div>
-          </SelectItem>
-          <SelectItem value="orange">
-            <div className="w-full flex items-center justify-between">
-              <div className="w-3 h-3 rounded-sm bg-orange-500 mr-2"></div>
-              Orange
-            </div>
-          </SelectItem>
+          {themes.map((item) => (
+            <SelectItem value={item.value} key={item.title} className="my-2">
+              <div className="w-full flex items-center justify-between">
+                <div
+                  className={cn("w-3 h-3 rounded-sm mr-2", item.value)}
+                ></div>
+                {item.title}
+              </div>
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>

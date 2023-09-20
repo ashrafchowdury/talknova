@@ -3,6 +3,8 @@
 
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { ChildrenType } from "@/types";
+import { useLS } from "@/lib/hooks";
+import { useUsers } from ".";
 
 type TypeUiContextProvider = {
   windowSize: number;
@@ -18,7 +20,10 @@ const UiContextProvider: React.FC<ChildrenType> = ({
 }: ChildrenType) => {
   const [windowSize, setWindowSize] = useState(0);
   const [appearance, setAppearance] = useState("black");
-  const [userAppearance, setUserAppearance] = useState("black");
+  const [userAppearance, setUserAppearance] = useState("");
+
+  const { getItem } = useLS();
+  const { selectedUser } = useUsers();
 
   useEffect(() => {
     const getWindowSize = () => {
@@ -30,6 +35,10 @@ const UiContextProvider: React.FC<ChildrenType> = ({
       window.removeEventListener("resize", getWindowSize);
     };
   }, []);
+
+  useEffect(() => {
+    setUserAppearance(getItem(selectedUser.uid));
+  }, [selectedUser]);
 
   const value: TypeUiContextProvider = {
     windowSize,

@@ -1,3 +1,4 @@
 import useCookies from "./useCookies";
+import useLS from "./useLS";
 
-export { useCookies };
+export { useCookies, useLS };

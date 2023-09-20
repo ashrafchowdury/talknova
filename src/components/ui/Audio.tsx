@@ -17,7 +17,7 @@ const DynamicReactMic = dynamic(
   }
 );
 import { cn } from "@/lib/functions";
-import { useUsers } from "@/provider";
+import { useUsers, useUI } from "@/provider";
 import { useTheme } from "next-themes";
 
 export const AudioMessage = ({ data, position }: any) => {
@@ -25,6 +25,7 @@ export const AudioMessage = ({ data, position }: any) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const { setIsAudioPlaying, isRecording } = useUsers();
+  const { userAppearance } = useUI();
   const audioRef: any = useRef(null);
 
   // Update current time as audio plays
@@ -79,7 +80,8 @@ export const AudioMessage = ({ data, position }: any) => {
     <section
       className={cn(
         "w-[250px] sm:w-[300px] md:w-[380px] h-[52px] md:h-[55px] py-2 md:py-3 px-4 md:px-5 rounded-lg flex items-center justify-between",
-        position ? "bg-slate-300 dark:bg-slate-800" : "bg-black dark:bg-white"
+        position ? "bg-slate-300 dark:bg-slate-800" : "bg-black dark:bg-white",
+        position ? "" : userAppearance
       )}
     >
       <audio ref={audioRef} src={data} className=" hidden" />
@@ -144,6 +146,7 @@ export const RecordAudio = () => {
   } = useUsers();
   const { toast } = useToast();
   const { theme } = useTheme();
+  const { userAppearance } = useUI();
 
   useEffect(() => {
     let interval: any;
@@ -194,7 +197,10 @@ export const RecordAudio = () => {
           load={fileUploadProgress > 0 ? true : false}
           title="Record Voice"
           size="icon"
-          className="w-8 md:w-9 h-8 md:h-9"
+          className={cn(
+            "w-8 md:w-9 h-8 md:h-9 bg-black dark:bg-white",
+            userAppearance
+          )}
           onClick={startRecording}
         >
           {fileUploadProgress == 0 && (
@@ -218,7 +224,8 @@ export const RecordAudio = () => {
       <section
         className={cn(
           "w-full h-[50px] md:h-[60px] hidden bg-black dark:bg-white rounded-lg flex-row-reverse items-center justify-between space-x-1 sm:space-x-2 md:space-x-3 pr-2 sm:pr-4 pl-1 mb-2 sm:mb-0",
-          isRecording && "flex"
+          isRecording && "flex",
+          userAppearance
         )}
       >
         <Button
@@ -235,7 +242,7 @@ export const RecordAudio = () => {
           className="h-[50px] w-[60%] sm:w-full"
           onStop={(file: any) => setAudio(file.blob)}
           strokeColor={theme == "light" ? "white" : "black"}
-          backgroundColor={theme == "light" ? "black" : "white"}
+          backgroundColor={"transparent"}
           mimeType="audio/webm"
           visualSetting="frequencyBars"
         />
