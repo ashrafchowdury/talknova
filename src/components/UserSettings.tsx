@@ -21,11 +21,15 @@ const UserSettings = ({ className }: ClassType) => {
   const { selectedUser } = useUsers();
   const { windowSize, userAppearance, setUserAppearance } = useUI();
   const { theme } = useTheme();
-  const { setItem } = useLS();
+  const { setItem, removeItem } = useLS();
 
   const handleChangeUserTheme = (e: any) => {
+    if (e == "bg-primary") {
+      removeItem(selectedUser.uid);
+    } else {
+      setItem(selectedUser.uid, e);
+    }
     setUserAppearance(e);
-    setItem(selectedUser.uid, e);
   };
   return (
     <section className={cn("h-auto lg:h-[98vh]", className)}>

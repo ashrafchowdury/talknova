@@ -25,7 +25,14 @@ const ThemeSelector = ({ action, defaultValue, schema }: ThemeSelectorType) => {
         <SelectGroup>
           <SelectLabel>Themes</SelectLabel>
           {schema.map((item: any) => (
-            <SelectItem value={item.value} key={item.title} className="my-2">
+            <SelectItem
+              value={item.value}
+              key={item.title}
+              className={cn(
+                "my-2",
+                item.title.includes("Default") && "border-t !mt-2 pt-2"
+              )}
+            >
               <div className="w-full flex items-center justify-between">
                 <div
                   className={cn(

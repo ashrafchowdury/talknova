@@ -31,6 +31,10 @@ export const userThemeSchema = [
     title: "Emerald",
     value: "bg-emerald-500 dark:bg-emerald-500 text-white dark:text-white",
   },
+  {
+    title: "Default Color",
+    value: "bg-primary",
+  },
 ];
 
 export const themeSchema = [
