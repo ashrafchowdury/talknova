@@ -4,6 +4,7 @@ import { Button, Logo } from "@/packages/ui";
 import Link from "next/link";
 import Register from "./Register";
 import { useTheme } from "next-themes";
+import { toggleTheme } from "@/lib/functions";
 
 const Navbar = () => {
   const { setTheme, theme } = useTheme();
@@ -30,19 +31,17 @@ const Navbar = () => {
         >
           <Button
             variant="ghost"
-            className=" px-2 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
+            className=" px-2 hover:bg-border duration-300"
           >
             <GitHubLogoIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </a>
         <Button
           variant="ghost"
-          className=" px-2 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300 mr-0 sm:!mr-3"
-          onClick={() =>
-            theme == "light" ? setTheme("dark") : setTheme("light")
-          }
+          className=" px-2 hover:bg-border duration-300 mr-0 sm:!mr-3"
+          onClick={() => toggleTheme(theme, setTheme)}
         >
-          {theme == "light" ? (
+          {theme?.includes("light") ? (
             <MoonIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           ) : (
             <SunIcon className="w-4 h-4 sm:w-5 sm:h-5" />

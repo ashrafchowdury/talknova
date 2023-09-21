@@ -80,8 +80,8 @@ const Message = ({ data, position }: MessageType) => {
           className={cn(
             "py-2 md:py-3 px-4 md:px-5 text-xs sm:text-sm md:text-[16px] rounded-lg relative flex items-center justify-center",
             msgPosition
-              ? "!ml-4 !mr-2 bg-slate-300 dark:bg-slate-800"
-              : "!mr-4 bg-black text-white dark:bg-white dark:text-black",
+              ? "!ml-4 !mr-2 bg-border"
+              : "!mr-4 bg-primary text-white dark:primary",
             data?.send?.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
             data?.send?.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
             msgPosition ? "" : userAppearance
@@ -166,10 +166,7 @@ export const FileMessage = ({ data, position }: any) => {
             <DialogFooter>
               <DialogClose>
                 <Button
-                  className={cn(
-                    "w-full bg-black dark:bg-white",
-                    position ? "" : userAppearance
-                  )}
+                  className={cn("w-full", position ? "" : userAppearance)}
                 >
                   Close
                 </Button>
@@ -203,7 +200,7 @@ export const MessageMenu = ({ data, position }: any) => {
         )}
       >
         <Button variant="ghost" className="py-0 px-1 hover:bg-transparent">
-          <DotsVerticalIcon className="w-4 h-4 text-black dark:text-white" />
+          <DotsVerticalIcon className="w-4 h-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent

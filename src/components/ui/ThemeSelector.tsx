@@ -7,40 +7,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/packages/ui";
-import { useUI, useUsers } from "@/provider";
-import { themes } from "@/lib/helpers";
 import { cn } from "@/lib/functions";
-import { useTheme } from "next-themes";
-import { useLS } from "@/lib/hooks";
 
-const ThemeSelector = () => {
-  const { userAppearance, setUserAppearance } = useUI();
-  const { selectedUser } = useUsers();
-  const { theme } = useTheme();
-  const { setItem } = useLS();
+type ThemeSelectorType = {
+  action: (e: any) => void;
+  defaultValue: string;
+  schema: any;
+};
 
-  const handleChangeTheme = (e: any) => {
-    setUserAppearance(e);
-    setItem(selectedUser.uid, e);
-  };
+const ThemeSelector = ({ action, defaultValue, schema }: ThemeSelectorType) => {
   return (
-    <Select
-      onValueChange={handleChangeTheme}
-      defaultValue={
-        userAppearance ?? theme == "light" ? themes[0].value : themes[1].value
-      }
-    >
+    <Select onValueChange={action} defaultValue={defaultValue}>
       <SelectTrigger className="w-full">
-        <SelectValue placeholder="Select Colours" />
+        <SelectValue placeholder="Select Theme" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Colours</SelectLabel>
-          {themes.map((item) => (
+          <SelectLabel>Themes</SelectLabel>
+          {schema.map((item: any) => (
             <SelectItem value={item.value} key={item.title} className="my-2">
               <div className="w-full flex items-center justify-between">
                 <div
-                  className={cn("w-3 h-3 rounded-sm mr-2", item.value)}
+                  className={cn(
+                    "w-3 h-3 rounded-sm mr-2",
+                    item?.style ?? item?.value
+                  )}
                 ></div>
                 {item.title}
               </div>

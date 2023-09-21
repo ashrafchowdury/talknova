@@ -13,10 +13,20 @@ import {
   AllImages,
 } from "./ui";
 import { useUsers, useUI } from "@/provider";
+import { useLS } from "@/lib/hooks";
+import { useTheme } from "next-themes";
+import { userThemeSchema } from "@/lib/helpers";
 
 const UserSettings = ({ className }: ClassType) => {
   const { selectedUser } = useUsers();
-  const { windowSize } = useUI();
+  const { windowSize, userAppearance, setUserAppearance } = useUI();
+  const { theme } = useTheme();
+  const { setItem } = useLS();
+
+  const handleChangeUserTheme = (e: any) => {
+    setUserAppearance(e);
+    setItem(selectedUser.uid, e);
+  };
   return (
     <section className={cn("h-auto lg:h-[98vh]", className)}>
       <nav className="h-[60px] md:mt-2 xl:px-8 border-b flex items-center justify-start">
@@ -54,7 +64,7 @@ const UserSettings = ({ className }: ClassType) => {
           <Button
             variant="outline"
             title="Shared Files"
-            className="h-14 w-[95%] hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
+            className="h-14 w-[95%] hover:bg-border duration-300"
           >
             <FileTextIcon className="w-7 h-7" />
           </Button>
@@ -85,7 +95,15 @@ const UserSettings = ({ className }: ClassType) => {
 
       <div className="w-full mt-7 px-4">
         <p className="mb-4 font-medium opacity-60">Theme</p>
-        <ThemeSelector />
+        <ThemeSelector
+          action={handleChangeUserTheme}
+          defaultValue={
+            userAppearance ?? theme?.includes("light")
+              ? userThemeSchema[0].value
+              : userThemeSchema[1].value
+          }
+          schema={userThemeSchema}
+        />
       </div>
     </section>
   );

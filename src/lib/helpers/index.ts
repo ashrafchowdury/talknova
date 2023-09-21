@@ -1,4 +1,4 @@
 import { balkUsers } from "./balkUsers";
 import { features } from "./features";
-import { themes } from "./themes";
-export { balkUsers, features, themes };
+import { themeSchema, userThemeSchema } from "./themes";
+export { balkUsers, features, themeSchema, userThemeSchema };

@@ -10,6 +10,8 @@ import {
 } from "@/components/ui";
 import { useTheme } from "next-themes";
 import { useAuth, useUsers } from "@/provider";
+import { cn, toggleTheme } from "@/lib/functions";
+import { themeSchema } from "@/lib/helpers";
 
 const Settings = () => {
   const [detailes, setDetailes] = useState({ name: "", bio: "" });
@@ -18,9 +20,6 @@ const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
 
-  const toggleTheme = () => {
-    theme == "light" ? setTheme("dark") : setTheme("light");
-  };
   const handleUpdateProfile = () => {
     if (detailes.name.length > 0 && detailes.name.length < 2) {
       toast({
@@ -46,6 +45,12 @@ const Settings = () => {
       }
     }
   };
+
+  const changeColorScheme = (color: string) => {
+    const which: any = theme?.split("-");
+    setTheme(`${which[0]}-${color}`);
+  };
+
   return (
     <main className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[1050px] mx-auto">
       <nav className="h-[60px] border-b flex items-center justify-start">
@@ -92,8 +97,8 @@ const Settings = () => {
         <ToggleSwitch
           title="Turn on Dark mood"
           desc="Lorem ipsum, dolor sit amet consectetur  dolor sit amet"
-          action={toggleTheme}
-          checked={theme == "light" ? false : true}
+          action={() => toggleTheme(theme, setTheme)}
+          checked={theme?.includes("light") ? false : true}
         />
         <ToggleSwitch
           title="Active state"
@@ -112,7 +117,11 @@ const Settings = () => {
         />
         <div className="w-full mt-7">
           <p className="mb-4 font-medium opacity-60">Appereance</p>
-          <ThemeSelector />
+          <ThemeSelector
+            action={changeColorScheme}
+            defaultValue={theme?.split("-")[1] as string}
+            schema={themeSchema}
+          />
         </div>
       </div>
 

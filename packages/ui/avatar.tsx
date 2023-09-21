@@ -18,7 +18,7 @@ const Avatar = React.forwardRef<
     )}
     {...props}
   >
-    <Skeleton className=" rounded-full absolute -z-10 top-0 left-0 right-0 bottom-0" />
+    <Skeleton className=" rounded-full absolute -z-10 top-[2px] left-[2px] right-[2px] bottom-[2px]" />
     {children}
   </AvatarPrimitive.Root>
 ));

@@ -26,7 +26,7 @@ const AllImages = () => {
         <Button
           variant="outline"
           title="All Shared Imgaes"
-          className="h-14 w-full hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
+          className="h-14 w-full hover:bg-border duration-300"
         >
           <ImageIcon className="w-7 h-7" />
         </Button>

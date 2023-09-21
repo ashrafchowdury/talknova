@@ -62,7 +62,7 @@ const Chat = ({ className }: ClassType) => {
             <p className="text-xs md:text-sm opacity-60 -mt-1 flex items-end ">
               Typing{" "}
               <Loader
-                variant={theme == "light" ? "black" : "white"}
+                variant={theme?.includes("light") ? "black" : "white"}
                 className="opacity-50 ml-[2px]"
               />
             </p>
@@ -130,7 +130,7 @@ const Chat = ({ className }: ClassType) => {
                   <Button
                     title="Select Media"
                     variant="ghost"
-                    className="py-[2px] px-2 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
+                    className="py-[2px] px-2 hover:bg-border duration-300"
                   >
                     <ImageIcon className="w-[14px] sm:w-4 h-[14px] sm:h-4 cursor-pointer" />
                   </Button>
