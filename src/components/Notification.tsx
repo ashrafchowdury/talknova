@@ -13,7 +13,7 @@ import {
   Skeleton,
 } from "@/packages/ui";
 import { BellIcon, TrashIcon, CheckIcon } from "@radix-ui/react-icons";
-import { useUsers } from "@/provider";
+import { useUsers } from "@/packages/server";
 import { Avatar } from "./ui";
 
 const Notification = () => {
@@ -46,7 +46,7 @@ const Notification = () => {
               <NotificattionUsersSkeleton />
             ) : (
               <>
-                {invite.map((data) => (
+                {invite.map((data: any) => (
                   <>
                     <div
                       key={data.uid}

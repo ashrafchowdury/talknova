@@ -1,7 +1,7 @@
 "use client";
 
-import { UiContextProvider, UserContextProvider } from "@/provider";
-import { useCookies } from "@/lib/hooks";
+import { UserContextProvider } from "@/packages/server";
+import { useCookies, AppearanceContextProvider } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import NotFound from "../not-found";
 
@@ -18,7 +18,7 @@ export default function MainLayout({
   }
   return (
     <UserContextProvider>
-      <UiContextProvider>{children}</UiContextProvider>
+      <AppearanceContextProvider>{children}</AppearanceContextProvider>
     </UserContextProvider>
   );
 }

@@ -5,7 +5,6 @@ import {
   PauseIcon,
   StopIcon,
   TrashIcon,
-  CheckIcon,
 } from "@radix-ui/react-icons";
 import { Button, useToast } from "@/packages/ui";
 import dynamic from "next/dynamic";
@@ -17,15 +16,16 @@ const DynamicReactMic = dynamic(
   }
 );
 import { cn } from "@/lib/functions";
-import { useUsers, useUI } from "@/provider";
+import { useUsers } from "@/packages/server";
 import { useTheme } from "next-themes";
+import { useAppearance } from "@/lib/hooks";
 
 export const AudioMessage = ({ data, position }: any) => {
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const { setIsAudioPlaying, isRecording } = useUsers();
-  const { userAppearance } = useUI();
+  const { userAppearance } = useAppearance();
   const audioRef: any = useRef(null);
 
   // Update current time as audio plays
@@ -146,7 +146,7 @@ export const RecordAudio = () => {
   } = useUsers();
   const { toast } = useToast();
   const { theme } = useTheme();
-  const { userAppearance } = useUI();
+  const { userAppearance } = useAppearance();
 
   useEffect(() => {
     let interval: any;

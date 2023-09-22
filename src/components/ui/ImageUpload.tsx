@@ -15,7 +15,7 @@ import {
   Input,
 } from "@/packages/ui";
 import { ImageIcon, Cross2Icon } from "@radix-ui/react-icons";
-import { useUsers } from "@/provider";
+import { useUsers } from "@/packages/server";
 import { cn } from "@/lib/functions";
 
 type ImageComponentType = {

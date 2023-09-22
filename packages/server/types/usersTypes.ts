@@ -1,0 +1,47 @@
+export type UserType = {
+  id: string;
+  uid: string;
+  name: string;
+  bio: string;
+  image: string;
+  date: string;
+  friends: string[];
+  invite: string[];
+};
+
+export type TypeUserContextProvider = {
+  userId: string;
+  selectedUser: UserType | any;
+  user: UserType[];
+  invite: UserType[];
+  friends: UserType[];
+  myself: UserType;
+  isLoading: boolean;
+  chats: any;
+  message: string | string[] | null;
+  selectFiles: string[] | [];
+  fileUploadProgress: number;
+  setSelectFiles: React.Dispatch<React.SetStateAction<string[] | []>>;
+  audio: any;
+  isRecording: boolean;
+  isAudioPlaying: boolean;
+  setAudio: React.Dispatch<React.SetStateAction<any>>;
+  setIsRecording: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAudioPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessage: React.Dispatch<React.SetStateAction<string | string[] | null>>;
+  setUserId: React.Dispatch<React.SetStateAction<string>>;
+  getSelectedUser: (id: string) => void;
+  getAllUsers: () => void;
+  getUserFriends: (id: string[]) => void;
+  inviteUser: (email: string) => void;
+  getUserInvitations: (id: string[]) => void;
+  acceptUserInvite: (id: string, userEmail: string) => void;
+  rejectUserInvite: (id: string) => void;
+  createChatDatabase: () => void;
+  getChats: () => void;
+  sendMessage: () => void;
+  uploadFile: (type: "message" | "profile") => void;
+  uploadAudio: (item: any) => void;
+  deleteMsg: (id: string) => void;
+  updateUserProfile: (name?: string, image?: string, bio?: string) => void;
+};

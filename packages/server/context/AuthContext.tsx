@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useContext, createContext } from "react";
-import { auth } from "@/server";
+import { auth, database } from "../config";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -12,34 +12,17 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
-import { database } from "@/server";
+
 import { generateUid } from "@/lib/functions";
 import { useToast } from "@/packages/ui";
-import { ChildrenType } from "@/types";
 import { useRouter } from "next/navigation";
 import { useCookies } from "@/lib/hooks";
-
-type AuthUserType = {
-  displayName: string;
-  email: string;
-  photoURL: string;
-  uid: string;
-};
-type AuthContextType = {
-  currentUser: AuthUserType | any;
-  isLoading: boolean;
-  singup: (name: string, email: string, password: string) => void;
-  login: (email: string, password: string) => void;
-  forget: (email: string) => void;
-  updateAuthInfo: (name: string) => void;
-  logout: () => void;
-};
-type ActionsType = {
-  toasts?: string;
-  direct?: string;
-  logic?: any;
-  type?: string; // action type like: signup, login
-};
+import {
+  AuthUserType,
+  AuthContextType,
+  ActionsType,
+  ChildrenType,
+} from "../types";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 export const useAuth = () => useContext(AuthContext)!;

@@ -1,9 +1,8 @@
 import { Avatar } from ".";
 import { Button, CommandItem, Skeleton } from "@/packages/ui";
-import { UserType } from "@/types";
 
 type InviteUsersType = {
-  data: UserType;
+  data: any;
   onclick: (email: string) => void;
   button: string;
 };

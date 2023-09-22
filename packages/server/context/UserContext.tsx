@@ -1,7 +1,7 @@
 "use client";
-// This context contines all the UI related logics
+
 import React, { useState, useEffect, useContext, createContext } from "react";
-import { ChildrenType, UsersType, UserType } from "@/types";
+import { TypeUserContextProvider, UserType, ChildrenType } from "../types";
 import {
   doc,
   setDoc,
@@ -24,48 +24,10 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { database } from "@/server";
-import { useAuth } from "./AuthContext";
+import { database } from "../config";
 import { generateUid } from "@/lib/functions";
 import { useCookies } from "@/lib/hooks";
 import { toast } from "@/packages/ui/hooks/use-toast";
-
-type TypeUserContextProvider = {
-  userId: string;
-  selectedUser: UsersType | any;
-  user: UserType[];
-  invite: UserType[];
-  friends: UserType[];
-  myself: UserType;
-  isLoading: boolean;
-  chats: any;
-  message: string | string[] | null;
-  selectFiles: string[] | [];
-  fileUploadProgress: number;
-  setSelectFiles: React.Dispatch<React.SetStateAction<string[] | []>>;
-  audio: any;
-  isRecording: boolean;
-  isAudioPlaying: boolean;
-  setAudio: React.Dispatch<React.SetStateAction<any>>;
-  setIsRecording: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsAudioPlaying: React.Dispatch<React.SetStateAction<boolean>>;
-  setMessage: React.Dispatch<React.SetStateAction<string | string[] | null>>;
-  setUserId: React.Dispatch<React.SetStateAction<string>>;
-  getSelectedUser: (id: string) => void;
-  getAllUsers: () => void;
-  getUserFriends: (id: string[]) => void;
-  inviteUser: (email: string) => void;
-  getUserInvitations: (id: string[]) => void;
-  acceptUserInvite: (id: string, userEmail: string) => void;
-  rejectUserInvite: (id: string) => void;
-  createChatDatabase: () => void;
-  getChats: () => void;
-  sendMessage: () => void;
-  uploadFile: (type: "message" | "profile") => void;
-  uploadAudio: (item: any) => void;
-  deleteMsg: (id: string) => void;
-  updateUserProfile: (name?: string, image?: string, bio?: string) => void;
-};
 
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
 export const useUsers = () => useContext(UserContext)!;

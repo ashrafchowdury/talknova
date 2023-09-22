@@ -12,25 +12,18 @@ import {
   Avatar,
   AllImages,
 } from "./ui";
-import { useUsers, useUI } from "@/provider";
-import { useLS } from "@/lib/hooks";
+
+import { useUsers } from "@/packages/server";
+import { useWindowResize, useAppearance } from "@/lib/hooks";
 import { useTheme } from "next-themes";
 import { userThemeSchema } from "@/lib/helpers";
 
 const UserSettings = ({ className }: ClassType) => {
   const { selectedUser } = useUsers();
-  const { windowSize, userAppearance, setUserAppearance } = useUI();
+  const { userAppearance, changeUserAppearance } = useAppearance();
+  const { windowSize } = useWindowResize();
   const { theme } = useTheme();
-  const { setItem, removeItem } = useLS();
 
-  const handleChangeUserTheme = (e: any) => {
-    if (e == "bg-primary") {
-      removeItem(selectedUser.uid);
-    } else {
-      setItem(selectedUser.uid, e);
-    }
-    setUserAppearance(e);
-  };
   return (
     <section className={cn("h-auto lg:h-[98vh]", className)}>
       <nav className="h-[60px] md:mt-2 xl:px-8 border-b flex items-center justify-start">
@@ -100,7 +93,7 @@ const UserSettings = ({ className }: ClassType) => {
       <div className="w-full mt-7 px-4">
         <p className="mb-4 font-medium opacity-60">Theme</p>
         <ThemeSelector
-          action={handleChangeUserTheme}
+          action={changeUserAppearance}
           defaultValue={
             userAppearance ?? theme?.includes("light")
               ? userThemeSchema[0].value

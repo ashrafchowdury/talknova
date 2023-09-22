@@ -20,7 +20,7 @@ import {
 } from "@/packages/ui";
 import { InviteUsers, InviteUsersSkeleton } from "./ui";
 import { ChildrenType } from "@/types";
-import { useUsers } from "@/provider";
+import { useUsers } from "@/packages/server";
 
 const Invite = ({ children }: ChildrenType) => {
   const [selectedInvitation, setSelectedInvitation] = useState<string[]>([]);
@@ -69,8 +69,10 @@ const Invite = ({ children }: ChildrenType) => {
                     className="py-1 md:py-2"
                   >
                     {user
-                      .filter((data) => selectedInvitation.includes(data.id))
-                      .map((data) => (
+                      .filter((data: any) =>
+                        selectedInvitation.includes(data.id)
+                      )
+                      .map((data: any) => (
                         <Fragment key={data.uid}>
                           <InviteUsers
                             data={data}
@@ -88,13 +90,15 @@ const Invite = ({ children }: ChildrenType) => {
                 {user.length == 0 && <InviteUsersSkeleton />}
                 {user
                   .filter(
-                    (data) => !friends.find((item) => item.uid == data.uid)
+                    (data: any) =>
+                      !friends.find((item: any) => item.uid == data.uid)
                   )
                   .filter(
-                    (data) => !invite.find((item) => item.uid == data.uid)
+                    (data: any) =>
+                      !invite.find((item: any) => item.uid == data.uid)
                   )
-                  .filter((data) => !selectedInvitation.includes(data.id))
-                  .map((data) => (
+                  .filter((data: any) => !selectedInvitation.includes(data.id))
+                  .map((data: any) => (
                     <Fragment key={data.uid}>
                       <InviteUsers
                         data={data}

@@ -1,10 +1,8 @@
-import { useState, useRef, Fragment } from "react";
+"use client";
+import { Fragment } from "react";
 import Image from "next/image";
 import {
   Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Dialog,
   DialogContent,
   DialogFooter,
@@ -12,10 +10,9 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-  Skeleton,
 } from "@/packages/ui";
 import { cn } from "@/lib/functions";
-import { useUI, useUsers } from "@/provider";
+import { useUsers } from "@/packages/server";
 import { ImageIcon, CopyIcon } from "@radix-ui/react-icons";
 
 const AllImages = () => {

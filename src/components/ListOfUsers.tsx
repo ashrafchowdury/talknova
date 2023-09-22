@@ -9,7 +9,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Button, Input } from "@/packages/ui";
 import Link from "next/link";
-import { useUsers } from "@/provider";
+import { useUsers } from "@/packages/server";
 
 const ListOfUsers = () => {
   const [searchUsers, setSearchUsers] = useState("");

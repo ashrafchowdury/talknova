@@ -9,7 +9,7 @@ import {
   ImageUpload,
 } from "@/components/ui";
 import { useTheme } from "next-themes";
-import { useAuth, useUsers } from "@/provider";
+import { useAuth, useUsers } from "@/packages/server";
 import { cn, toggleTheme } from "@/lib/functions";
 import { themeSchema } from "@/lib/helpers";
 

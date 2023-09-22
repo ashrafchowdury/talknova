@@ -17,7 +17,7 @@ import {
   Skeleton,
 } from "@/packages/ui";
 import { cn } from "@/lib/functions";
-import { useUI, useUsers } from "@/provider";
+import { useUsers } from "@/packages/server";
 import {
   TrashIcon,
   DotsVerticalIcon,
@@ -26,6 +26,7 @@ import {
   CheckIcon,
 } from "@radix-ui/react-icons";
 import { Avatar, AudioMessage } from ".";
+import { useAppearance } from "@/lib/hooks";
 
 type MessageType = {
   data?: any;
@@ -33,7 +34,7 @@ type MessageType = {
 };
 
 const Message = ({ data, position }: MessageType) => {
-  const { userAppearance } = useUI();
+  const { userAppearance } = useAppearance();
   const { selectedUser, myself } = useUsers();
   const msgPosition = position == "left";
 
@@ -119,7 +120,7 @@ const Message = ({ data, position }: MessageType) => {
 export default Message;
 
 export const FileMessage = ({ data, position }: any) => {
-  const { userAppearance } = useUI();
+  const { userAppearance } = useAppearance();
   return (
     <>
       {data.length == 1 ? (

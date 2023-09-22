@@ -1,12 +1,13 @@
 "use client";
 import { Avatar } from ".";
-import { useUI, useUsers } from "@/provider";
+import { useWindowResize } from "@/lib/hooks";
+import { useUsers } from "@/packages/server";
 import { cn, formatTimeByLastMsg } from "@/lib/functions";
 import { useRouter } from "next/navigation";
 import { Badge, Skeleton } from "@/packages/ui";
 
 const Users = ({ data }: any) => {
-  const { windowSize } = useUI();
+  const { windowSize } = useWindowResize();
   const router = useRouter();
   const { setUserId, getSelectedUser } = useUsers();
 

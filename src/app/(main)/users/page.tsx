@@ -1,17 +1,18 @@
 "use client";
 import { ListOfUsers, Chat, UserSettings } from "@/components";
-import { useUI, useUsers, useAuth } from "@/provider";
+import { useUsers, useAuth } from "@/packages/server";
 import { useTheme } from "next-themes";
 import { Loader } from "@/components/ui";
+import { useWindowResize } from "@/lib/hooks";
 
 const Users = () => {
-  const { windowSize } = useUI();
+  const { windowSize } = useWindowResize();
   const { isLoading } = useUsers();
   const { theme } = useTheme();
 
   return (
     <main className="w-full flex justify-center">
-      {windowSize == 0 && isLoading ? (
+      {windowSize == 0 || isLoading ? (
         <Loader
           variant={theme == "light" ? "black" : "white"}
           className="scale-150 md:scale-[2] absolute top-[50%] left-[50%] transform translate-x-[50%] translate-y-[50%]"

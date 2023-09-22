@@ -1,14 +1,9 @@
 "use client";
 
 import { useEffect, Fragment } from "react";
-import {
-  GearIcon,
-  PaperPlaneIcon,
-  PlayIcon,
-  ImageIcon,
-} from "@radix-ui/react-icons";
+import { GearIcon, PaperPlaneIcon, ImageIcon } from "@radix-ui/react-icons";
 import { Button, Input, Progress } from "@/packages/ui";
-import { useUI } from "@/provider";
+import { useWindowResize } from "@/lib/hooks";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
 import {
@@ -21,11 +16,11 @@ import {
   RecordAudio,
 } from "./ui";
 import { useRouter } from "next/navigation";
-import { useUsers } from "@/provider";
+import { useUsers } from "@/packages/server";
 import { useTheme } from "next-themes";
 
 const Chat = ({ className }: ClassType) => {
-  const { windowSize, userAppearance } = useUI();
+  const { windowSize } = useWindowResize();
   const router = useRouter();
   const { theme } = useTheme();
   const {

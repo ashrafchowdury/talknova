@@ -18,7 +18,7 @@ import {
   DialogTrigger,
   DialogContent,
 } from "@/packages/ui";
-import { useAuth } from "@/provider";
+import { useAuth } from "@/packages/server";
 import {
   EnvelopeClosedIcon,
   LockClosedIcon,
