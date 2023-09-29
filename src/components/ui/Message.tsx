@@ -25,7 +25,7 @@ import {
   LoopIcon,
   CheckIcon,
 } from "@radix-ui/react-icons";
-import { Avatar, AudioMessage } from ".";
+import { Avatar, AudioMessage, LinkPreview } from ".";
 import { useAppearance } from "@/lib/hooks";
 
 type MessageType = {
@@ -37,6 +37,7 @@ const Message = ({ data, position }: MessageType) => {
   const { userAppearance } = useAppearance();
   const { selectedUser, myself } = useUsers();
   const msgPosition = position == "left";
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
 
   // Format date
   const formatTimestamp = (timestamp: any) => {
@@ -94,7 +95,12 @@ const Message = ({ data, position }: MessageType) => {
           {data?.send?.files && (
             <FileMessage data={data?.send?.files} position={msgPosition} />
           )}
-          {data?.send?.msg && <span>{data.send.msg}</span>}
+
+          {data?.send?.msg && data?.send?.msg.match(urlRegex) ? (
+            <LinkPreview message={data.send.msg} />
+          ) : (
+            <span>{data.send.msg}</span>
+          )}
           <div
             className={cn(
               "absolute -bottom-[18px] flex items-center space-x-2",

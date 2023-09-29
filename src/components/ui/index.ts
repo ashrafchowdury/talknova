@@ -11,6 +11,7 @@ import InviteUsers, { InviteUsersSkeleton } from "./InviteUsers";
 import ImageUpload from "./ImageUpload";
 import { AudioMessage, RecordAudio } from "./Audio";
 import AllImages from "./AllImages";
+import LinkPreview from "./LinkPreview";
 
 export {
   InviteUsers,
@@ -30,4 +31,5 @@ export {
   AudioMessage,
   RecordAudio,
   AllImages,
+  LinkPreview,
 };
