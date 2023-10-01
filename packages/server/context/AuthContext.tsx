@@ -46,7 +46,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
       bio: "Work ipsum dolor sit amet Lorem ipsum dolor sit amet.",
       image: "",
       email: user.email,
-      friends: [],
+      friends: ["M1LnjyfwMZa5EP4j5xAnLJLY6213"],
       invite: [],
     });
   };

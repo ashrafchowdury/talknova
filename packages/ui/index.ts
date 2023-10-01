@@ -89,6 +89,7 @@ import {
   ToastClose,
   ToastAction,
 } from "./toast";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "./hover-card";
 
 export {
   Button,
@@ -174,4 +175,7 @@ export {
   ToastDescription,
   ToastClose,
   ToastAction,
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
 };

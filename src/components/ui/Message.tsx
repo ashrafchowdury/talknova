@@ -96,7 +96,7 @@ const Message = ({ data, position }: MessageType) => {
             <FileMessage data={data?.send?.files} position={msgPosition} />
           )}
 
-          {data?.send?.msg && data?.send?.msg.match(urlRegex) ? (
+          {data?.send?.msg && data?.send?.msg?.match(urlRegex) ? (
             <LinkPreview message={data.send.msg} />
           ) : (
             <span>{data.send.msg}</span>
