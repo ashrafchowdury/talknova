@@ -14,19 +14,6 @@ import { useUsers } from "@/packages/server";
 const ListOfUsers = () => {
   const [searchUsers, setSearchUsers] = useState("");
   const { friends, myself } = useUsers();
-  const shortUser = () => {
-    const now = new Date();
-    const changeTimeFormat = friends.map((item: any) => ({
-      ...item,
-      lastMsgTime: new Date(item.lastMsgTime),
-    }));
-    const alignUserByTime = changeTimeFormat.sort(
-      (a: any, b: any) =>
-        Math.abs(now.getTime() - a.lastMsgTime.getTime()) -
-        Math.abs(now.getTime() - b.lastMsgTime.getTime())
-    );
-    return alignUserByTime;
-  };
   return (
     <aside className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[300px] xl:w-[400px] h-[98vh] mt-2 flex flex-col justify-between">
       <div>
@@ -70,7 +57,7 @@ const ListOfUsers = () => {
             <UsersSkeleton />
           ) : (
             <>
-              {shortUser()
+              {friends
                 .filter(
                   (data: any) =>
                     data.name?.toLowerCase().includes(searchUsers.toLowerCase())

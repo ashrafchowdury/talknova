@@ -97,9 +97,9 @@ const Message = ({ data, position }: MessageType) => {
           )}
 
           {data?.send?.msg && data?.send?.msg?.match(urlRegex) ? (
-            <LinkPreview message={data.send.msg} />
+            <LinkPreview message={data?.send?.msg} />
           ) : (
-            <span>{data.send.msg}</span>
+            <span>{data?.send?.msg}</span>
           )}
           <div
             className={cn(

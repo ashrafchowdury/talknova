@@ -90,13 +90,53 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         ...doc.data(),
         id: doc.id,
       }));
-      setFriends(data);
-      setSelectedUser(data[0]);
-      window.location.hash = `${data[0]?.uid}`;
-      setUserId(`${data[0]?.uid}`);
       getLastMsg(data);
     });
-    setIsLoading(false);
+  };
+
+  const getLastMsg = (friendData: any) => {
+    try {
+      const q = query(collection(database, "chats"), limit(50));
+      onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map((doc: any) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        const friendsWithMsgs = friendData.map((value: any) => {
+          const matchingData = data.find((item) => {
+            const users = item.users.split(" & ");
+            return users.includes(value.name);
+          });
+          if (matchingData) {
+            const msg = matchingData.lastMsg.split(" | ");
+            value.lastMsg = `${msg[1] == uid ? "You:" : "They:"} ${msg[0]}`;
+            value.lastMsgTime = matchingData.lastMsgTime;
+          }
+          return value;
+        });
+
+        if (friendsWithMsgs.length > 0) {
+          const now = new Date();
+          const changeTimeFormat = friendsWithMsgs?.map((item: any) => ({
+            ...item,
+            lastMsgTime: new Date(item.lastMsgTime),
+          }));
+          const alignUserByTime = changeTimeFormat.sort(
+            (a: any, b: any) =>
+              Math.abs(now.getTime() - a.lastMsgTime.getTime()) -
+              Math.abs(now.getTime() - b.lastMsgTime.getTime())
+          );
+          setFriends(alignUserByTime);
+          setSelectedUser(alignUserByTime[0]);
+          window.location.hash = `${alignUserByTime[0]?.uid}`;
+          setUserId(`${alignUserByTime[0]?.uid}`);
+        }
+      });
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getUserInvitations = (id: string[]) => {
@@ -164,34 +204,6 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const createChatId = () => {
     const combinedUid = [uid, selectedUser.uid].sort().join("");
     return combinedUid;
-  };
-
-  const getLastMsg = (friendData: any) => {
-    try {
-      const q = query(collection(database, "chats"), limit(50));
-      onSnapshot(q, (snapshot) => {
-        const data = snapshot.docs.map((doc: any) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-
-        const friendsWithMsgs = friendData.map((friend: any) => {
-          const matchingData = data.find((item) => {
-            const users = item.users.split(" & ");
-            return users.includes(friend.name);
-          });
-          if (matchingData) {
-            const msg = matchingData.lastMsg.split(" | ");
-            friend.lastMsg = `${msg[1] == uid ? "You:" : "They:"} ${msg[0]}`;
-            friend.lastMsgTime = matchingData.lastMsgTime;
-          }
-          return friend;
-        });
-        setFriends(friendsWithMsgs);
-      });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const getChats = () => {
