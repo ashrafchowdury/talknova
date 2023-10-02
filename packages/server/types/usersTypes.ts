@@ -22,10 +22,8 @@ export type TypeUserContextProvider = {
   selectFiles: string[] | [];
   fileUploadProgress: number;
   setSelectFiles: React.Dispatch<React.SetStateAction<string[] | []>>;
-  audio: any;
   isRecording: boolean;
   isAudioPlaying: boolean;
-  setAudio: React.Dispatch<React.SetStateAction<any>>;
   setIsRecording: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAudioPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   setMessage: React.Dispatch<React.SetStateAction<string | string[] | null>>;

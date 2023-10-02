@@ -44,11 +44,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const [userId, setUserId] = useState(""); // selected user id
   const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<any>([]); // user chats
-  const [files, setFiles] = useState([]); // sended files
   const [message, setMessage] = useState<string | string[] | null>(null); // input message
   const [selectFiles, setSelectFiles] = useState<string[] | []>([]); // selected files
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
-  const [audio, setAudio] = useState<any>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
@@ -90,42 +88,40 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         ...doc.data(),
         id: doc.id,
       }));
-      getLastMsg(data);
+      alignFriends(data);
     });
   };
 
-  const getLastMsg = (friendData: any) => {
+  const alignFriends = async (friendsList: UserType[]) => {
     try {
       const q = query(collection(database, "chats"), limit(50));
       onSnapshot(q, (snapshot) => {
-        const data = snapshot.docs.map((doc: any) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
+        const data = snapshot.docs.map((doc) => ({ ...doc.data() }));
 
-        const friendsWithMsgs = friendData.map((value: any) => {
-          const matchingData = data.find((item) => {
-            const users = item.users.split(" & ");
-            return users.includes(value.name);
+        const friendsLastMsgs = friendsList.map((value: any) => {
+          const matchingFriends = data.find((item) => {
+            const users = item.lastMsg.split(" | ");
+            return users.includes(value.uid);
           });
-          if (matchingData) {
-            const msg = matchingData.lastMsg.split(" | ");
-            value.lastMsg = `${msg[1] == uid ? "You:" : "They:"} ${msg[0]}`;
-            value.lastMsgTime = matchingData.lastMsgTime;
+
+          if (matchingFriends) {
+            const msg = matchingFriends.lastMsg.split(" | ");
+            if (msg[0] == uid) {
+              value.lastMsg = `You: ${msg[2]}`;
+            } else if (msg[0] !== uid) {
+              value.lastMsg = `They: ${msg[2]}`;
+            }
+            value.lastMsgTime = new Date(matchingFriends.lastMsgTime);
           }
           return value;
         });
 
-        if (friendsWithMsgs.length > 0) {
+        if (friendsLastMsgs.length > 0) {
           const now = new Date();
-          const changeTimeFormat = friendsWithMsgs?.map((item: any) => ({
-            ...item,
-            lastMsgTime: new Date(item.lastMsgTime),
-          }));
-          const alignUserByTime = changeTimeFormat.sort(
+          const alignUserByTime = friendsLastMsgs.sort(
             (a: any, b: any) =>
-              Math.abs(now.getTime() - a.lastMsgTime.getTime()) -
-              Math.abs(now.getTime() - b.lastMsgTime.getTime())
+              Math.abs(now.getTime() - a.lastMsgTime?.getTime()) -
+              Math.abs(now.getTime() - b.lastMsgTime?.getTime())
           );
           setFriends(alignUserByTime);
           setSelectedUser(alignUserByTime[0]);
@@ -251,7 +247,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         });
         await updateDoc(doc(database, "chats", `${createChatId()}`), {
           lastMsgTime: new Date().toISOString(),
-          lastMsg: `${lastMsg} | ${uid}`,
+          lastMsg: `${uid} | ${selectedUser.uid} | ${message}`,
         });
         setMessage(null);
       }
@@ -351,7 +347,6 @@ const UserContextProvider: React.FC<ChildrenType> = ({
             .then((downloadURL) => {
               sendMessage(downloadURL);
               setFileUploadProgress(0);
-              setAudio(null);
             })
             .catch((error) => console.log(error));
         }
@@ -379,10 +374,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     friends,
     isLoading,
     chats,
-    audio,
     isRecording,
     isAudioPlaying,
-    setAudio,
     setIsRecording,
     setIsAudioPlaying,
     fileUploadProgress,

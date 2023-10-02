@@ -133,10 +133,9 @@ export const AudioMessage = ({ data, position }: any) => {
 };
 
 export const RecordAudio = () => {
+  const [audio, setAudio] = useState<any>(null);
   const [recordingTime, setRecordingTime] = useState(0);
   const {
-    audio,
-    setAudio,
     isAudioPlaying,
     setIsAudioPlaying,
     isRecording,
@@ -173,8 +172,9 @@ export const RecordAudio = () => {
   const startRecording = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
+      setAudio(null);
       setIsAudioPlaying(false);
-      // setAudio(null);
+
       setIsRecording(true);
     } catch (error) {
       toast({ title: "Please enable your Mic first", variant: "destructive" });
