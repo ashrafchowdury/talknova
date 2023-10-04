@@ -110,6 +110,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
               value.lastMsg = `You: ${msg[2]}`;
             } else if (msg[0] !== uid) {
               value.lastMsg = `They: ${msg[2]}`;
+            } else {
+              value.lastMsg = `Start chatting with the new friend`;
             }
             value.lastMsgTime = new Date(matchingFriends.lastMsgTime);
           }
