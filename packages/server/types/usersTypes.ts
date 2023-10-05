@@ -20,10 +20,13 @@ export type TypeUserContextProvider = {
   chats: any;
   message: string | string[] | null;
   selectFiles: string[] | [];
+  chatId: { id: string; load: boolean };
   fileUploadProgress: number;
   setSelectFiles: React.Dispatch<React.SetStateAction<string[] | []>>;
   isRecording: boolean;
   isAudioPlaying: boolean;
+  autoScroll: boolean;
+  setAutoScroll: React.Dispatch<React.SetStateAction<boolean>>;
   setIsRecording: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAudioPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   setMessage: React.Dispatch<React.SetStateAction<string | string[] | null>>;
@@ -42,4 +45,5 @@ export type TypeUserContextProvider = {
   uploadAudio: (item: any) => void;
   deleteMsg: (id: string) => void;
   updateUserProfile: (name?: string, image?: string, bio?: string) => void;
+  getOldChats: () => void;
 };

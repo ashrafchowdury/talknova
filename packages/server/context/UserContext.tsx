@@ -17,6 +17,9 @@ import {
   limit,
   serverTimestamp,
   addDoc,
+  startAfter,
+  getDocs,
+  getDoc,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -44,11 +47,16 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const [userId, setUserId] = useState(""); // selected user id
   const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<any>([]); // user chats
+  const [chatId, setChatId] = useState<{ id: string; load: boolean }>({
+    id: "",
+    load: true,
+  });
   const [message, setMessage] = useState<string | string[] | null>(null); // input message
   const [selectFiles, setSelectFiles] = useState<string[] | []>([]); // selected files
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [autoScroll, setAutoScroll] = useState(true);
 
   //hooks
   const { uid } = useCookies();
@@ -208,13 +216,51 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     try {
       const q = query(
         collection(database, "chats", `${createChatId()}`, "messagas"),
-        orderBy("timestemp", "asc"),
-        limit(50)
+        orderBy("timestemp", "desc"),
+        limit(15)
       );
       onSnapshot(q, (snapshot) => {
         setChats(
-          snapshot.docs.map((doc: any) => ({ ...doc.data(), id: doc.id }))
+          snapshot.docs
+            .map((doc: any) => ({ ...doc.data(), id: doc.id }))
+            .reverse()
         );
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getFirstChat = async () => {
+    try {
+      const q = query(
+        collection(database, "chats", `${createChatId()}`, "messagas"),
+        orderBy("timestemp", "asc"),
+        limit(1)
+      );
+      const firstChat = await getDocs(q);
+      setChatId({ id: firstChat.docs[0].id, load: true });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getOldChats = async () => {
+    try {
+      !chatId.id && getFirstChat();
+      const firstMeg = await getDoc(
+        doc(database, "chats", `${createChatId()}`, "messagas", chats.at(0).id)
+      );
+      firstMeg.id == chatId.id && setChatId({ ...chatId, load: false });
+      const q = query(
+        collection(database, "chats", `${createChatId()}`, "messagas"),
+        orderBy("timestemp", "desc"),
+        startAfter(firstMeg),
+        limit(15)
+      );
+      onSnapshot(q, (snapshot) => {
+        const oldChats = snapshot.docs
+          .map((doc: any) => ({ ...doc.data(), id: doc.id }))
+          .reverse();
+        setChats([...oldChats, ...chats]);
       });
     } catch (error) {
       console.log(error);
@@ -364,6 +410,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   }, []);
   useEffect(() => {
     setChats([]);
+    setAutoScroll(true);
+    setChatId({ id: "", load: true });
     getChats();
   }, [userId]);
 
@@ -382,6 +430,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     setIsAudioPlaying,
     fileUploadProgress,
     myself,
+    chatId,
     getSelectedUser,
     getAllUsers,
     inviteUser,
@@ -400,6 +449,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     deleteMsg,
     uploadAudio,
     updateUserProfile,
+    getOldChats,
+    autoScroll,
+    setAutoScroll,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

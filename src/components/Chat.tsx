@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, Fragment } from "react";
+import { Fragment } from "react";
 import { GearIcon, PaperPlaneIcon, ImageIcon } from "@radix-ui/react-icons";
 import { Button, Input, Progress } from "@/packages/ui";
 import { useWindowResize } from "@/lib/hooks";
@@ -33,12 +33,28 @@ const Chat = ({ className }: ClassType) => {
     setMessage,
     fileUploadProgress,
     isRecording,
+    getOldChats,
+    chatId,
+    autoScroll,
+    setAutoScroll,
   } = useUsers();
 
-  useEffect(() => {
+  const handleLoad = () => {
     const doc: any = document.querySelector(".chatInterface");
     doc.scrollTop = doc?.scrollHeight;
-  }, [chats[0]]);
+  };
+
+  const handleScroll = () => {
+    const clientHeight = document.querySelector(
+      ".chatInterface"
+    ) as HTMLElement;
+
+    if (clientHeight.scrollTop == 0 && chatId.load && chats.length > 6) {
+      autoScroll && setAutoScroll(false);
+      clientHeight.scrollTop = 5;
+      getOldChats();
+    }
+  };
 
   return (
     <main className={cn(" border-x md:mt-2 relative", className)}>
@@ -81,7 +97,11 @@ const Chat = ({ className }: ClassType) => {
       {fileUploadProgress !== 0 && (
         <Progress value={fileUploadProgress} className="w-full" />
       )}
-      <article className="chatInterface w-full h-[86.5vh] px-2 sm:px-6 md:px-8 break-all pt-16 pb-10 overflow-y-auto">
+      <article
+        onLoad={() => (autoScroll ? handleLoad() : null)}
+        onScroll={handleScroll}
+        className="chatInterface scroll-smooth w-full h-[86.5vh] px-2 sm:px-6 md:px-8 break-all pt-16 pb-10 overflow-y-auto"
+      >
         {chats.length == 0 && (
           <div className="w-full mt-20">
             <p className="text-xl md:text-3xl text-center font-bold text-muted-foreground opacity-80">
@@ -137,9 +157,10 @@ const Chat = ({ className }: ClassType) => {
                 title="Send Message"
                 size="icon"
                 className="w-8 md:w-9 h-8 md:h-9"
-                onClick={() =>
-                  chats.length > 0 ? sendMessage() : createChatDatabase()
-                }
+                onClick={() => {
+                  !autoScroll && setAutoScroll(true);
+                  chats.length > 0 ? sendMessage() : createChatDatabase();
+                }}
               >
                 <PaperPlaneIcon className="w-3 md:w-4 h-3 md:h-4" />
               </Button>
