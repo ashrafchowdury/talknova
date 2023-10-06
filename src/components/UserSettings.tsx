@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Skeleton } from "@/packages/ui";
-import { ImageIcon, DashboardIcon, FileTextIcon } from "@radix-ui/react-icons";
+import { FileTextIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/functions";
 import { ClassType } from "@/types";
 import {
@@ -70,15 +70,7 @@ const UserSettings = ({ className }: ClassType) => {
 
       <div className="w-full mt-7 px-4">
         <p className="mb-4 font-medium opacity-60">Settings</p>
-        <div className="w-full flex items-center justify-between mb-7">
-          <div className="mr-5">
-            <p className="text-[16px] font-bold mb-1">Enable Encryption</p>
-            <p className="text-xs opacity-60 -mt-1">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-            </p>
-          </div>
-          <SecretKey />
-        </div>
+        <SecretKey />
 
         <ToggleSwitch
           title="Auto Lock"

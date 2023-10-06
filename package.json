@@ -36,6 +36,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
+    "crypto-js": "^4.1.1",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.17",
     "firebase": "^10.3.0",
@@ -54,6 +55,7 @@
     "zod": "^3.22.1"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.2",
     "@types/react-mic": "^12.4.3",
     "husky": "^8.0.0",
     "prettier": "3.0.2"

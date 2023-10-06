@@ -1,6 +1,7 @@
 "use client";
 
 import { UserContextProvider } from "@/packages/server";
+import { EncryptContextProvider } from "@/packages/encryption";
 import { useCookies, AppearanceContextProvider } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import NotFound from "../not-found";
@@ -17,8 +18,10 @@ export default function MainLayout({
     return <NotFound />;
   }
   return (
-    <UserContextProvider>
-      <AppearanceContextProvider>{children}</AppearanceContextProvider>
-    </UserContextProvider>
+    <EncryptContextProvider>
+      <UserContextProvider>
+        <AppearanceContextProvider>{children}</AppearanceContextProvider>
+      </UserContextProvider>
+    </EncryptContextProvider>
   );
 }

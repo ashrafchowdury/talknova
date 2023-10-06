@@ -30,6 +30,7 @@ import {
 import { database } from "../config";
 import { generateUid } from "@/lib/functions";
 import { useCookies } from "@/lib/hooks";
+import { useEncrypt } from "@/packages/encryption";
 import { toast } from "@/packages/ui/hooks/use-toast";
 
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
@@ -60,7 +61,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   //hooks
   const { uid } = useCookies();
-
+  const { isEncrypt, setIsEncrypt, key } = useEncrypt();
   //functions
   const getAllUsers = () => {
     const q = query(collection(database, "users"));
@@ -122,6 +123,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
               value.lastMsg = `Start chatting with the new friend`;
             }
             value.lastMsgTime = new Date(matchingFriends.lastMsgTime);
+            value.encryption = matchingFriends?.encryption;
+            value.key = matchingFriends?.key;
           }
           return value;
         });
@@ -135,6 +138,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
           );
           setFriends(alignUserByTime);
           setSelectedUser(alignUserByTime[0]);
+          alignUserByTime[0].key == key
+            ? setIsEncrypt(false)
+            : setIsEncrypt(true);
           window.location.hash = `${alignUserByTime[0]?.uid}`;
           setUserId(`${alignUserByTime[0]?.uid}`);
         }
@@ -183,6 +189,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   const getSelectedUser = (id: string) => {
     const filter: any = friends.filter((data: any) => data.uid == id);
+    filter[0].key == key ? setIsEncrypt(false) : setIsEncrypt(true);
     setSelectedUser(filter[0]);
   };
 
@@ -278,7 +285,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         let msg: any;
         let lastMsg: any;
         if (typeof message === "string") {
-          msg = { msg: message };
+          msg = { msg: message, encryption: false };
           lastMsg = message;
         } else if (Array.isArray(files)) {
           msg = { files: files };
@@ -306,7 +313,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   const createChatDatabase = () => {
     setDoc(doc(database, "chats", `${createChatId()}`), {
-      users: `${myself.name} & ${selectedUser.name}`,
+      encryption: false,
+      key: "",
     })
       .then((res) => sendMessage())
       .catch((err) => console.log(err));

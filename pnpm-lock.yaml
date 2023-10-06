@@ -74,6 +74,9 @@ dependencies:
   cmdk:
     specifier: ^0.2.0
     version: 0.2.0(@types/react@18.2.20)(react-dom@18.2.0)(react@18.2.0)
+  crypto-js:
+    specifier: ^4.1.1
+    version: 4.1.1
   eslint:
     specifier: 8.47.0
     version: 8.47.0
@@ -124,6 +127,9 @@ dependencies:
     version: 3.22.1
 
 devDependencies:
+  "@types/crypto-js":
+    specifier: ^4.1.2
+    version: 4.1.2
   "@types/react-mic":
     specifier: ^12.4.3
     version: 12.4.3
@@ -2415,6 +2421,13 @@ packages:
       tslib: 2.6.1
     dev: false
 
+  /@types/crypto-js@4.1.2:
+    resolution:
+      {
+        integrity: sha512-t33RNmTu5ufG/sorROIafiCVJMx3jz95bXUMoPAZcUD14fxMXnuTzqzXZoxpR0tNx2xpw11Dlmem9vGCsrSOfA==,
+      }
+    dev: true
+
   /@types/js-cookie@3.0.3:
     resolution:
       {
@@ -3038,6 +3051,13 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+    dev: false
+
+  /crypto-js@4.1.1:
+    resolution:
+      {
+        integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==,
+      }
     dev: false
 
   /cssesc@3.0.0:
