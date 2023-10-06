@@ -5,13 +5,14 @@ import ToggleSwitch from "./ToggleSwitch";
 import BackSpace from "./BackSpace";
 import Loader from "./Loader";
 import Emojies from "./Emojies";
-import SecretKey from "./SecretKey";
+import SecretKey, { AddSecretKey } from "./SecretKey";
 import Avatar from "./Avatar";
 import InviteUsers, { InviteUsersSkeleton } from "./InviteUsers";
 import ImageUpload from "./ImageUpload";
 import { AudioMessage, RecordAudio } from "./Audio";
 import AllImages from "./AllImages";
 import LinkPreview from "./LinkPreview";
+import QuestionMark from "./QuestionMark";
 
 export {
   InviteUsers,
@@ -32,4 +33,6 @@ export {
   RecordAudio,
   AllImages,
   LinkPreview,
+  AddSecretKey,
+  QuestionMark,
 };

@@ -14,10 +14,12 @@ import {
   Avatar,
   ImageUpload,
   RecordAudio,
+  AddSecretKey,
 } from "./ui";
 import { useRouter } from "next/navigation";
 import { useUsers } from "@/packages/server";
 import { useTheme } from "next-themes";
+import { useEncrypt } from "@/packages/encryption";
 
 const Chat = ({ className }: ClassType) => {
   const { windowSize } = useWindowResize();
@@ -38,6 +40,7 @@ const Chat = ({ className }: ClassType) => {
     autoScroll,
     setAutoScroll,
   } = useUsers();
+  const { isEncrypt } = useEncrypt();
 
   const handleLoad = () => {
     const doc: any = document.querySelector(".chatInterface");
@@ -58,6 +61,7 @@ const Chat = ({ className }: ClassType) => {
 
   return (
     <main className={cn(" border-x md:mt-2 relative", className)}>
+      {selectedUser.encryption && isEncrypt ? <AddSecretKey /> : null}
       <nav className="h-[60px] px-2 sm:px-6 md:px-8 border-b flex items-center justify-between sticky z-20 top-0 bg-background">
         <BackSpace href="/users" />
         <div className="flex items-center">
