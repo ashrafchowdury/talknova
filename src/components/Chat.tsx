@@ -40,7 +40,7 @@ const Chat = ({ className }: ClassType) => {
     autoScroll,
     setAutoScroll,
   } = useUsers();
-  const { isEncrypt } = useEncrypt();
+  const { isAutoLock, toggleLockUi } = useEncrypt();
 
   const handleLoad = () => {
     const doc: any = document.querySelector(".chatInterface");
@@ -61,7 +61,7 @@ const Chat = ({ className }: ClassType) => {
 
   return (
     <main className={cn(" border-x md:mt-2 relative", className)}>
-      {selectedUser.encryption && isEncrypt ? <AddSecretKey /> : null}
+      {selectedUser.key && isAutoLock ? <AddSecretKey /> : null}
       <nav className="h-[60px] px-2 sm:px-6 md:px-8 border-b flex items-center justify-between sticky z-20 top-0 bg-background">
         <BackSpace href="/users" />
         <div className="flex items-center">

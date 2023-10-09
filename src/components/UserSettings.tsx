@@ -73,10 +73,6 @@ const UserSettings = ({ className }: ClassType) => {
         <SecretKey />
 
         <ToggleSwitch
-          title="Auto Lock"
-          desc="Lorem ipsum, dolor sit amet consectetur dolor sit amet consectetur"
-        />
-        <ToggleSwitch
           title="Lorem Ipsum"
           desc="Lorem ipsum, dolor sit amet consectetur"
         />

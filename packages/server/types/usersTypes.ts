@@ -46,4 +46,6 @@ export type TypeUserContextProvider = {
   deleteMsg: (id: string) => void;
   updateUserProfile: (name?: string, image?: string, bio?: string) => void;
   getOldChats: () => void;
+  createChatId: () => string;
+  toggleChatKey: (secKey: string) => void;
 };
