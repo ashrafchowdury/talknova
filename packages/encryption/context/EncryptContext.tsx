@@ -4,12 +4,14 @@ import CryptoJS from "crypto-js";
 type EncryptContextType = {
   key: string;
   setKey: React.Dispatch<React.SetStateAction<string>>;
-  encryptData: (data: any) => void;
-  decryptData: (data: any) => void;
-  isEncrypt: boolean;
-  setIsEncrypt: React.Dispatch<React.SetStateAction<boolean>>;
+  encryptData: (data: string, key: string) => void;
+  decryptData: (data: string, key: string) => string;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isAutoLock: boolean;
+  setIsAutoLock: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleLockUi: boolean;
+  setToggleLockUi: React.Dispatch<React.SetStateAction<boolean>>;
 };
 type ChildrenType = {
   children: React.ReactNode;
@@ -21,28 +23,41 @@ const EncryptContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
   const [key, setKey] = useState("");
-  const [isEncrypt, setIsEncrypt] = useState(false);
+  const [isAutoLock, setIsAutoLock] = useState(false);
+  const [toggleLockUi, setToggleLockUi] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const encryptData = (data: any) => {
-    const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
-    return encryptedData;
+  const encryptData = (data: string, key: string) => {
+    try {
+      const encryptedData = CryptoJS.AES.encrypt(data, key)?.toString();
+      return encryptedData;
+    } catch (error) {
+      console.log(error);
+      return data;
+    }
   };
-  const decryptData = (data: any) => {
-    const decryptedData = CryptoJS.AES.decrypt(data, key).toString(
-      CryptoJS.enc.Utf8
-    );
-    return decryptedData;
+  const decryptData = (data: string, key: string): string => {
+    try {
+      const decryptedData = CryptoJS.AES.decrypt(data, key)?.toString(
+        CryptoJS.enc.Utf8
+      );
+      return decryptedData;
+    } catch (error) {
+      console.log(error);
+      return data;
+    }
   };
   const value: EncryptContextType = {
     key,
     setKey,
     encryptData,
     decryptData,
-    isEncrypt,
-    setIsEncrypt,
     isLoading,
     setIsLoading,
+    isAutoLock,
+    setIsAutoLock,
+    toggleLockUi,
+    setToggleLockUi,
   };
   return (
     <EncryptContext.Provider value={value}>{children}</EncryptContext.Provider>

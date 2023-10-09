@@ -61,7 +61,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   //hooks
   const { uid } = useCookies();
-  const { isEncrypt, setIsEncrypt, key } = useEncrypt();
+  const { setToggleLockUi, setIsAutoLock, encryptData, key } = useEncrypt();
+
   //functions
   const getAllUsers = () => {
     const q = query(collection(database, "users"));
@@ -105,25 +106,18 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     try {
       const q = query(collection(database, "chats"), limit(50));
       onSnapshot(q, (snapshot) => {
-        const data = snapshot.docs.map((doc) => ({ ...doc.data() }));
+        const data = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
 
         const friendsLastMsgs = friendsList.map((value: any) => {
-          const matchingFriends = data.find((item) => {
-            const users = item.lastMsg.split(" | ");
-            return users.includes(value.uid);
+          const matchingFriends: any = data.find((item) => {
+            return item.id == [uid, value.uid].sort().join("");
           });
-
           if (matchingFriends) {
-            const msg = matchingFriends.lastMsg.split(" | ");
-            if (msg[0] == uid) {
-              value.lastMsg = `You: ${msg[2]}`;
-            } else if (msg[0] !== uid) {
-              value.lastMsg = `They: ${msg[2]}`;
-            } else {
-              value.lastMsg = `Start chatting with the new friend`;
-            }
+            value.lastMsg = matchingFriends.lastMsg;
             value.lastMsgTime = new Date(matchingFriends.lastMsgTime);
-            value.encryption = matchingFriends?.encryption;
             value.key = matchingFriends?.key;
           }
           return value;
@@ -138,9 +132,6 @@ const UserContextProvider: React.FC<ChildrenType> = ({
           );
           setFriends(alignUserByTime);
           setSelectedUser(alignUserByTime[0]);
-          alignUserByTime[0].key == key
-            ? setIsEncrypt(false)
-            : setIsEncrypt(true);
           window.location.hash = `${alignUserByTime[0]?.uid}`;
           setUserId(`${alignUserByTime[0]?.uid}`);
         }
@@ -189,7 +180,16 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   const getSelectedUser = (id: string) => {
     const filter: any = friends.filter((data: any) => data.uid == id);
-    filter[0].key == key ? setIsEncrypt(false) : setIsEncrypt(true);
+    if (filter[0].key == key) {
+      setIsAutoLock(false);
+      setToggleLockUi(false);
+    } else if (filter[0].key) {
+      setIsAutoLock(true);
+      setToggleLockUi(true);
+    } else {
+      setIsAutoLock(false);
+      setToggleLockUi(false);
+    }
     setSelectedUser(filter[0]);
   };
 
@@ -237,6 +237,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
       console.log(error);
     }
   };
+
   const getFirstChat = async () => {
     try {
       const q = query(
@@ -250,6 +251,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
       console.log(error);
     }
   };
+
   const getOldChats = async () => {
     try {
       !chatId.id && getFirstChat();
@@ -274,6 +276,17 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
+  const toggleChatKey = async (secKey: string) => {
+    await updateDoc(doc(database, "chats", `${createChatId()}`), {
+      key: secKey,
+      lastMsgTime: new Date().toISOString(),
+      lastMsg: encryptData(
+        secKey ? "Added AutoLock" : "AutoLock Removed",
+        createChatId()
+      ),
+    });
+  };
+
   const sendMessage = async (files?: any) => {
     try {
       const q: any = query(
@@ -285,14 +298,14 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         let msg: any;
         let lastMsg: any;
         if (typeof message === "string") {
-          msg = { msg: message, encryption: false };
-          lastMsg = message;
+          msg = { msg: encryptData(message, createChatId()) };
+          lastMsg = encryptData(message, createChatId());
         } else if (Array.isArray(files)) {
           msg = { files: files };
-          lastMsg = "Send Images";
+          lastMsg = encryptData("Send Images", createChatId());
         } else if (typeof files === "string") {
           msg = { audio: `${files}` };
-          lastMsg = "Audio message";
+          lastMsg = encryptData("Audio message", createChatId());
         }
 
         await addDoc(q, {
@@ -302,7 +315,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         });
         await updateDoc(doc(database, "chats", `${createChatId()}`), {
           lastMsgTime: new Date().toISOString(),
-          lastMsg: `${uid} | ${selectedUser.uid} | ${message}`,
+          lastMsg: `${lastMsg}`,
         });
         setMessage(null);
       }
@@ -313,7 +326,6 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   const createChatDatabase = () => {
     setDoc(doc(database, "chats", `${createChatId()}`), {
-      encryption: false,
       key: "",
     })
       .then((res) => sendMessage())
@@ -460,6 +472,8 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     getOldChats,
     autoScroll,
     setAutoScroll,
+    createChatId,
+    toggleChatKey,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

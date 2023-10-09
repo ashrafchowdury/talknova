@@ -5,11 +5,13 @@ import { useUsers } from "@/packages/server";
 import { cn, formatTimeByLastMsg } from "@/lib/functions";
 import { useRouter } from "next/navigation";
 import { Badge, Skeleton } from "@/packages/ui";
+import { useEncrypt } from "@/packages/encryption";
 
 const Users = ({ data }: any) => {
   const { windowSize } = useWindowResize();
   const router = useRouter();
-  const { setUserId, getSelectedUser } = useUsers();
+  const { setUserId, getSelectedUser, myself } = useUsers();
+  const { decryptData } = useEncrypt();
 
   return (
     <div
@@ -40,7 +42,12 @@ const Users = ({ data }: any) => {
             {!data?.lastMsg && <Badge className=" ml-2 text-[10px]">New</Badge>}
           </p>
           <p className="w-[90%] md:w-[80%] text-xs sm:text-sm text-muted-foreground whitespace-nowrap overflow-hidden truncate">
-            {data?.lastMsg ?? `Start chat with ${data.name}`}
+            {data?.lastMsg
+              ? `Send: ${decryptData(
+                  data?.lastMsg,
+                  [myself.uid, data.uid].sort().join("")
+                )}`
+              : `Start chat with ${data.name}`}
           </p>
         </div>
       </div>

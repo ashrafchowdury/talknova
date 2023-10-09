@@ -27,6 +27,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Avatar, AudioMessage, LinkPreview } from ".";
 import { useAppearance } from "@/lib/hooks";
+import { useEncrypt } from "@/packages/encryption";
 
 type MessageType = {
   data?: any;
@@ -35,7 +36,8 @@ type MessageType = {
 
 const Message = ({ data, position }: MessageType) => {
   const { userAppearance } = useAppearance();
-  const { selectedUser, myself } = useUsers();
+  const { selectedUser, myself, createChatId } = useUsers();
+  const { decryptData, isAutoLock } = useEncrypt();
   const msgPosition = position == "left";
   const urlRegex = /(https?:\/\/[^\s]+)/g;
 
@@ -97,9 +99,19 @@ const Message = ({ data, position }: MessageType) => {
           )}
 
           {data?.send?.msg && data?.send?.msg?.match(urlRegex) ? (
-            <LinkPreview message={data?.send?.msg} />
+            <LinkPreview
+              message={
+                isAutoLock
+                  ? data?.send?.msg
+                  : decryptData(data?.send?.msg, createChatId())
+              }
+            />
           ) : (
-            <span>{data?.send?.msg}</span>
+            <span>
+              {isAutoLock
+                ? data?.send?.msg
+                : decryptData(data?.send?.msg, createChatId())}
+            </span>
           )}
           <div
             className={cn(
