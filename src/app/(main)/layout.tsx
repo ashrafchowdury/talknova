@@ -15,13 +15,14 @@ export default function MainLayout({
   const router = useRouter();
 
   if (!uid) {
-    return <NotFound />;
+    return <></>;
+  } else {
+    return (
+      <EncryptContextProvider>
+        <UserContextProvider>
+          <AppearanceContextProvider>{children}</AppearanceContextProvider>
+        </UserContextProvider>
+      </EncryptContextProvider>
+    );
   }
-  return (
-    <EncryptContextProvider>
-      <UserContextProvider>
-        <AppearanceContextProvider>{children}</AppearanceContextProvider>
-      </UserContextProvider>
-    </EncryptContextProvider>
-  );
 }

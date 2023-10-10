@@ -172,7 +172,7 @@ export const RecordAudio = () => {
   const startRecording = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      setAudio(null);
+      // setAudio(null);
       setIsAudioPlaying(false);
 
       setIsRecording(true);
@@ -231,7 +231,7 @@ export const RecordAudio = () => {
           className="w-5 md:w-6 h-5 md:h-6 hover:bg-transparent mr-2"
           onClick={stopRecording}
         >
-          <StopIcon className="w-5 md:w-6 h-5 md:h-6 text-white dark:text-black" />
+          <StopIcon className="w-5 md:w-6 h-5 md:h-6 text-color" />
         </Button>
 
         <DynamicReactMic

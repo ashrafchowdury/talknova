@@ -74,13 +74,13 @@ const Chat = ({ className }: ClassType) => {
             <p className="text-[16px] md:text-lg font-bold">
               {selectedUser?.name}
             </p>
-            <p className="text-xs md:text-sm opacity-60 -mt-1 flex items-end ">
-              Typing{" "}
+            <div className="text-xs md:text-sm opacity-60 -mt-1 flex items-end ">
+              <p>Typing</p>
               <Loader
                 variant={theme?.includes("light") ? "black" : "white"}
                 className="opacity-50 ml-[2px]"
               />
-            </p>
+            </div>
           </div>
         </div>
 
@@ -139,7 +139,7 @@ const Chat = ({ className }: ClassType) => {
           <div
             className={cn(
               "flex items-center space-x-1 md:space-x-3 absolute top-[7px] right-2",
-              isRecording && "w-full -top-2 right-0"
+              isRecording && "w-full -top-6 md:-top-3 right-0"
             )}
           >
             {!isRecording && (
@@ -149,7 +149,7 @@ const Chat = ({ className }: ClassType) => {
                   <Button
                     title="Select Media"
                     variant="ghost"
-                    className="py-[2px] px-2 hover:bg-border duration-300"
+                    className="py-[2px] px-2 hover:bg-border duration-300 mr-3"
                   >
                     <ImageIcon className="w-[14px] sm:w-4 h-[14px] sm:h-4 cursor-pointer" />
                   </Button>

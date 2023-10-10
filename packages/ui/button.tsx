@@ -73,7 +73,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             >
               <>
                 {load && (
-                  <ReloadIcon className="w-3 md:w-[14px] h-3 md:h-[14px] mr-2 animate-spin" />
+                  <ReloadIcon
+                    className={cn(
+                      "w-3 md:w-[14px] h-3 md:h-[14px] animate-spin",
+                      children && "mr-2"
+                    )}
+                  />
                 )}
                 {children}
               </>
