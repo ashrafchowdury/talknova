@@ -113,7 +113,7 @@ const ImageUpload = ({ children, type }: ImageComponentType) => {
           ) : (
             <>
               <div className="flex flex-col items-center justify-center absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]">
-                <ImageIcon className="w-3 md:w-10 h-3 md:h-10 cursor-pointer opacity-70 text-muted-foreground" />
+                <ImageIcon className="w-7 md:w-10 h-7 md:h-10 cursor-pointer opacity-70 text-muted-foreground" />
                 <p className="text-xl font-semibold mt-2 opacity-70 text-muted-foreground whitespace-nowrap">
                   Select Image
                 </p>

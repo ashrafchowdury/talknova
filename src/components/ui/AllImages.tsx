@@ -49,8 +49,8 @@ const AllImages = () => {
               ))}
             </Fragment>
           ))}
-          {chats?.map((data: any) => data?.send?.files?.length == 0) && (
-            <p className="font-semibold text-muted-foreground my-20">Empty</p>
+          {!chats?.map((data: any) => data?.send?.files?.length == 0)[0] && (
+            <p className="font-semibold text-muted-foreground my-28">Empty</p>
           )}
         </section>
         <DialogFooter>

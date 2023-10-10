@@ -15,10 +15,11 @@ const InviteUsers = ({ data, onclick, button }: InviteUsersType) => {
     >
       <div className="flex items-center space-x-2">
         <Avatar
+          img={data.image}
           fallback={data.name}
           className="w-5 md:w-6 h-5 md:h-6 text-[8px] md:text-[10px]"
         />
-        <span className="text-sm md:text-[16px] font-semibold">
+        <span className="text-sm md:text-[16px] font-semibold capitalize">
           {data.name}
         </span>
       </div>

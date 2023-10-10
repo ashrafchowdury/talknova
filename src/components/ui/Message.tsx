@@ -85,7 +85,7 @@ const Message = ({ data, position }: MessageType) => {
             "py-2 md:py-3 px-4 md:px-5 text-xs sm:text-sm md:text-[16px] rounded-lg relative flex items-center justify-center",
             msgPosition
               ? "!ml-4 !mr-2 bg-border"
-              : "!mr-4 bg-primary text-white dark:primary",
+              : "!mr-4 bg-primary text-color",
             data?.send?.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
             data?.send?.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
             msgPosition ? "" : userAppearance
@@ -215,11 +215,11 @@ export const MessageMenu = ({ data, position }: any) => {
       <PopoverTrigger
         className={cn(
           "absolute top-[50%] transform translate-y-[-50%]",
-          position ? "-left-6" : "-right-6 hidden"
+          position ? "-left-6" : "-right-6"
         )}
       >
         <Button variant="ghost" className="py-0 px-1 hover:bg-transparent">
-          <DotsVerticalIcon className="w-4 h-4" />
+          <DotsVerticalIcon className="w-4 h-4 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
