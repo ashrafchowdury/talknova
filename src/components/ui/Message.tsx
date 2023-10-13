@@ -98,19 +98,29 @@ const Message = ({ data, position }: MessageType) => {
             <FileMessage data={data?.send?.files} position={msgPosition} />
           )}
 
-          {data?.send?.msg && data?.send?.msg?.match(urlRegex) ? (
+          {data?.send?.msg &&
+          decryptData(
+            data?.send?.msg,
+            [myself.uid, selectedUser.uid].sort().join("")
+          )?.match(urlRegex) ? (
             <LinkPreview
               message={
                 isAutoLock
                   ? data?.send?.msg
-                  : decryptData(data?.send?.msg, createChatId())
+                  : decryptData(
+                      data?.send?.msg,
+                      [myself.uid, selectedUser.uid].sort().join("")
+                    )
               }
             />
           ) : (
             <span>
               {isAutoLock
                 ? data?.send?.msg
-                : decryptData(data?.send?.msg, createChatId())}
+                : decryptData(
+                    data?.send?.msg,
+                    [myself.uid, selectedUser.uid].sort().join("")
+                  )}
             </span>
           )}
           <div

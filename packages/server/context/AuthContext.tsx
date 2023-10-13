@@ -11,7 +11,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, updateDoc, arrayUnion } from "firebase/firestore";
 
 import { generateUid } from "@/lib/functions";
 import { useToast } from "@/packages/ui";
@@ -40,15 +40,28 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
 
   // functions
   const createUserProfile = async (user: AuthUserType) => {
+    const firstFriend = `${process.env.NEXT_PUBLIC_FIRST_FRIEND_UID}`;
     await setDoc(doc(database, "users", user.email), {
       uid: user.uid,
       name: user.displayName,
       bio: "Work ipsum dolor sit amet Lorem ipsum dolor sit amet.",
       image: "",
       email: user.email,
-      friends: ["M1LnjyfwMZa5EP4j5xAnLJLY6213"],
+      friends: [firstFriend],
       invite: [],
     });
+    await updateDoc(doc(database, "users", `${user.email}`), {
+      friends: arrayUnion(user.uid),
+    });
+    await setDoc(
+      doc(database, "chats", `${[user.uid, firstFriend].sort().join("")}`),
+      {
+        key: "",
+        uid: [user.uid, firstFriend].sort().join(""),
+        lastMsgTime: new Date().toISOString(),
+        lastMsg: "",
+      }
+    );
   };
 
   const actions = async ({ toasts, direct, logic, type }: ActionsType) => {

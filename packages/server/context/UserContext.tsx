@@ -84,61 +84,52 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         id: doc.id,
       }))[0];
       setMyself(data);
-      if (data?.friends?.length > 0) {
-        getUserFriends(data.friends);
-      }
+      data?.friends?.length > 0 && getUserFriends(data.friends);
       data?.invite?.length > 0 && getUserInvitations(data.invite);
     });
   };
 
-  const getUserFriends = (id: string[]) => {
-    const q = query(collection(database, "users"), where("uid", "in", id));
-    onSnapshot(q, (snapshot) => {
+  const getUserFriends = async (id: string[]) => {
+    try {
+      const q = query(collection(database, "users"), where("uid", "in", id));
+      const snapshot = await getDocs(q);
       const data: any = snapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       }));
-      alignFriends(data);
-    });
+
+      if (data.length > 0) {
+        setFriends(data);
+        setSelectedUser(data[0]);
+        window.location.hash = `${data[0]?.uid}`;
+        setUserId(`${data[0]?.uid}`);
+        await getLastMsg(data, id);
+      }
+    } catch (error) {
+      console.error("Error in getUserFriends:", error);
+    }
   };
 
-  const alignFriends = async (friendsList: UserType[]) => {
+  const getLastMsg = async (friendData: UserType[], id: string[]) => {
     try {
-      const q = query(collection(database, "chats"), limit(50));
+      const ids = id.map((item) => [uid, item].sort().join(""));
+      const q = query(collection(database, "chats"), where("uid", "in", ids));
       onSnapshot(q, (snapshot) => {
-        const data = snapshot.docs.map((doc) => ({
+        const data: any = snapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
         }));
-
-        const friendsLastMsgs = friendsList.map((value: any) => {
-          const matchingFriends: any = data.find((item) => {
-            return item.id == [uid, value.uid].sort().join("");
-          });
-          if (matchingFriends) {
-            value.lastMsg = matchingFriends.lastMsg;
-            value.lastMsgTime = new Date(matchingFriends.lastMsgTime);
-            value.key = matchingFriends?.key;
-          }
-          return value;
-        });
-
-        if (friendsLastMsgs.length > 0) {
-          const now = new Date();
-          const alignUserByTime = friendsLastMsgs.sort(
-            (a: any, b: any) =>
-              Math.abs(now.getTime() - a.lastMsgTime?.getTime()) -
-              Math.abs(now.getTime() - b.lastMsgTime?.getTime())
+        const friendsLastMsgs = friendData.map((value) => {
+          const matchingFriend: any = data.find(
+            (item: any) => item.uid === [uid, value.uid].sort().join("")
           );
-          setFriends(alignUserByTime);
-          setSelectedUser(alignUserByTime[0]);
-          window.location.hash = `${alignUserByTime[0]?.uid}`;
-          setUserId(`${alignUserByTime[0]?.uid}`);
-        }
+          return { ...value, ...matchingFriend, uid: value.uid };
+        });
+        setFriends(friendsLastMsgs);
+        setIsLoading(false);
       });
-      setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error("Error in getLastMsg:", error);
     }
   };
 
@@ -168,6 +159,12 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     });
     await updateDoc(doc(database, "users", `${userEmail}`), {
       friends: arrayUnion(uid),
+    });
+    await setDoc(doc(database, "chats", `${[uid, id].sort().join("")}`), {
+      key: "",
+      uid: [uid, id].sort().join(""),
+      lastMsgTime: new Date().toISOString(),
+      lastMsg: "",
     });
     getCurrentUser();
   };
@@ -223,14 +220,12 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     try {
       const q = query(
         collection(database, "chats", `${createChatId()}`, "messagas"),
-        orderBy("timestemp", "desc"),
-        limit(15)
+        orderBy("timestemp", "asc")
+        // limit(10)
       );
       onSnapshot(q, (snapshot) => {
         setChats(
-          snapshot.docs
-            .map((doc: any) => ({ ...doc.data(), id: doc.id }))
-            .reverse()
+          snapshot.docs.map((doc: any) => ({ ...doc.data(), id: doc.id }))
         );
       });
     } catch (error) {
@@ -263,12 +258,13 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         collection(database, "chats", `${createChatId()}`, "messagas"),
         orderBy("timestemp", "desc"),
         startAfter(firstMeg),
-        limit(15)
+        limit(10)
       );
       onSnapshot(q, (snapshot) => {
-        const oldChats = snapshot.docs
-          .map((doc: any) => ({ ...doc.data(), id: doc.id }))
-          .reverse();
+        const oldChats = snapshot.docs.map((doc: any) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
         setChats([...oldChats, ...chats]);
       });
     } catch (error) {
@@ -299,13 +295,13 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         let lastMsg: any;
         if (typeof message === "string") {
           msg = { msg: encryptData(message, createChatId()) };
-          lastMsg = encryptData(message, createChatId());
+          lastMsg = message;
         } else if (Array.isArray(files)) {
           msg = { files: files };
-          lastMsg = encryptData("Send Images", createChatId());
+          lastMsg = "Send Images";
         } else if (typeof files === "string") {
           msg = { audio: `${files}` };
-          lastMsg = encryptData("Audio message", createChatId());
+          lastMsg = "Audio message";
         }
 
         await addDoc(q, {
@@ -315,21 +311,13 @@ const UserContextProvider: React.FC<ChildrenType> = ({
         });
         await updateDoc(doc(database, "chats", `${createChatId()}`), {
           lastMsgTime: new Date().toISOString(),
-          lastMsg: `${lastMsg}`,
+          lastMsg: `${encryptData(lastMsg, createChatId())}`,
         });
         setMessage(null);
       }
     } catch (error) {
       toast({ title: "Something went wrong!", variant: "destructive" });
     }
-  };
-
-  const createChatDatabase = () => {
-    setDoc(doc(database, "chats", `${createChatId()}`), {
-      key: "",
-    })
-      .then((res) => sendMessage())
-      .catch((err) => console.log(err));
   };
 
   const deleteMsg = async (id: string) => {
@@ -459,7 +447,6 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     acceptUserInvite,
     rejectUserInvite,
     getChats,
-    createChatDatabase,
     sendMessage,
     message,
     setMessage,

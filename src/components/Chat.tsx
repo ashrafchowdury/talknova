@@ -29,7 +29,6 @@ const Chat = ({ className }: ClassType) => {
     selectedUser,
     userId,
     chats,
-    createChatDatabase,
     sendMessage,
     message,
     setMessage,
@@ -51,7 +50,6 @@ const Chat = ({ className }: ClassType) => {
     const clientHeight = document.querySelector(
       ".chatInterface"
     ) as HTMLElement;
-
     if (clientHeight.scrollTop == 0 && chatId.load && chats.length > 6) {
       autoScroll && setAutoScroll(false);
       clientHeight.scrollTop = 5;
@@ -103,7 +101,7 @@ const Chat = ({ className }: ClassType) => {
       )}
       <article
         onLoad={() => (autoScroll ? handleLoad() : null)}
-        onScroll={handleScroll}
+        // onScroll={handleScroll}
         className="chatInterface scroll-smooth w-full h-[86.5vh] px-2 sm:px-6 md:px-8 break-all pt-16 pb-10 overflow-y-auto"
       >
         {chats.length == 0 && (
@@ -163,7 +161,7 @@ const Chat = ({ className }: ClassType) => {
                 className="w-8 md:w-9 h-8 md:h-9"
                 onClick={() => {
                   !autoScroll && setAutoScroll(true);
-                  chats.length > 0 ? sendMessage() : createChatDatabase();
+                  sendMessage();
                 }}
               >
                 <PaperPlaneIcon className="w-3 md:w-4 h-3 md:h-4" />

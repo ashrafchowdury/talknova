@@ -7,6 +7,9 @@ export type UserType = {
   date: string;
   friends: string[];
   invite: string[];
+  lastMsg?: string;
+  lastMsgTime?: any;
+  key?: string;
 };
 
 export type TypeUserContextProvider = {
@@ -38,7 +41,6 @@ export type TypeUserContextProvider = {
   getUserInvitations: (id: string[]) => void;
   acceptUserInvite: (id: string, userEmail: string) => void;
   rejectUserInvite: (id: string) => void;
-  createChatDatabase: () => void;
   getChats: () => void;
   sendMessage: () => void;
   uploadFile: (type: "message" | "profile") => void;

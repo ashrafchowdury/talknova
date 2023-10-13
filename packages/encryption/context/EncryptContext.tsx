@@ -36,14 +36,13 @@ const EncryptContextProvider: React.FC<ChildrenType> = ({
       return data;
     }
   };
-  const decryptData = (data: string, key: string): string => {
+  const decryptData = (data: string, key: any): string => {
     try {
       const decryptedData = CryptoJS.AES.decrypt(data, key)?.toString(
         CryptoJS.enc.Utf8
       );
       return decryptedData;
     } catch (error) {
-      console.log(error);
       return data;
     }
   };
