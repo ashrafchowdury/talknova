@@ -50,9 +50,12 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
       friends: [firstFriend],
       invite: [],
     });
-    await updateDoc(doc(database, "users", `${user.email}`), {
-      friends: arrayUnion(user.uid),
-    });
+    await updateDoc(
+      doc(database, "users", `${process.env.NEXT_PUBLIC_FIRST_FRIEND_EMAIL}`),
+      {
+        friends: arrayUnion(user.uid),
+      }
+    );
     await setDoc(
       doc(database, "chats", `${[user.uid, firstFriend].sort().join("")}`),
       {
