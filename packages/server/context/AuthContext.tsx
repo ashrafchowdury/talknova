@@ -75,7 +75,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
         createSession(result?.user.uid);
       } else if (type) {
         await updateProfile(result?.user, { displayName: type });
-        createUserProfile(result?.user);
+        await createUserProfile(result?.user);
         createSession(result?.user.uid);
       }
       setCurrentUser(result?.user ?? {});
