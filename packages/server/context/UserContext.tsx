@@ -28,7 +28,6 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { database } from "../config";
-import { generateUid } from "@/lib/functions";
 import { useCookies } from "@/lib/hooks";
 import { useEncrypt } from "@/packages/encryption";
 import { toast } from "@/packages/ui/hooks/use-toast";
@@ -384,6 +383,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   const uploadAudio = (item: any) => {
     const storage = getStorage();
+    const generateUid = new Date().getMilliseconds();
     try {
       const storageRef = ref(storage, `audios/${generateUid}.webm`);
       const uploadTask = uploadBytesResumable(storageRef, item);

@@ -12,8 +12,6 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { setDoc, doc, updateDoc, arrayUnion } from "firebase/firestore";
-
-import { generateUid } from "@/lib/functions";
 import { useToast } from "@/packages/ui";
 import { useRouter } from "next/navigation";
 import { useCookies } from "@/lib/hooks";
