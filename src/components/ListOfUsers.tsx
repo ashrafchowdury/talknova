@@ -1,5 +1,5 @@
 "use client";
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { Users, UsersSkeleton } from "@/components/ui";
 import { Invite, Notification } from ".";
 import {
@@ -10,10 +10,22 @@ import {
 import { Button, Input } from "@/packages/ui";
 import Link from "next/link";
 import { useUsers } from "@/packages/server";
+import { useVisibilityChange } from "@uidotdev/usehooks";
 
 const ListOfUsers = () => {
   const [searchUsers, setSearchUsers] = useState("");
-  const { friends, myself } = useUsers();
+  const { friends, myself, isLoading } = useUsers();
+  const documentVisible = useVisibilityChange();
+
+  useEffect(() => {
+    const soundEffects = (): any => {
+      if (!documentVisible && navigator.onLine && !isLoading) {
+        const effect = new Audio("/new_message.mp3");
+        effect.play();
+      }
+    };
+    soundEffects();
+  }, [friends]);
 
   const alignUser = () => {
     const now = new Date();
