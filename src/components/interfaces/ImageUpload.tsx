@@ -15,7 +15,7 @@ import {
   Input,
 } from "@/packages/ui";
 import { ImageIcon, Cross2Icon } from "@radix-ui/react-icons";
-import { useUsers } from "@/packages/server";
+import { useChats } from "@/packages/server/context/ChatContext";
 import { cn } from "@/lib/functions";
 
 type ImageComponentType = {
@@ -25,7 +25,7 @@ type ImageComponentType = {
 
 const ImageUpload = ({ children, type }: ImageComponentType) => {
   const [imagePreview, setImagePreview] = useState<any>([]);
-  const { selectFiles, setSelectFiles, uploadFile } = useUsers();
+  const { selectFiles, setSelectFiles, uploadFile } = useChats();
 
   const handleImagePreviews = (e: any) => {
     const selectedFiles = e.target.files;

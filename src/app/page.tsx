@@ -93,9 +93,8 @@ export default function Home() {
             </PopoverContent>
           </Popover>
         </div>
-
-        <Features />
       </header>
+      <Features />
     </main>
   );
 }

@@ -18,9 +18,9 @@ import {
   DialogClose,
   useToast,
 } from "@/packages/ui";
-import { InviteUsers, InviteUsersSkeleton } from "./ui";
+import { InviteUsers, InviteUsersSkeleton } from "./interfaces";
 import { ChildrenType } from "@/types";
-import { useUsers } from "@/packages/server";
+import { useUsers } from "@/packages/server/context/UserContext";
 
 const Invite = ({ children }: ChildrenType) => {
   const [selectedInvitation, setSelectedInvitation] = useState<string[]>([]);

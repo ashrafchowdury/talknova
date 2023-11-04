@@ -7,10 +7,11 @@ import {
   ThemeSelector,
   Avatar,
   ImageUpload,
-} from "@/components/ui";
+} from "@/components/interfaces";
 import { useTheme } from "next-themes";
-import { useAuth, useUsers } from "@/packages/server";
-import { cn, toggleTheme } from "@/lib/functions";
+import { useAuth } from "@/packages/server/context/AuthContext";
+import { useUsers } from "@/packages/server/context/UserContext";
+import { toggleTheme } from "@/lib/functions";
 import { themeSchema } from "@/lib/helpers";
 
 const Settings = () => {
@@ -52,7 +53,7 @@ const Settings = () => {
   };
 
   return (
-    <main className=" w-[95%] sm:w-[520px] md:w-[720px] lg:w-[1050px] mx-auto">
+    <main className="md:px-4 md:border-x h-[98vh]">
       <nav className="h-[60px] border-b flex items-center justify-start">
         <BackSpace href="/users" />
         <p className=" text-xl font-bold ml-3">Settings</p>
@@ -125,10 +126,10 @@ const Settings = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center mt-20 mb-6">
+      <div className="flex items-center justify-center mt-28 mb-6">
         <Button
           variant="destructive"
-          className="w-full md:w-[98%] py-5"
+          className="w-full md:w-[98%] py-5 "
           onClick={() => logout()}
           load={isLoading}
         >

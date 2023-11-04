@@ -13,8 +13,8 @@ import {
   Skeleton,
 } from "@/packages/ui";
 import { BellIcon, TrashIcon, CheckIcon } from "@radix-ui/react-icons";
-import { useUsers } from "@/packages/server";
-import { Avatar } from "./ui";
+import { useUsers } from "@/packages/server/context/UserContext";
+import { Avatar } from "./interfaces";
 
 const Notification = () => {
   const { getUserInvitations, invite, acceptUserInvite, myself } = useUsers();

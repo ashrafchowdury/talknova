@@ -16,7 +16,7 @@ const DynamicReactMic = dynamic(
   }
 );
 import { cn } from "@/lib/functions";
-import { useUsers } from "@/packages/server";
+import { useChats } from "@/packages/server/context/ChatContext";
 import { useTheme } from "next-themes";
 import { useAppearance } from "@/lib/hooks";
 
@@ -24,7 +24,7 @@ export const AudioMessage = ({ data, position }: any) => {
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const { setIsAudioPlaying, isRecording } = useUsers();
+  const { setIsAudioPlaying, isRecording } = useChats();
   const { userAppearance } = useAppearance();
   const audioRef: any = useRef(null);
 
@@ -142,7 +142,7 @@ export const RecordAudio = () => {
     setIsRecording,
     uploadAudio,
     fileUploadProgress,
-  } = useUsers();
+  } = useChats();
   const { toast } = useToast();
   const { theme } = useTheme();
   const { userAppearance } = useAppearance();

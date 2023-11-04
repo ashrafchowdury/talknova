@@ -22,18 +22,19 @@ import {
 import { QuestionMark } from ".";
 import { Cross1Icon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useEncrypt } from "@/packages/encryption";
-import { useUsers } from "@/packages/server";
+import { UserType } from "@/packages/server/types";
+import { useChats } from "@/packages/server/context/ChatContext";
 
-const SecretKey = () => {
+const SecretKey = ({ user }: { user: UserType }) => {
   const [value, setValue] = useState("");
   const { setKey, setIsAutoLock } = useEncrypt();
-  const { selectedUser, toggleChatKey } = useUsers();
+  const { toggleChatKey } = useChats();
 
   const handleEncryption = () => {
-    if (value && selectedUser.key == value) {
+    if (value && user?.key == value) {
       toggleChatKey("");
       setIsAutoLock(false);
-    } else if (value && !selectedUser.key) {
+    } else if (value && !user?.key) {
       toggleChatKey(value);
     }
     setValue("");
@@ -50,8 +51,8 @@ const SecretKey = () => {
             </p>
           </div>
           <Switch
-            defaultChecked={Boolean(selectedUser?.key)}
-            checked={Boolean(selectedUser?.key)}
+            defaultChecked={Boolean(user?.key)}
+            checked={Boolean(user?.key)}
           />
         </div>
       </DialogTrigger>
@@ -74,7 +75,7 @@ const SecretKey = () => {
         <DialogFooter>
           <DialogClose>
             <Button type="submit" className="w-full" onClick={handleEncryption}>
-              {selectedUser.key ? "Disable" : "Lock Chats"}
+              {user?.key ? "Disable" : "Lock Chats"}
             </Button>
           </DialogClose>
         </DialogFooter>
@@ -85,13 +86,12 @@ const SecretKey = () => {
 
 export default SecretKey;
 
-export const AddSecretKey = () => {
+export const AddSecretKey = ({ user }: { user: UserType }) => {
   const [value, setValue] = useState("");
   const { setKey, setToggleLockUi, setIsAutoLock, toggleLockUi } = useEncrypt();
-  const { selectedUser } = useUsers();
 
   const handleDecryption = () => {
-    if (value && value == selectedUser.key) {
+    if (value && value == user?.key) {
       setKey(value);
       setToggleLockUi(false);
       setIsAutoLock(false);

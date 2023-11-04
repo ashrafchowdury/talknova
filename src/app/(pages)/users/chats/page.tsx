@@ -1,11 +1,10 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { GearIcon, PaperPlaneIcon, ImageIcon } from "@radix-ui/react-icons";
 import { Button, Input, Progress } from "@/packages/ui";
-import { useWindowResize } from "@/lib/hooks";
 import { cn } from "@/lib/functions";
-import { ClassType } from "@/types";
 import {
   Message,
   BackSpace,
@@ -15,62 +14,139 @@ import {
   ImageUpload,
   RecordAudio,
   AddSecretKey,
-} from "./ui";
-import { useRouter } from "next/navigation";
-import { useUsers } from "@/packages/server";
+} from "@/components/interfaces";
+import { useUsers } from "@/packages/server/context/UserContext";
+import { useChats } from "@/packages/server/context/ChatContext";
 import { useTheme } from "next-themes";
 import { useEncrypt } from "@/packages/encryption";
+import { UserType } from "@/packages/server/types";
+import {
+  doc,
+  onSnapshot,
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDoc,
+  getDocs,
+  startAfter,
+} from "firebase/firestore";
+import { database } from "@/packages/server/config";
 
-const Chat = ({ className }: ClassType) => {
-  const { windowSize } = useWindowResize();
+const Chats = () => {
+  const [chats, setChats] = useState<any>([]);
+  const [chatId, setChatId] = useState<any>({ id: "", load: true });
+  const [autoScroll, setAutoScroll] = useState(true);
+  const id: any = useSearchParams().get("id");
   const router = useRouter();
   const { theme } = useTheme();
+  const { friends, myself, isLoading } = useUsers();
   const {
-    selectedUser,
-    userId,
-    chats,
     sendMessage,
     message,
     setMessage,
     fileUploadProgress,
     isRecording,
-    getOldChats,
-    chatId,
-    autoScroll,
-    setAutoScroll,
-  } = useUsers();
-  const { isAutoLock, toggleLockUi } = useEncrypt();
+    createChatId,
+  } = useChats();
+  const { isAutoLock } = useEncrypt();
+  const user: UserType = friends.filter((item) => item.uid == id)[0];
+
+  useEffect(() => {
+    setChats([]);
+    setAutoScroll(true);
+    setChatId({ id: "", load: true });
+    getChats();
+  }, [user?.uid]);
 
   const handleLoad = () => {
     const doc: any = document.querySelector(".chatInterface");
     doc.scrollTop = doc?.scrollHeight;
   };
 
+  const getChats = () => {
+    try {
+      const q = query(
+        collection(database, "chats", `${createChatId()}`, `messagas`),
+        orderBy("timestemp", "desc"),
+        limit(10)
+      );
+      onSnapshot(q, (snapshot) => {
+        setChats(
+          snapshot.docs
+            .map((doc: any) => ({
+              ...doc.data(),
+              id: doc.id,
+            }))
+            .reverse()
+        );
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getFirstChat = async () => {
+    try {
+      const q = query(
+        collection(database, "chats", `${createChatId()}`, "messagas"),
+        orderBy("timestemp", "asc"),
+        limit(1)
+      );
+      const firstChat = await getDocs(q);
+      setChatId({ id: firstChat.docs[0].id, load: true });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getOldChats = async () => {
+    try {
+      !chatId.id && getFirstChat();
+      const firstMeg = await getDoc(
+        doc(database, "chats", `${createChatId()}`, "messagas", chats.at(0).id)
+      );
+      firstMeg.id == chatId.id && setChatId({ ...chatId, load: false });
+      const q = query(
+        collection(database, "chats", `${createChatId()}`, "messagas"),
+        orderBy("timestemp", "desc"),
+        startAfter(firstMeg),
+        limit(15)
+      );
+      onSnapshot(q, (snapshot) => {
+        const oldChats = snapshot.docs
+          .map((doc: any) => ({ ...doc.data(), id: doc.id }))
+          .reverse();
+        setChats([...oldChats, ...chats]);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleScroll = () => {
     const clientHeight = document.querySelector(
       ".chatInterface"
     ) as HTMLElement;
+
     if (clientHeight.scrollTop == 0 && chatId.load && chats.length > 6) {
       autoScroll && setAutoScroll(false);
       clientHeight.scrollTop = 5;
       getOldChats();
     }
   };
-
   return (
-    <main className={cn(" border-x md:mt-2 relative", className)}>
-      {selectedUser.key && isAutoLock ? <AddSecretKey /> : null}
+    <main className="border-x md:mt-2 relative w-[95%] sm:w-[520px] md:w-[720px] lg:w-[680px] xl:w-[780px] mx-auto">
+      {user?.key && isAutoLock ? <AddSecretKey user={user} /> : null}
       <nav className="h-[60px] px-2 sm:px-6 md:px-8 border-b flex items-center justify-between sticky z-20 top-0 bg-background">
         <BackSpace href="/users" />
         <div className="flex items-center">
           <Avatar
-            img={selectedUser?.image}
-            fallback={selectedUser?.name}
+            img={user?.image}
+            fallback={user?.name}
             className=" w-10 h-10"
           />
           <div className="ml-2">
-            <p className="text-[16px] md:text-lg font-bold">
-              {selectedUser?.name}
+            <p className="text-[16px] md:text-lg font-bold capitalize">
+              {user?.name}
             </p>
             <div className="text-xs md:text-sm opacity-60 -mt-1 flex items-end ">
               <p>Typing</p>
@@ -86,11 +162,8 @@ const Chat = ({ className }: ClassType) => {
           <Button
             variant="ghost"
             title="Settings"
-            className="py-[2px] px-2 mx-1 hover:bg-slate-200 dark:hover:bg-slate-800 duration-300"
-            onClick={() =>
-              windowSize < 1350 &&
-              router.push(`/user-settings#${selectedUser?.id}`)
-            }
+            className="py-[2px] px-2 mx-1 hover:bg-border duration-300"
+            onClick={() => router.push(`/users/settings?id=${user?.uid}`)}
           >
             <GearIcon className="w-5 h-5" />
           </Button>
@@ -101,13 +174,13 @@ const Chat = ({ className }: ClassType) => {
       )}
       <article
         onLoad={() => (autoScroll ? handleLoad() : null)}
-        // onScroll={handleScroll}
+        onScroll={handleScroll}
         className="chatInterface scroll-smooth w-full h-[86.5vh] px-2 sm:px-6 md:px-8 break-all pt-16 pb-10 overflow-y-auto"
       >
         {chats.length == 0 && (
           <div className="w-full mt-20">
             <p className="text-xl md:text-3xl text-center font-bold text-muted-foreground opacity-80">
-              Welcome to {selectedUser.name} Chat 🎉
+              Welcome to {user?.name} Chat 🎉
             </p>
           </div>
         )}
@@ -116,7 +189,8 @@ const Chat = ({ className }: ClassType) => {
           <Fragment key={data.id}>
             <Message
               data={data}
-              position={data.uid == selectedUser.uid ? "right" : "left"}
+              position={data.uid == user?.uid ? "right" : "left"}
+              user={user}
             />
           </Fragment>
         ))}
@@ -129,7 +203,7 @@ const Chat = ({ className }: ClassType) => {
               placeholder="Type a Message..."
               className=" !py-6 text-sm md:text-[16px] pr-36"
               onChange={(e) => setMessage(e.target.value)}
-              value={typeof message === "string" ? message : ""}
+              value={message}
               disabled={fileUploadProgress !== 0}
             />
           )}
@@ -176,4 +250,4 @@ const Chat = ({ className }: ClassType) => {
   );
 };
 
-export default Chat;
+export default Chats;

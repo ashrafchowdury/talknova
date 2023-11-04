@@ -11,15 +11,14 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/packages/ui";
-import { cn } from "@/lib/functions";
-import { useUsers } from "@/packages/server";
-import { ImageIcon, CopyIcon } from "@radix-ui/react-icons";
+import { useChats } from "@/packages/server/context/ChatContext";
+import { ImageIcon } from "@radix-ui/react-icons";
 
 const AllImages = () => {
-  const { chats } = useUsers();
+  const { chats } = useChats();
   return (
     <Dialog>
-      <DialogTrigger className="w-full">
+      <DialogTrigger className="w-full" asChild>
         <Button
           variant="outline"
           title="All Shared Imgaes"
@@ -32,7 +31,7 @@ const AllImages = () => {
         <DialogHeader>
           <DialogTitle>Sended Files</DialogTitle>
         </DialogHeader>
-        <section className="flex flex-wrap items-center justify-center border rounded-lg w-full h-auto max-h-[70vh] md:max-h-[65vh] lg:max-h-[700px] overflow-y-auto relative gap-3 py-4 px-3 mb-7">
+        <div className="flex flex-wrap items-center justify-center border rounded-lg w-full h-auto max-h-[70vh] md:max-h-[65vh] lg:max-h-[700px] overflow-y-auto relative gap-3 py-4 px-3 mb-7">
           {chats?.map((data: any) => (
             <Fragment key={data.timestamp}>
               {data?.send?.files?.map((item: any, ind: number) => (
@@ -52,7 +51,7 @@ const AllImages = () => {
           {!chats?.map((data: any) => data?.send?.files?.length == 0)[0] && (
             <p className="font-semibold text-muted-foreground my-28">Empty</p>
           )}
-        </section>
+        </div>
         <DialogFooter>
           <DialogClose>
             <Button className="w-full">Close</Button>

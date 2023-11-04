@@ -1,32 +1,24 @@
 "use client";
 
 import React, { useState, useEffect, useContext, createContext } from "react";
-import { TypeUserContextProvider, UserType, ChildrenType } from "../types";
+import {
+  TypeUserContextProvider,
+  UserType,
+  ChildrenType,
+  LastMsgType,
+} from "../types";
 import {
   doc,
   setDoc,
   onSnapshot,
   collection,
   query,
-  deleteDoc,
   where,
   updateDoc,
   arrayRemove,
   arrayUnion,
-  orderBy,
-  limit,
-  serverTimestamp,
-  addDoc,
-  startAfter,
   getDocs,
-  getDoc,
 } from "firebase/firestore";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
 import { database } from "../config";
 import { useCookies } from "@/lib/hooks";
 import { useEncrypt } from "@/packages/encryption";
@@ -38,29 +30,15 @@ export const useUsers = () => useContext(UserContext)!;
 const UserContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
-  // states
   const [myself, setMyself] = useState<UserType | any>({});
   const [user, setUser] = useState<UserType[]>([]);
-  const [friends, setFriends] = useState<UserType[]>([]); // user friends
+  const [friends, setFriends] = useState<UserType[]>([]);
   const [invite, setInvite] = useState<UserType[]>([]);
-  const [selectedUser, setSelectedUser] = useState<UserType | any>({}); // first user
-  const [userId, setUserId] = useState(""); // selected user id
-  const [isLoading, setIsLoading] = useState(true);
-  const [chats, setChats] = useState<any>([]); // user chats
-  const [chatId, setChatId] = useState<{ id: string; load: boolean }>({
-    id: "",
-    load: true,
-  });
-  const [message, setMessage] = useState<string | string[] | null>(null); // input message
-  const [selectFiles, setSelectFiles] = useState<string[] | []>([]); // selected files
-  const [fileUploadProgress, setFileUploadProgress] = useState(0);
-  const [isRecording, setIsRecording] = useState(false);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
-  const [autoScroll, setAutoScroll] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   //hooks
   const { uid } = useCookies();
-  const { setToggleLockUi, setIsAutoLock, encryptData, key } = useEncrypt();
+  const { setToggleLockUi, setIsAutoLock, key } = useEncrypt();
 
   //functions
   const getAllUsers = () => {
@@ -77,7 +55,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   const getCurrentUser = () => {
     const q = query(collection(database, "users"), where("uid", "==", uid));
-    const userData = onSnapshot(q, (snapshot) => {
+    onSnapshot(q, (snapshot) => {
       const data: any = snapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
@@ -99,9 +77,6 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
       if (data.length > 0) {
         setFriends(data);
-        setSelectedUser(data[0]);
-        window.location.hash = `${data[0]?.uid}`;
-        setUserId(`${data[0]?.uid}`);
         await getLastMsg(data, id);
       }
     } catch (error) {
@@ -118,12 +93,13 @@ const UserContextProvider: React.FC<ChildrenType> = ({
           ...doc.data(),
           id: doc.id,
         }));
-        const friendsLastMsgs = friendData.map((value) => {
-          const matchingFriend: any = data.find(
+        const friendsLastMsgs = friendData.map((value: any) => {
+          const matchingFriend = data.find(
             (item: any) => item.uid === [uid, value.uid].sort().join("")
           );
           return { ...value, ...matchingFriend, uid: value.uid };
         });
+
         setFriends(friendsLastMsgs);
         setIsLoading(false);
       });
@@ -174,21 +150,6 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     });
   };
 
-  const getSelectedUser = (id: string) => {
-    const filter: any = friends.filter((data: any) => data.uid == id);
-    if (filter[0].key == key) {
-      setIsAutoLock(false);
-      setToggleLockUi(false);
-    } else if (filter[0].key) {
-      setIsAutoLock(true);
-      setToggleLockUi(true);
-    } else {
-      setIsAutoLock(false);
-      setToggleLockUi(false);
-    }
-    setSelectedUser(filter[0]);
-  };
-
   const updateUserProfile = async (
     image?: string,
     name?: string,
@@ -210,257 +171,23 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
-  const createChatId = () => {
-    const combinedUid = [uid, selectedUser.uid].sort().join("");
-    return combinedUid;
-  };
-
-  const getChats = () => {
-    try {
-      const q = query(
-        collection(database, "chats", `${createChatId()}`, "messagas"),
-        orderBy("timestemp", "asc")
-        // limit(10)
-      );
-      onSnapshot(q, (snapshot) => {
-        setChats(
-          snapshot.docs.map((doc: any) => ({ ...doc.data(), id: doc.id }))
-        );
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getFirstChat = async () => {
-    try {
-      const q = query(
-        collection(database, "chats", `${createChatId()}`, "messagas"),
-        orderBy("timestemp", "asc"),
-        limit(1)
-      );
-      const firstChat = await getDocs(q);
-      setChatId({ id: firstChat.docs[0].id, load: true });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getOldChats = async () => {
-    try {
-      !chatId.id && getFirstChat();
-      const firstMeg = await getDoc(
-        doc(database, "chats", `${createChatId()}`, "messagas", chats.at(0).id)
-      );
-      firstMeg.id == chatId.id && setChatId({ ...chatId, load: false });
-      const q = query(
-        collection(database, "chats", `${createChatId()}`, "messagas"),
-        orderBy("timestemp", "desc"),
-        startAfter(firstMeg),
-        limit(10)
-      );
-      onSnapshot(q, (snapshot) => {
-        const oldChats = snapshot.docs.map((doc: any) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        setChats([...oldChats, ...chats]);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const toggleChatKey = async (secKey: string) => {
-    await updateDoc(doc(database, "chats", `${createChatId()}`), {
-      key: secKey,
-      lastMsgTime: new Date().toISOString(),
-      lastMsg: encryptData(
-        secKey ? "Added AutoLock" : "AutoLock Removed",
-        createChatId()
-      ),
-    });
-  };
-
-  const sendMessage = async (files?: any) => {
-    try {
-      const q: any = query(
-        collection(database, "chats", `${createChatId()}`, "messagas")
-      );
-      if (!message && !files) {
-        return null;
-      } else {
-        let msg: any;
-        let lastMsg: any;
-        if (typeof message === "string") {
-          msg = { msg: encryptData(message, createChatId()) };
-          lastMsg = message;
-        } else if (Array.isArray(files)) {
-          msg = { files: files };
-          lastMsg = "Send Images";
-        } else if (typeof files === "string") {
-          msg = { audio: `${files}` };
-          lastMsg = "Audio message";
-        }
-
-        await addDoc(q, {
-          send: msg,
-          timestemp: serverTimestamp(),
-          uid: uid,
-        });
-        await updateDoc(doc(database, "chats", `${createChatId()}`), {
-          lastMsgTime: new Date().toISOString(),
-          lastMsg: `${encryptData(lastMsg, createChatId())}`,
-        });
-        setMessage(null);
-      }
-    } catch (error) {
-      toast({ title: "Something went wrong!", variant: "destructive" });
-    }
-  };
-
-  const deleteMsg = async (id: string) => {
-    const q = doc(database, "chats", `${createChatId()}`, "messagas", id);
-    try {
-      await deleteDoc(q);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const uploadFile = (type: string) => {
-    const storage = getStorage();
-
-    try {
-      // Create an array to store the promises of each upload task
-      const uploadPromises = selectFiles.map((item: any) => {
-        const storageRef = ref(
-          storage,
-          `${type == "message" ? "users" : "profile"}/${item.name}`
-        );
-        const uploadTask = uploadBytesResumable(storageRef, item);
-
-        return new Promise((resolve, reject) => {
-          uploadTask.on(
-            "state_changed",
-            (snapshot) => {
-              setFileUploadProgress(
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-              );
-            },
-            (error) => {
-              toast({ title: "Something went wrong!", variant: "destructive" });
-              reject(error);
-            },
-            () => {
-              getDownloadURL(uploadTask.snapshot.ref)
-                .then((downloadURL) => {
-                  setFileUploadProgress(0);
-                  resolve(downloadURL);
-                })
-                .catch((error) => {
-                  reject(error);
-                });
-            }
-          );
-        });
-      });
-
-      Promise.all(uploadPromises) // Wait for all upload tasks to complete
-        .then((downloadURLs: any) => {
-          type == "message"
-            ? sendMessage(downloadURLs)
-            : updateUserProfile(downloadURLs[0]); // All uploads are done, and downloadURLs contains all the file URLs
-          setSelectFiles([]);
-        })
-        .catch((error) => {
-          toast({ title: "Something went wrong!", variant: "destructive" });
-        });
-    } catch (error) {
-      toast({ title: "Something went wrong!", variant: "destructive" });
-    }
-  };
-
-  const uploadAudio = (item: any) => {
-    const storage = getStorage();
-    const generateUid = new Date().getMilliseconds();
-    try {
-      const storageRef = ref(storage, `audios/${generateUid}.webm`);
-      const uploadTask = uploadBytesResumable(storageRef, item);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          setFileUploadProgress(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-        },
-        (error) => {
-          toast({ title: "Something went wrong!", variant: "destructive" });
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref)
-            .then((downloadURL) => {
-              sendMessage(downloadURL);
-              setFileUploadProgress(0);
-            })
-            .catch((error) => console.log(error));
-        }
-      );
-    } catch (error) {
-      toast({ title: "Something went wrong!", variant: "destructive" });
-    }
-  };
-
-  // effects
   useEffect(() => {
     getCurrentUser();
   }, []);
-  useEffect(() => {
-    setChats([]);
-    setAutoScroll(true);
-    setChatId({ id: "", load: true });
-    getChats();
-  }, [userId]);
 
   const value: TypeUserContextProvider = {
-    userId,
-    setUserId,
-    selectedUser,
     user,
     invite,
     friends,
     isLoading,
-    chats,
-    isRecording,
-    isAudioPlaying,
-    setIsRecording,
-    setIsAudioPlaying,
-    fileUploadProgress,
     myself,
-    chatId,
-    getSelectedUser,
     getAllUsers,
     inviteUser,
     getUserFriends,
     getUserInvitations,
     acceptUserInvite,
     rejectUserInvite,
-    getChats,
-    sendMessage,
-    message,
-    setMessage,
-    selectFiles,
-    setSelectFiles,
-    uploadFile,
-    deleteMsg,
-    uploadAudio,
     updateUserProfile,
-    getOldChats,
-    autoScroll,
-    setAutoScroll,
-    createChatId,
-    toggleChatKey,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

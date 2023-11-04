@@ -2,8 +2,6 @@
 
 import { Button, Skeleton } from "@/packages/ui";
 import { FileTextIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/functions";
-import { ClassType } from "@/types";
 import {
   ThemeSelector,
   ToggleSwitch,
@@ -11,41 +9,38 @@ import {
   SecretKey,
   Avatar,
   AllImages,
-} from "./ui";
-
-import { useUsers } from "@/packages/server";
-import { useWindowResize, useAppearance } from "@/lib/hooks";
+} from "@/components/interfaces";
+import { useUsers } from "@/packages/server/context/UserContext";
+import { useAppearance } from "@/lib/hooks";
 import { useTheme } from "next-themes";
 import { userThemeSchema } from "@/lib/helpers";
+import { useSearchParams, useRouter } from "next/navigation";
+import { UserType } from "@/packages/server/types";
 
-const UserSettings = ({ className }: ClassType) => {
-  const { selectedUser } = useUsers();
+const UserSetting = () => {
+  const id: any = useSearchParams().get("id");
+  const { friends } = useUsers();
   const { userAppearance, changeUserAppearance } = useAppearance();
-  const { windowSize } = useWindowResize();
   const { theme } = useTheme();
+  const user: UserType = friends.filter((item) => item.uid == id)[0];
 
   return (
-    <section className={cn("h-auto lg:h-[98vh]", className)}>
+    <section className="h-auto md:h-[98vh] md:px-4 md:border-x relative">
       <nav className="h-[60px] md:mt-2 xl:px-8 border-b flex items-center justify-start">
-        <BackSpace
-          className="flex xl:hidden"
-          href={windowSize < 1025 ? "/chats" : "/users"}
-        />
-        <p className=" text-xl font-bold ml-3 xl:ml-0">Settings</p>
+        <BackSpace href={`/users/chats?id=${user?.uid}`} />
+        <p className=" text-xl font-bold ml-3">Settings</p>
       </nav>
 
       <div className="flex flex-col items-center justify-center mt-6 px-4">
         <Avatar
-          img={selectedUser?.image}
-          fallback={selectedUser?.name}
+          img={user?.image}
+          fallback={user?.name}
           className="w-24 h-24 text-3xl"
         />
 
-        <p className="text-xl font-bold mt-2 mb-1">{selectedUser?.name}</p>
-        <p className="w-[90%] text-sm text-center opacity-60">
-          {selectedUser?.bio}
-        </p>
-        {!selectedUser?.name && (
+        <p className="text-xl font-bold mt-2 mb-1 capitalize">{user?.name}</p>
+        <p className="w-[90%] text-sm text-center opacity-60">{user?.bio}</p>
+        {!user?.name && (
           <>
             <Skeleton className="h-5 w-20" />
             <Skeleton className="h-10 w-[90%] mt-2" />
@@ -70,7 +65,7 @@ const UserSettings = ({ className }: ClassType) => {
 
       <div className="w-full mt-7 px-4">
         <p className="mb-4 font-medium opacity-60">Settings</p>
-        <SecretKey />
+        <SecretKey user={user} />
 
         <ToggleSwitch
           title="Lorem Ipsum"
@@ -94,4 +89,4 @@ const UserSettings = ({ className }: ClassType) => {
   );
 };
 
-export default UserSettings;
+export default UserSetting;

@@ -17,7 +17,8 @@ import {
   Skeleton,
 } from "@/packages/ui";
 import { cn } from "@/lib/functions";
-import { useUsers } from "@/packages/server";
+import { useUsers } from "@/packages/server/context/UserContext";
+import { useChats } from "@/packages/server/context/ChatContext";
 import {
   TrashIcon,
   DotsVerticalIcon,
@@ -28,15 +29,17 @@ import {
 import { Avatar, AudioMessage, LinkPreview } from ".";
 import { useAppearance } from "@/lib/hooks";
 import { useEncrypt } from "@/packages/encryption";
+import { UserType } from "@/packages/server/types";
 
 type MessageType = {
   data?: any;
   position: "left" | "right";
+  user: UserType;
 };
 
-const Message = ({ data, position }: MessageType) => {
+const Message = ({ data, position, user }: MessageType) => {
   const { userAppearance } = useAppearance();
-  const { selectedUser, myself, createChatId } = useUsers();
+  const { myself } = useUsers();
   const { decryptData, isAutoLock } = useEncrypt();
   const msgPosition = position == "left";
   const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -75,8 +78,8 @@ const Message = ({ data, position }: MessageType) => {
         )}
       >
         <Avatar
-          img={msgPosition ? myself.image : selectedUser.image}
-          fallback={msgPosition ? myself.name : selectedUser.name}
+          img={msgPosition ? myself.image : user?.image}
+          fallback={msgPosition ? myself.name : user?.name}
           className="w-4 md:w-6 h-4 md:h-6 text-[7px] md:text-[9px]"
         />
 
@@ -86,22 +89,22 @@ const Message = ({ data, position }: MessageType) => {
             msgPosition
               ? "!ml-4 !mr-2 bg-border"
               : "!mr-4 bg-primary text-color",
-            data?.send?.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
-            data?.send?.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
+            data.send.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
+            data.send.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
             msgPosition ? "" : userAppearance
           )}
         >
-          {data?.send?.audio && (
-            <AudioMessage data={data?.send?.audio} position={msgPosition} />
+          {data.send.audio && (
+            <AudioMessage data={data.send.audio} position={msgPosition} />
           )}
-          {data?.send?.files && (
-            <FileMessage data={data?.send?.files} position={msgPosition} />
+          {data.send.files && (
+            <FileMessage data={data.send.files} position={msgPosition} />
           )}
 
           {data?.send?.msg &&
           decryptData(
             data?.send?.msg,
-            [myself.uid, selectedUser.uid].sort().join("")
+            [myself.uid, user?.uid].sort().join("")
           )?.match(urlRegex) ? (
             <LinkPreview
               message={
@@ -109,7 +112,7 @@ const Message = ({ data, position }: MessageType) => {
                   ? data?.send?.msg
                   : decryptData(
                       data?.send?.msg,
-                      [myself.uid, selectedUser.uid].sort().join("")
+                      [myself.uid, user?.uid].sort().join("")
                     )
               }
             />
@@ -119,7 +122,7 @@ const Message = ({ data, position }: MessageType) => {
                 ? data?.send?.msg
                 : decryptData(
                     data?.send?.msg,
-                    [myself.uid, selectedUser.uid].sort().join("")
+                    [myself.uid, user?.uid].sort().join("")
                   )}
             </span>
           )}
@@ -139,7 +142,7 @@ const Message = ({ data, position }: MessageType) => {
               {formatTimestamp(data.timestemp)}
             </p>
           </div>
-          <MessageMenu data={data} position={msgPosition} />
+          <MessageMenu data={data} position={msgPosition} user={user} />
         </div>
       </div>
     </div>
@@ -208,9 +211,9 @@ export const FileMessage = ({ data, position }: any) => {
   );
 };
 
-export const MessageMenu = ({ data, position }: any) => {
+export const MessageMenu = ({ data, position, user }: any) => {
   const [isCopied, setIsCopied] = useState(false);
-  const { deleteMsg } = useUsers();
+  const { deleteMsg } = useChats();
 
   const copyIconCoponent = () => {
     if (isCopied) {
