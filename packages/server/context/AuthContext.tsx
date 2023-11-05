@@ -143,6 +143,7 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
     updateAuthInfo,
     logout,
     isLoading,
+    setIsLoading,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

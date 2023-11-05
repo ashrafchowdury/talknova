@@ -2,18 +2,12 @@
 import React, { useState, useContext, createContext } from "react";
 import {
   doc,
-  onSnapshot,
   collection,
   query,
   deleteDoc,
   updateDoc,
-  orderBy,
-  limit,
   serverTimestamp,
   addDoc,
-  startAfter,
-  getDocs,
-  getDoc,
 } from "firebase/firestore";
 import {
   getStorage,

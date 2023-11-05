@@ -8,6 +8,7 @@ export type AuthUserType = {
 export type AuthContextType = {
   currentUser: AuthUserType | any;
   isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   singup: (name: string, email: string, password: string) => void;
   login: (email: string, password: string) => void;
   forget: (email: string) => void;

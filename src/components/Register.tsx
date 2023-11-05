@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent } from "react";
+
 import {
   Input,
   Button,
@@ -30,7 +30,7 @@ const Register = () => {
   const { singup, login, forget, isLoading } = useAuth();
   const { toast } = useToast();
 
-  const hnadleForms = (
+  const handleForms = async (
     e: any,
     form: number[],
     authFunction: (...args: string[]) => void
@@ -73,7 +73,7 @@ const Register = () => {
                 </CardHeader>
                 <CardContent>
                   <form
-                    onSubmit={(e) => hnadleForms(e, [0, 1, 2], singup)}
+                    onSubmit={(e) => handleForms(e, [0, 1, 2], singup)}
                     className="space-y-3"
                   >
                     <div className="space-y-1 relative">
@@ -123,7 +123,7 @@ const Register = () => {
                 </CardHeader>
                 <CardContent>
                   <form
-                    onSubmit={(e) => hnadleForms(e, [0, 1], login)}
+                    onSubmit={(e) => handleForms(e, [0, 1], login)}
                     className="space-y-3"
                   >
                     <div className="space-y-1 relative">
@@ -171,7 +171,7 @@ const Register = () => {
                 </CardHeader>
                 <CardContent>
                   <form
-                    onSubmit={(e) => hnadleForms(e, [0], forget)}
+                    onSubmit={(e) => handleForms(e, [0], forget)}
                     className="space-y-1 relative"
                   >
                     <Label htmlFor="email">Email</Label>

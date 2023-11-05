@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect, useContext, createContext } from "react";
 import { useUsers } from "@/packages/server/context/UserContext";
-import { useLS } from ".";
 import { ChildrenType } from "@/types";
 import { useSearchParams } from "next/navigation";
 import { UserType } from "@/packages/server/types";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 type AppearanceContextProviderType = {
   userAppearance: string;
@@ -20,20 +20,20 @@ const AppearanceContextProvider: React.FC<ChildrenType> = ({
 }: ChildrenType) => {
   const [userAppearance, setUserAppearance] = useState("");
   const id: any = useSearchParams().get("id");
+  const [getData, setData] = useLocalStorage(id);
   const { friends } = useUsers();
-  const { getItem, setItem, removeItem } = useLS();
   const user: UserType = friends.filter((item) => item.uid == id)[0];
 
   const changeUserAppearance = (value: string) => {
     if (value == "bg-primary") {
-      removeItem(user?.uid);
+      localStorage.removeItem(id);
     } else {
-      setItem(user?.uid, value);
+      setData(value);
     }
     setUserAppearance(value);
   };
   useEffect(() => {
-    setUserAppearance(getItem(user?.uid));
+    setUserAppearance(getData as string);
   }, [user?.uid]);
 
   const value: AppearanceContextProviderType = {
