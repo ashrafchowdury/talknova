@@ -27,8 +27,9 @@ Talknova is a real-time chat application built with modern technologies, providi
 
 ## Upcoming Features
 
-- [ ] User active/deactive feature
-- [ ] Image download
+- [x] Add Image Compressor
+- [ ] User active/deactivate feature
+- [ ] Image Download
 - [ ] Message seen & unseen
 - [ ] Block User
 - [ ] Delete Account
