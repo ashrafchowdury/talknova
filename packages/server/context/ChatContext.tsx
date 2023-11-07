@@ -37,7 +37,6 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
   const [chats, setChats] = useState<MsgType[]>([]);
   const [chatId, setChatId] = useState<ChatIdType>({ id: "", load: true });
   const [message, setMessage] = useState("");
-  const [selectFiles, setSelectFiles] = useState<string[]>([]);
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
@@ -110,12 +109,12 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
-  const uploadFile = (type: string) => {
+  const uploadFile = (type: string, files: any) => {
     const storage = getStorage();
 
     try {
       // Create an array to store the promises of each upload task
-      const uploadPromises = selectFiles.map((item: any) => {
+      const uploadPromises = files.map((item: any) => {
         const storageRef = ref(
           storage,
           `${type == "message" ? "users" : "profile"}/${item.name}`
@@ -152,7 +151,6 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
           type == "message"
             ? sendMessage(downloadURLs)
             : updateUserProfile(downloadURLs[0]); // All uploads are done, and downloadURLs contains all the file URLs
-          setSelectFiles([]);
         })
         .catch((error) => {
           toast({ title: "Something went wrong!", variant: "destructive" });
@@ -196,13 +194,11 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
   const value: ChatContextProviderType = {
     chats,
     message,
-    selectFiles,
     chatId,
     fileUploadProgress,
     isRecording,
     isAudioPlaying,
     autoScroll,
-    setSelectFiles,
     setAutoScroll,
     setIsRecording,
     setIsAudioPlaying,

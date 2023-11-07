@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+
 import Image from "next/image";
 import {
   Button,
@@ -17,6 +17,7 @@ import {
 import { ImageIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { useChats } from "@/packages/server/context/ChatContext";
 import { cn } from "@/lib/functions";
+import { useImgCompress } from "@/packages/compressor";
 
 type ImageComponentType = {
   type: "message" | "profile";
@@ -24,43 +25,20 @@ type ImageComponentType = {
 };
 
 const ImageUpload = ({ children, type }: ImageComponentType) => {
-  const [imagePreview, setImagePreview] = useState<any>([]);
-  const { selectFiles, setSelectFiles, uploadFile } = useChats();
+  const { uploadFile } = useChats();
+  const { compressImg, preview, production, setPreview, setProduction } =
+    useImgCompress();
 
-  const handleImagePreviews = (e: any) => {
-    const selectedFiles = e.target.files;
-    const MAX_PREVIEW_COUNT = 4;
-
-    if (selectedFiles.length > 0 && selectedFiles.length <= MAX_PREVIEW_COUNT) {
-      const imagePreviews: any = [];
-      const selectedFilesArray = Array.from(selectedFiles);
-      const processFile = (file: any) => {
-        const reader = new FileReader();
-        reader.onload = (event: any) => {
-          imagePreviews.push({
-            name: file.name,
-            data: event.target.result,
-          });
-          if (imagePreviews.length === selectedFilesArray.length) {
-            setImagePreview(imagePreviews);
-            setSelectFiles([...selectedFiles]);
-          }
-        };
-        reader.readAsDataURL(file);
-      };
-      selectedFilesArray.forEach((file) => processFile(file));
-    } else {
-      setImagePreview([]);
-      setSelectFiles([]);
-    }
+  const handleRemoveImage = (name: string) => {
+    const removePrev = preview.filter((item: any) => name !== item.name);
+    const file = production.filter((item: any) => name !== item.name);
+    setPreview(removePrev);
+    setProduction(file);
   };
 
-  const handleRemoveImage = (data: string) => {
-    const preview = imagePreview.filter((item: any) => data !== item.name);
-    const file = selectFiles.filter((item: any) => data !== item.name);
-
-    setImagePreview(preview);
-    setSelectFiles(file);
+  const clearImgStates = () => {
+    setPreview([]);
+    setProduction([]);
   };
 
   return (
@@ -80,16 +58,16 @@ const ImageUpload = ({ children, type }: ImageComponentType) => {
         <section
           className={cn(
             "flex items-center justify-center border rounded-lg h-[300px] relative gap-2",
-            imagePreview.length == 4 && "flex-wrap"
+            preview.length == 4 && "flex-wrap"
           )}
         >
-          {imagePreview.length > 0 ? (
+          {preview.length > 0 ? (
             <>
-              {imagePreview.map((data: any) => (
+              {preview.map((data: any) => (
                 <div
                   className={cn(
                     "relative w-full h-[300px]",
-                    imagePreview.length == 4 && "w-[250px] h-[135px]"
+                    preview.length == 4 && "w-[250px] h-[135px]"
                   )}
                   key={data.name}
                 >
@@ -122,7 +100,7 @@ const ImageUpload = ({ children, type }: ImageComponentType) => {
                 type="file"
                 accept=".png, .jpg, .jpeg"
                 className="opacity-0 border w-full h-[300px] cursor-pointer"
-                onChange={handleImagePreviews}
+                onChange={(e) => compressImg(e.target.files)}
                 multiple={type == "message" ? true : false}
               />
             </>
@@ -130,12 +108,20 @@ const ImageUpload = ({ children, type }: ImageComponentType) => {
         </section>
         <DialogFooter>
           <DialogClose>
-            {imagePreview ? (
-              <Button className="w-full" onClick={() => uploadFile(type)}>
+            {preview.length > 0 ? (
+              <Button
+                className="w-full"
+                onClick={() => {
+                  uploadFile(type, production);
+                  clearImgStates();
+                }}
+              >
                 Send
               </Button>
             ) : (
-              <Button className="w-full">Close</Button>
+              <Button className="w-full" onClick={clearImgStates}>
+                Close
+              </Button>
             )}
           </DialogClose>
         </DialogFooter>
