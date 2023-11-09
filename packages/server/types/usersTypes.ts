@@ -31,4 +31,5 @@ export type TypeUserContextProvider = {
   acceptUserInvite: (id: string, userEmail: string) => void;
   rejectUserInvite: (id: string) => void;
   updateUserProfile: (name?: string, image?: string, bio?: string) => void;
+  activeStatus: (status: boolean) => void;
 };
