@@ -17,7 +17,7 @@ import { themeSchema } from "@/lib/helpers";
 const Settings = () => {
   const [detailes, setDetailes] = useState({ name: "", bio: "" });
   const { logout, isLoading } = useAuth();
-  const { updateUserProfile, myself } = useUsers();
+  const { updateUserProfile, myself, activeStatus } = useUsers();
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
 
@@ -130,7 +130,10 @@ const Settings = () => {
         <Button
           variant="destructive"
           className="w-full md:w-[98%] py-5 "
-          onClick={() => logout()}
+          onClick={() => {
+            logout();
+            activeStatus(false);
+          }}
           load={isLoading}
         >
           Log Out

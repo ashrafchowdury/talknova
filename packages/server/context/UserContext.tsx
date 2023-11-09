@@ -21,8 +21,8 @@ import {
 } from "firebase/firestore";
 import { database } from "../config";
 import { useCookies } from "@/lib/hooks";
-import { useEncrypt } from "@/packages/encryption";
 import { toast } from "@/packages/ui/hooks/use-toast";
+import useActive from "../hook/useActive";
 
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
 export const useUsers = () => useContext(UserContext)!;
@@ -38,7 +38,11 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   //hooks
   const { uid } = useCookies();
-  const { setToggleLockUi, setIsAutoLock, key } = useEncrypt();
+  useActive(isLoading, async (status) => {
+    if (myself.id) {
+      activeStatus(status);
+    }
+  });
 
   //functions
   const getAllUsers = () => {
@@ -53,16 +57,21 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     });
   };
 
-  const getCurrentUser = () => {
+  const getCurrentUser = async () => {
     const q = query(collection(database, "users"), where("uid", "==", uid));
-    onSnapshot(q, (snapshot) => {
-      const data: any = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }))[0];
-      setMyself(data);
-      data?.friends?.length > 0 && getUserFriends(data.friends);
-      data?.invite?.length > 0 && getUserInvitations(data.invite);
+    const snapshot = await getDocs(q);
+    const data: any = snapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }))[0];
+    setMyself(data);
+    data?.friends?.length > 0 && getUserFriends(data.friends);
+    data?.invite?.length > 0 && getUserInvitations(data.invite);
+  };
+
+  const activeStatus = async (status: boolean) => {
+    await updateDoc(doc(database, "users", `${myself.id}`), {
+      active: status,
     });
   };
 
@@ -188,6 +197,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     acceptUserInvite,
     rejectUserInvite,
     updateUserProfile,
+    activeStatus,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
