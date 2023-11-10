@@ -38,11 +38,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
 
   //hooks
   const { uid } = useCookies();
-  useActive(isLoading, async (status) => {
-    if (myself.id) {
-      activeStatus(status);
-    }
-  });
+  // useActive(isLoading, async (status) => {
+  //   if (myself.id) {  activeStatus(status) }
+  // });
 
   //functions
   const getAllUsers = () => {
