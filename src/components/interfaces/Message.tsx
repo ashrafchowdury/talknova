@@ -1,6 +1,6 @@
 import Loader from "./Loader";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import {
   Button,
@@ -25,9 +25,10 @@ import {
   CopyIcon,
   LoopIcon,
   CheckIcon,
+  DownloadIcon,
 } from "@radix-ui/react-icons";
 import { Avatar, AudioMessage, LinkPreview } from ".";
-import { useAppearance } from "@/lib/hooks";
+import { useAppearance, useDownload } from "@/lib/hooks";
 import { useEncrypt } from "@/packages/encryption";
 import { UserType } from "@/packages/server/types";
 
@@ -43,6 +44,7 @@ const Message = ({ data, position, user }: MessageType) => {
   const { decryptData, isAutoLock } = useEncrypt();
   const msgPosition = position == "left";
   const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const fileRef: any = useRef(null);
 
   // Format date
   const formatTimestamp = (timestamp: any) => {
@@ -95,10 +97,18 @@ const Message = ({ data, position, user }: MessageType) => {
           )}
         >
           {data.send.audio && (
-            <AudioMessage data={data.send.audio} position={msgPosition} />
+            <AudioMessage
+              data={data.send.audio}
+              position={msgPosition}
+              fileRef={fileRef}
+            />
           )}
           {data.send.files && (
-            <FileMessage data={data.send.files} position={msgPosition} />
+            <FileMessage
+              data={data.send.files}
+              position={msgPosition}
+              fileRef={fileRef}
+            />
           )}
 
           {data?.send?.msg &&
@@ -142,7 +152,12 @@ const Message = ({ data, position, user }: MessageType) => {
               {formatTimestamp(data.timestemp)}
             </p>
           </div>
-          <MessageMenu data={data} position={msgPosition} user={user} />
+          <MessageMenu
+            data={data}
+            position={msgPosition}
+            user={user}
+            fileRef={fileRef}
+          />
         </div>
       </div>
     </div>
@@ -150,12 +165,15 @@ const Message = ({ data, position, user }: MessageType) => {
 };
 export default Message;
 
-export const FileMessage = ({ data, position }: any) => {
+export const FileMessage = ({ data, position, fileRef }: any) => {
   const { userAppearance } = useAppearance();
+  const { isDownload, downloadImg } = useDownload();
+
   return (
     <>
       {data.length == 1 ? (
         <Image
+          ref={fileRef}
           src={data[0]}
           alt="image"
           width={300}
@@ -182,7 +200,10 @@ export const FileMessage = ({ data, position }: any) => {
             <DialogHeader>
               <DialogTitle>Sended Files</DialogTitle>
             </DialogHeader>
-            <section className="flex flex-wrap items-center justify-center border rounded-lg w-full h-auto max-h-[500px] overflow-y-auto relative gap-3 py-4 px-3 mb-7">
+            <section
+              ref={fileRef}
+              className="flex flex-wrap items-center justify-center border rounded-lg w-full h-auto max-h-[500px] overflow-y-auto relative gap-3 py-4 px-3 mb-7"
+            >
               {data.map((item: string, ind: number) => (
                 <Image
                   src={item}
@@ -196,13 +217,13 @@ export const FileMessage = ({ data, position }: any) => {
               ))}
             </section>
             <DialogFooter>
-              <DialogClose>
-                <Button
-                  className={cn("w-full", position ? "" : userAppearance)}
-                >
-                  Close
-                </Button>
-              </DialogClose>
+              <Button
+                className={cn("w-full", position ? "" : userAppearance)}
+                onClick={() => downloadImg(fileRef, "multiple")}
+                load={isDownload}
+              >
+                Download All
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -211,9 +232,10 @@ export const FileMessage = ({ data, position }: any) => {
   );
 };
 
-export const MessageMenu = ({ data, position, user }: any) => {
+export const MessageMenu = ({ data, position, fileRef }: any) => {
   const [isCopied, setIsCopied] = useState(false);
   const { deleteMsg } = useChats();
+  const { isDownload, downloadImg, downloadAudio } = useDownload();
 
   const copyIconCoponent = () => {
     if (isCopied) {
@@ -254,6 +276,21 @@ export const MessageMenu = ({ data, position, user }: any) => {
             {copyIconCoponent()}
           </Button>
         )}
+
+        {data?.send?.files?.length == 1 || data?.send?.audio ? (
+          <Button
+            variant="ghost"
+            className="!py-0 px-2"
+            onClick={() =>
+              data?.send?.files
+                ? downloadImg(fileRef, "single")
+                : downloadAudio(fileRef)
+            }
+            load={isDownload}
+          >
+            <DownloadIcon className="w-3 md:w-4 h-3 md:h-4" />
+          </Button>
+        ) : null}
 
         <Button variant="ghost" className="py-0 px-2">
           <LoopIcon className="w-[14px] md:w-[18px] h-[14px] md:h-[18px]" />

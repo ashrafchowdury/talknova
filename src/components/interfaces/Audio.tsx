@@ -20,7 +20,7 @@ import { useChats } from "@/packages/server/context/ChatContext";
 import { useTheme } from "next-themes";
 import { useAppearance } from "@/lib/hooks";
 
-export const AudioMessage = ({ data, position }: any) => {
+export const AudioMessage = ({ data, position, fileRef }: any) => {
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -83,6 +83,7 @@ export const AudioMessage = ({ data, position }: any) => {
         position ? "bg-border" : "bg-primary",
         position ? "" : userAppearance
       )}
+      ref={fileRef}
     >
       <audio ref={audioRef} src={data} className=" hidden" />
       <div className="w-full flex items-center space-x-2">
