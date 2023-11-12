@@ -30,7 +30,7 @@ Talknova is a real-time chat application built with modern technologies, providi
 - [x] Add Image Compressor
 - [ ] User active/deactivate feature
 - [x] Image Download
-- [ ] Message seen & unseen
+- [x] Message seen & unseen
 - [ ] Block User
 - [ ] Delete Account
 - [ ] ...
