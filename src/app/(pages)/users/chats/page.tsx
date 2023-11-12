@@ -30,6 +30,7 @@ import {
   getDoc,
   getDocs,
   startAfter,
+  updateDoc,
 } from "firebase/firestore";
 import { database } from "@/packages/server/config";
 
@@ -59,10 +60,13 @@ const Chats = () => {
     getChats();
   }, [user?.uid]);
 
-  const handleLoad = () => {
-    const doc: any = document.querySelector(".chatInterface");
-    doc.scrollTop = doc?.scrollHeight;
-  };
+  useEffect(() => {
+    if (autoScroll) {
+      const doc: any = document.querySelector(".chatInterface");
+      doc.scrollTop = doc?.scrollHeight;
+    }
+    seenMsg();
+  }, [chats]);
 
   const getChats = () => {
     try {
@@ -72,14 +76,13 @@ const Chats = () => {
         limit(10)
       );
       onSnapshot(q, (snapshot) => {
-        setChats(
-          snapshot.docs
-            .map((doc: any) => ({
-              ...doc.data(),
-              id: doc.id,
-            }))
-            .reverse()
-        );
+        const data = snapshot.docs
+          .map((doc: any) => ({
+            ...doc.data(),
+            id: doc.id,
+          }))
+          .reverse();
+        setChats(data);
       });
     } catch (error) {
       console.log(error);
@@ -99,6 +102,7 @@ const Chats = () => {
       console.log(error);
     }
   };
+
   const getOldChats = async () => {
     try {
       !chatId.id && getFirstChat();
@@ -122,6 +126,7 @@ const Chats = () => {
       console.log(error);
     }
   };
+
   const handleScroll = () => {
     const clientHeight = document.querySelector(
       ".chatInterface"
@@ -133,6 +138,27 @@ const Chats = () => {
       getOldChats();
     }
   };
+
+  const seenMsg = () => {
+    try {
+      const unseenChats = chats.filter((data: any) => {
+        return data.uid === myself.uid ? null : data.seen == false;
+      });
+      if (unseenChats.length > 0) {
+        unseenChats.forEach(async (data: any) => {
+          await updateDoc(
+            doc(database, "chats", `${createChatId()}`, "messagas", data.id),
+            {
+              seen: true,
+            }
+          );
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <main className="border-x md:mt-2 relative w-[95%] sm:w-[520px] md:w-[720px] lg:w-[680px] xl:w-[780px] mx-auto">
       {user?.key && isAutoLock ? <AddSecretKey user={user} /> : null}
@@ -173,7 +199,6 @@ const Chats = () => {
         <Progress value={fileUploadProgress} className="w-full" />
       )}
       <article
-        onLoad={() => (autoScroll ? handleLoad() : null)}
         onScroll={handleScroll}
         className="chatInterface scroll-smooth w-full h-[86.5vh] px-2 sm:px-6 md:px-8 break-all pt-16 pb-10 overflow-y-auto"
       >

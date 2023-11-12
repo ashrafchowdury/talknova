@@ -88,6 +88,7 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
           send: msg,
           timestemp: serverTimestamp(),
           uid: uid,
+          seen: false,
         });
         await updateDoc(doc(database, "chats", `${createChatId()}`), {
           lastMsgTime: new Date().toISOString(),

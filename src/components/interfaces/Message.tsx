@@ -69,7 +69,7 @@ const Message = ({ data, position, user }: MessageType) => {
   return (
     <div
       className={cn(
-        "w-full my-4",
+        "w-full my-5",
         msgPosition ? "float-left clear-both" : "float-right clear-both"
       )}
     >
@@ -138,19 +138,29 @@ const Message = ({ data, position, user }: MessageType) => {
           )}
           <div
             className={cn(
-              "absolute -bottom-[18px] flex items-center space-x-2",
+              "absolute -bottom-[24px] flex items-center space-x-2",
               msgPosition ? "right-1" : "-left-1"
             )}
           >
-            <div
-              className={cn("relative", msgPosition ? "right-1" : " hidden")}
-            >
-              <CheckIcon className="w-2 sm:w-3 h-2 sm:h-3" />
-              <CheckIcon className="w-2 sm:w-3 h-2 sm:h-3 absolute top-0 left-[4px]" />
-            </div>
-            <p className="text-[9px] sm:text-[10px] text-muted-foreground whitespace-nowrap">
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-nowrap">
               {formatTimestamp(data.timestemp)}
             </p>
+            <div
+              className={cn("relative", msgPosition ? "right-0" : " hidden")}
+            >
+              <CheckIcon
+                className={cn(
+                  "w-3 sm:w-4 h-3 sm:h-4",
+                  data?.seen && "text-green-600"
+                )}
+              />
+              <CheckIcon
+                className={cn(
+                  "w-3 sm:w-4 h-3 sm:h-4 absolute top-0 left-[4px]",
+                  data?.seen && "text-green-600"
+                )}
+              />
+            </div>
           </div>
           <MessageMenu
             data={data}
