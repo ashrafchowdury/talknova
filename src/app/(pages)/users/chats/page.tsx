@@ -204,7 +204,7 @@ const Chats = () => {
       )}
       <article
         onScroll={handleScroll}
-        className="chatInterface scroll-smooth w-full h-[90%] px-2 sm:px-6 md:px-8 break-all pt-16 pb-8 overflow-y-auto overscroll-contain"
+        className="chatInterface scroll-smooth w-full h-[82%] px-2 sm:px-6 md:px-8 break-all pt-10 pb-6 overflow-y-auto overscroll-contain"
       >
         {chats.length == 0 && (
           <div className="w-full mt-20">
@@ -225,7 +225,7 @@ const Chats = () => {
         ))}
       </article>
 
-      <section className="w-full bg-background mb-3">
+      <section className="w-full bg-background sticky bottom-3">
         <div className="relative md:mx-5">
           {!isRecording && (
             <Input
