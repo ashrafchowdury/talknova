@@ -53,7 +53,7 @@ const Users = () => {
     );
   } else {
     return (
-      <aside className="h-[98vh] flex flex-col justify-between md:px-4 md:border-x">
+      <aside className="h-screen flex flex-col justify-between md:px-4 md:border-x">
         <div>
           <nav className="h-[60px] flex items-center justify-between border-b">
             <h1 className=" text-2xl font-bold">Inbox</h1>
@@ -113,7 +113,7 @@ const Users = () => {
         </div>
 
         <Invite>
-          <Button className="w-full md:w-[97%]">
+          <Button className="w-full md:w-[97%] mb-3">
             <PlusCircledIcon className="w-5 h-5 mr-2" />
             Invite Friends
           </Button>

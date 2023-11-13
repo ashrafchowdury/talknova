@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { GearIcon, PaperPlaneIcon, ImageIcon } from "@radix-ui/react-icons";
 import { Button, Input, Progress } from "@/packages/ui";
-import { cn } from "@/lib/functions";
+import { cn, formatTimeByLastMsg } from "@/lib/functions";
 import {
   Message,
   BackSpace,
@@ -160,27 +160,31 @@ const Chats = () => {
   };
 
   return (
-    <main className="border-x md:mt-2 relative w-[95%] sm:w-[520px] md:w-[720px] lg:w-[680px] xl:w-[780px] mx-auto">
+    <main className="md:border-x relative h-screen overflow-hidden flex flex-col justify-between">
       {user?.key && isAutoLock ? <AddSecretKey user={user} /> : null}
-      <nav className="h-[60px] px-2 sm:px-6 md:px-8 border-b flex items-center justify-between sticky z-20 top-0 bg-background">
+      <nav className="h-[55px] md:h-[60px] w-[98%] md:w-[97%] md:px-2 mx-auto border-b flex items-center justify-between bg-background">
         <BackSpace href="/users" />
         <div className="flex items-center">
           <Avatar
             img={user?.image}
             fallback={user?.name}
-            className=" w-10 h-10"
+            className="w-9 md:w-10 h-9 md:h-10"
           />
-          <div className="ml-2">
+          <div className="ml-2 flex flex-col items-start justify-center">
             <p className="text-[16px] md:text-lg font-bold capitalize">
               {user?.name}
             </p>
-            <div className="text-xs md:text-sm opacity-60 -mt-1 flex items-end ">
-              <p>Typing</p>
+
+            <p className="text-xs md:text-sm opacity-60 md:-mt-1">
+              {user?.active
+                ? `Active Now ...`
+                : `Last Message ${formatTimeByLastMsg(user?.lastMsgTime)}`}
+            </p>
+            {/* <p>Typing</p>
               <Loader
                 variant={theme?.includes("light") ? "black" : "white"}
                 className="opacity-50 ml-[2px]"
-              />
-            </div>
+              /> */}
           </div>
         </div>
 
@@ -200,7 +204,7 @@ const Chats = () => {
       )}
       <article
         onScroll={handleScroll}
-        className="chatInterface scroll-smooth w-full h-[86.5vh] px-2 sm:px-6 md:px-8 break-all pt-16 pb-10 overflow-y-auto"
+        className="chatInterface scroll-smooth w-full h-[90%] px-2 sm:px-6 md:px-8 break-all pt-16 pb-8 overflow-y-auto overscroll-contain"
       >
         {chats.length == 0 && (
           <div className="w-full mt-20">
@@ -221,8 +225,8 @@ const Chats = () => {
         ))}
       </article>
 
-      <section className="w-full sticky z-20 bottom-2 md:bottom-3 bg-background">
-        <div className="relative mx-3 md:mx-8">
+      <section className="w-full bg-background mb-3">
+        <div className="relative md:mx-5">
           {!isRecording && (
             <Input
               placeholder="Type a Message..."
@@ -236,7 +240,8 @@ const Chats = () => {
           <div
             className={cn(
               "flex items-center space-x-1 md:space-x-3 absolute top-[7px] right-2",
-              isRecording && "w-full -top-6 md:-top-3 right-0"
+              isRecording &&
+                "w-full md:w-[96%] -top-12 md:-top-14 right-[50%] transform translate-x-[50%]"
             )}
           >
             {!isRecording && (

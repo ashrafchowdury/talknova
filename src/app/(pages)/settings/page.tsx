@@ -53,7 +53,7 @@ const Settings = () => {
   };
 
   return (
-    <main className="md:px-4 md:border-x h-[98vh]">
+    <main className="md:px-4 md:border-x h-screen">
       <nav className="h-[60px] border-b flex items-center justify-start">
         <BackSpace href="/users" />
         <p className=" text-xl font-bold ml-3">Settings</p>

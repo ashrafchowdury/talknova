@@ -25,8 +25,8 @@ const UserSetting = () => {
   const user: UserType = friends.filter((item) => item.uid == id)[0];
 
   return (
-    <section className="h-auto md:h-[98vh] md:px-4 md:border-x relative">
-      <nav className="h-[60px] md:mt-2 xl:px-8 border-b flex items-center justify-start">
+    <section className="h-auto md:h-screen md:px-4 md:border-x relative">
+      <nav className="h-[60px] border-b flex items-center justify-start">
         <BackSpace href={`/users/chats?id=${user?.uid}`} />
         <p className=" text-xl font-bold ml-3">Settings</p>
       </nav>

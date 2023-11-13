@@ -9,7 +9,7 @@ export default function PagesLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="w-[95%] sm:w-[520px] md:w-[720px] lg:w-[580px] xl:w-[680px] mx-auto mt-2">
+    <main className="w-[95%] sm:w-[520px] md:w-[720px] lg:w-[680px] xl:w-[780px] mx-auto">
       <EncryptContextProvider>
         <UserContextProvider>
           <ChatContextProvider>

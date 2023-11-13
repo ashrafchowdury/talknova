@@ -221,7 +221,7 @@ export const RecordAudio = () => {
 
       <section
         className={cn(
-          "w-full h-[50px] md:h-[60px] hidden bg-primary rounded-lg flex-row-reverse items-center justify-between space-x-1 sm:space-x-2 md:space-x-3 pr-2 sm:pr-4 pl-1 mb-2 sm:mb-0",
+          "w-full h-[50px] md:h-[55px] hidden bg-primary rounded-lg flex-row-reverse items-center justify-between space-x-1 sm:space-x-2 md:space-x-3 pr-2 sm:pr-4 pl-1",
           isRecording && "flex",
           userAppearance
         )}

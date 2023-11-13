@@ -256,6 +256,15 @@
   body {
     @apply bg-background text-foreground;
   }
+  *::-webkit-scrollbar {
+    @apply w-1 md:w-2;
+  }
+  *::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  *::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-sm;
+  }
 }
 
 @layer base {

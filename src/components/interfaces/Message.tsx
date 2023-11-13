@@ -87,7 +87,7 @@ const Message = ({ data, position, user }: MessageType) => {
 
         <div
           className={cn(
-            "py-2 md:py-3 px-4 md:px-5 text-xs sm:text-sm md:text-[16px] rounded-lg relative flex items-center justify-center",
+            "py-2 md:py-3 px-4 md:px-5 text-xs sm:text-sm md:text-[16px] rounded-lg relative flex items-center justify-center select-none",
             msgPosition
               ? "!ml-4 !mr-2 bg-border"
               : "!mr-4 bg-primary text-color",
@@ -189,7 +189,7 @@ export const FileMessage = ({ data, position, fileRef }: any) => {
           width={300}
           height={250}
           loading="lazy"
-          className="w-full sm:w-[300px] rounded-lg"
+          className="w-full sm:w-[300px] min-h-[100px] max-h-auto rounded-lg"
         />
       ) : (
         <Dialog>
@@ -200,19 +200,19 @@ export const FileMessage = ({ data, position, fileRef }: any) => {
               width={300}
               height={250}
               loading="lazy"
-              className="w-full sm:w-[300px] rounded-lg"
+              className="w-full sm:w-[300px] min-h-[100px] max-h-auto rounded-lg"
             />
             <div className=" text-xs absolute top-2 left-2 py-[3px] px-2 rounded-sm bg-white opacity-70 text-black">
               {data.length}
             </div>
           </DialogTrigger>
-          <DialogContent className="w-[95%] md:max-w-[780px]">
+          <DialogContent className="w-[95%] md:max-w-[780px] rounded-lg">
             <DialogHeader>
               <DialogTitle>Sended Files</DialogTitle>
             </DialogHeader>
             <section
               ref={fileRef}
-              className="flex flex-wrap items-center justify-center border rounded-lg w-full h-auto max-h-[500px] overflow-y-auto relative gap-3 py-4 px-3 mb-7"
+              className="flex flex-wrap items-center justify-center rounded-lg w-full h-auto max-h-[500px] overflow-y-auto relative gap-3 py-4 px-3 mb-7"
             >
               {data.map((item: string, ind: number) => (
                 <Image
@@ -221,7 +221,7 @@ export const FileMessage = ({ data, position, fileRef }: any) => {
                   width={300}
                   height={250}
                   loading="lazy"
-                  className="w-[46%] sm:w-[48%] rounded-lg"
+                  className="w-[46%] sm:w-[48%] min-h-[100px] max-h-auto rounded-lg"
                   key={ind}
                 />
               ))}
