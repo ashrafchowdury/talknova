@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 // Check user movements
 export const useIdle = (inactiveTime: number) => {
   const [idle, setIdle] = useState(false);
-  let idleTimer: any;
+  let idleTimer: NodeJS.Timeout;
 
   const resetTimer = () => {
     if (idleTimer) {

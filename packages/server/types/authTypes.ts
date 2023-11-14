@@ -1,3 +1,4 @@
+import { UserCredential } from "firebase/auth";
 export type AuthUserType = {
   displayName: string;
   email: string;
@@ -6,7 +7,7 @@ export type AuthUserType = {
 };
 
 export type AuthContextType = {
-  currentUser: AuthUserType | any;
+  currentUser: AuthUserType;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   singup: (name: string, email: string, password: string) => void;
@@ -19,6 +20,6 @@ export type AuthContextType = {
 export type ActionsType = {
   toasts?: string;
   direct?: string;
-  logic?: any;
+  logic?: () => Promise<UserCredential | void>;
   type?: string; // action type like: signup, login
 };

@@ -15,10 +15,10 @@ import { useAppearance } from "@/lib/hooks";
 import { useTheme } from "next-themes";
 import { userThemeSchema } from "@/lib/helpers";
 import { useSearchParams, useRouter } from "next/navigation";
-import { UserType } from "@/packages/server/types";
+import { UserType } from "@/packages/server";
 
 const UserSetting = () => {
-  const id: any = useSearchParams().get("id");
+  const id = useSearchParams().get("id");
   const { friends } = useUsers();
   const { userAppearance, changeUserAppearance } = useAppearance();
   const { theme } = useTheme();

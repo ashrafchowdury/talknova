@@ -32,9 +32,9 @@ const AllImages = () => {
           <DialogTitle>Sended Files</DialogTitle>
         </DialogHeader>
         <div className="flex flex-wrap items-center justify-center border rounded-lg w-full h-auto max-h-[70vh] md:max-h-[65vh] lg:max-h-[700px] overflow-y-auto relative gap-3 py-4 px-3 mb-7">
-          {chats?.map((data: any) => (
-            <Fragment key={data.timestamp}>
-              {data?.send?.files?.map((item: any, ind: number) => (
+          {chats?.map((data) => (
+            <Fragment key={data.id}>
+              {data?.send?.files?.map((item, ind) => (
                 <div className="relative w-full md:w-[48%]" key={ind}>
                   <Image
                     src={item}
@@ -48,7 +48,7 @@ const AllImages = () => {
               ))}
             </Fragment>
           ))}
-          {!chats?.map((data: any) => data?.send?.files?.length == 0)[0] && (
+          {!chats?.map((data) => data?.send?.files?.length == 0)[0] && (
             <p className="font-semibold text-muted-foreground my-28">Empty</p>
           )}
         </div>

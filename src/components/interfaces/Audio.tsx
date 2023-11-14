@@ -1,5 +1,11 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  MutableRefObject,
+  MouseEvent,
+} from "react";
 import {
   PlayIcon,
   PauseIcon,
@@ -8,7 +14,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Button, useToast } from "@/packages/ui";
 import dynamic from "next/dynamic";
-import { ReactMic } from "react-mic";
+import { ReactMicStopEvent } from "react-mic";
 const DynamicReactMic = dynamic(
   () => import("react-mic").then((mod) => mod.ReactMic),
   {
@@ -20,13 +26,18 @@ import { useChats } from "@/packages/server/context/ChatContext";
 import { useTheme } from "next-themes";
 import { useAppearance } from "@/lib/hooks";
 
-export const AudioMessage = ({ data, position, fileRef }: any) => {
+type AudioMessageType = {
+  data: string;
+  position: boolean;
+  fileRef: MutableRefObject<HTMLAudioElement>;
+};
+export const AudioMessage = ({ data, position, fileRef }: AudioMessageType) => {
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const { setIsAudioPlaying, isRecording } = useChats();
   const { userAppearance } = useAppearance();
-  const audioRef: any = useRef(null);
+  const audioRef: MutableRefObject<HTMLAudioElement> = useRef(null!);
 
   // Update current time as audio plays
   useEffect(() => {
@@ -45,7 +56,7 @@ export const AudioMessage = ({ data, position, fileRef }: any) => {
     };
   }, []);
 
-  const togglePlayback = (dd: any) => {
+  const togglePlayback = () => {
     if (audioPlaying) {
       audioRef.current.pause();
     } else {
@@ -57,10 +68,11 @@ export const AudioMessage = ({ data, position, fileRef }: any) => {
   };
 
   // Update audio playback time when progress bar is clicked
-  const handleProgressBarClick = (e: any) => {
+  const handleProgressBarClick = (e: MouseEvent<HTMLDivElement>) => {
     if (duration === 0) return; // Avoid division by zero
     const clickedTime =
-      (e.nativeEvent.offsetX / e.target.offsetWidth) * duration;
+      (e.nativeEvent.offsetX / (e.target as HTMLDivElement).offsetWidth) *
+      duration;
     audioRef.current.currentTime = clickedTime;
     setCurrentTime(clickedTime);
     setAudioPlaying(true);
@@ -92,7 +104,7 @@ export const AudioMessage = ({ data, position, fileRef }: any) => {
             variant="ghost"
             size="icon"
             className="w-5 md:w-6 h-5 md:h-6 hover:bg-transparent hover:text-inherit"
-            onClick={() => togglePlayback(data)}
+            onClick={togglePlayback}
           >
             <PlayIcon className="w-5 md:w-6 h-5 md:h-6 " />
           </Button>
@@ -101,7 +113,7 @@ export const AudioMessage = ({ data, position, fileRef }: any) => {
             variant="ghost"
             size="icon"
             className="w-5 md:w-6 h-5 md:h-6 hover:bg-transparent hover:text-inherit"
-            onClick={() => togglePlayback(data)}
+            onClick={togglePlayback}
           >
             <PauseIcon className="w-5 md:w-6 h-5 md:h-6" />
           </Button>
@@ -134,7 +146,7 @@ export const AudioMessage = ({ data, position, fileRef }: any) => {
 };
 
 export const RecordAudio = () => {
-  const [audio, setAudio] = useState<any>(null);
+  const [audio, setAudio] = useState<Blob | null>(null);
   const [recordingTime, setRecordingTime] = useState(0);
   const {
     isAudioPlaying,
@@ -149,7 +161,7 @@ export const RecordAudio = () => {
   const { userAppearance } = useAppearance();
 
   useEffect(() => {
-    let interval: any;
+    let interval: NodeJS.Timeout;
     if (isRecording) {
       interval = setInterval(() => {
         setRecordingTime((prevTimer) => prevTimer + 1);
@@ -238,7 +250,7 @@ export const RecordAudio = () => {
         <DynamicReactMic
           record={isRecording}
           className="h-[50px] w-[60%] sm:w-full"
-          onStop={(file: any) => setAudio(file.blob)}
+          onStop={(file: ReactMicStopEvent) => setAudio(file.blob)}
           strokeColor={theme == "light" ? "white" : "black"}
           backgroundColor={"transparent"}
           mimeType="audio/webm"

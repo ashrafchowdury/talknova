@@ -8,6 +8,8 @@ import {
   updateDoc,
   serverTimestamp,
   addDoc,
+  CollectionReference,
+  DocumentData,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -28,9 +30,18 @@ import {
 import { useUsers } from "./UserContext";
 import { useSearchParams } from "next/navigation";
 
+// Types
+type MediaType = {
+  msg?: string;
+  files?: string[];
+  audio?: string;
+};
+
+// Context
 export const ChatContext = createContext<ChatContextProviderType | null>(null);
 export const useChats = () => useContext(ChatContext)!;
 
+// Provider
 const ChatContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
@@ -46,7 +57,7 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
   const { updateUserProfile, myself } = useUsers();
   const { uid } = useCookies();
   const { setToggleLockUi, setIsAutoLock, encryptData, key } = useEncrypt();
-  const id: any = useSearchParams().get("id");
+  const id = useSearchParams().get("id");
 
   const createChatId = () => {
     const combinedUid = [myself.uid, id].sort().join("");
@@ -64,16 +75,16 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
     });
   };
 
-  const sendMessage = async (files?: any) => {
+  const sendMessage = async (files?: string | string[]) => {
     try {
-      const q: any = query(
+      const q = query(
         collection(database, "chats", `${createChatId()}`, "messagas")
       );
       if (!message && !files) {
         return null;
       } else {
-        let msg: any;
-        let lastMsg: any;
+        let msg: MediaType = {};
+        let lastMsg: string = "";
         if (message.length > 0) {
           msg = { msg: encryptData(message, createChatId()) };
           lastMsg = message;
@@ -84,7 +95,7 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
           msg = { audio: `${files}` };
           lastMsg = "Audio message";
         }
-        await addDoc(q, {
+        await addDoc(q as CollectionReference<DocumentData>, {
           send: msg,
           timestemp: serverTimestamp(),
           uid: uid,
@@ -110,12 +121,12 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
-  const uploadFile = (type: string, files: any) => {
+  const uploadFile = (type: string, files: File[]) => {
     const storage = getStorage();
 
     try {
       // Create an array to store the promises of each upload task
-      const uploadPromises = files.map((item: any) => {
+      const uploadPromises = files.map((item: File) => {
         const storageRef = ref(
           storage,
           `${type == "message" ? "users" : "profile"}/${item.name}`
@@ -148,10 +159,10 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
       });
 
       Promise.all(uploadPromises) // Wait for all upload tasks to complete
-        .then((downloadURLs: any) => {
+        .then((downloadURLs) => {
           type == "message"
-            ? sendMessage(downloadURLs)
-            : updateUserProfile(downloadURLs[0]); // All uploads are done, and downloadURLs contains all the file URLs
+            ? sendMessage(downloadURLs as string[])
+            : updateUserProfile(downloadURLs[0] as string); // All uploads are done, and downloadURLs contains all the file URLs
         })
         .catch((error) => {
           toast({ title: "Something went wrong!", variant: "destructive" });
@@ -161,7 +172,7 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
     }
   };
 
-  const uploadAudio = (item: any) => {
+  const uploadAudio = (item: Blob) => {
     const storage = getStorage();
     const generateUid = new Date().getMilliseconds();
     try {
@@ -205,12 +216,10 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
     setIsAudioPlaying,
     setChats,
     setMessage,
-
     sendMessage,
     uploadFile,
     uploadAudio,
     deleteMsg,
-
     createChatId,
     toggleChatKey,
   };

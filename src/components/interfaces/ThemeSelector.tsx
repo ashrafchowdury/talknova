@@ -10,9 +10,9 @@ import {
 import { cn } from "@/lib/functions";
 
 type ThemeSelectorType = {
-  action: (e: any) => void;
+  action: (e: string) => void;
   defaultValue: string;
-  schema: any;
+  schema: { value: string; title: string; style?: string }[];
 };
 
 const ThemeSelector = ({ action, defaultValue, schema }: ThemeSelectorType) => {
@@ -24,7 +24,7 @@ const ThemeSelector = ({ action, defaultValue, schema }: ThemeSelectorType) => {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Themes</SelectLabel>
-          {schema.map((item: any) => (
+          {schema.map((item) => (
             <SelectItem
               value={item.value}
               key={item.title}

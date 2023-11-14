@@ -19,7 +19,7 @@ import { useUsers } from "@/packages/server/context/UserContext";
 import { useChats } from "@/packages/server/context/ChatContext";
 import { useTheme } from "next-themes";
 import { useEncrypt } from "@/packages/encryption";
-import { UserType } from "@/packages/server/types";
+import { UserType } from "@/packages/server";
 import {
   doc,
   onSnapshot,
@@ -31,14 +31,29 @@ import {
   getDocs,
   startAfter,
   updateDoc,
+  Timestamp,
 } from "firebase/firestore";
-import { database } from "@/packages/server/config";
+import { database } from "@/packages/server";
 
+// Types
+type ChatType = {
+  id: string;
+  send: { audio?: string; msg?: string; files?: string[] };
+  uid: string;
+  timestemp: Timestamp;
+  seen: boolean;
+};
+type ChatId = {
+  id: string;
+  load: boolean;
+};
+
+// JSX
 const Chats = () => {
-  const [chats, setChats] = useState<any>([]);
-  const [chatId, setChatId] = useState<any>({ id: "", load: true });
+  const [chats, setChats] = useState<ChatType[]>([]);
+  const [chatId, setChatId] = useState<ChatId>({ id: "", load: true });
   const [autoScroll, setAutoScroll] = useState(true);
-  const id: any = useSearchParams().get("id");
+  const id = useSearchParams().get("id");
   const router = useRouter();
   const { theme } = useTheme();
   const { friends, myself, isLoading } = useUsers();
@@ -62,8 +77,8 @@ const Chats = () => {
 
   useEffect(() => {
     if (autoScroll) {
-      const doc: any = document.querySelector(".chatInterface");
-      doc.scrollTop = doc?.scrollHeight;
+      const doc: Element | null = document.querySelector(".chatInterface");
+      doc ? (doc.scrollTop = doc?.scrollHeight) : null;
     }
     seenMsg();
   }, [chats]);
@@ -77,11 +92,11 @@ const Chats = () => {
       );
       onSnapshot(q, (snapshot) => {
         const data = snapshot.docs
-          .map((doc: any) => ({
+          .map((doc) => ({
             ...doc.data(),
             id: doc.id,
           }))
-          .reverse();
+          .reverse() as ChatType[];
         setChats(data);
       });
     } catch (error) {
@@ -107,7 +122,13 @@ const Chats = () => {
     try {
       !chatId.id && getFirstChat();
       const firstMeg = await getDoc(
-        doc(database, "chats", `${createChatId()}`, "messagas", chats.at(0).id)
+        doc(
+          database,
+          "chats",
+          `${createChatId()}`,
+          "messagas",
+          (chats.at(0) as ChatType).id
+        )
       );
       firstMeg.id == chatId.id && setChatId({ ...chatId, load: false });
       const q = query(
@@ -118,8 +139,8 @@ const Chats = () => {
       );
       onSnapshot(q, (snapshot) => {
         const oldChats = snapshot.docs
-          .map((doc: any) => ({ ...doc.data(), id: doc.id }))
-          .reverse();
+          .map((doc) => ({ ...doc.data(), id: doc.id }))
+          .reverse() as ChatType[];
         setChats([...oldChats, ...chats]);
       });
     } catch (error) {
@@ -141,11 +162,11 @@ const Chats = () => {
 
   const seenMsg = () => {
     try {
-      const unseenChats = chats.filter((data: any) => {
+      const unseenChats = chats.filter((data) => {
         return data.uid === myself.uid ? null : data.seen == false;
       });
       if (unseenChats.length > 0) {
-        unseenChats.forEach(async (data: any) => {
+        unseenChats.forEach(async (data) => {
           await updateDoc(
             doc(database, "chats", `${createChatId()}`, "messagas", data.id),
             {
@@ -214,7 +235,7 @@ const Chats = () => {
           </div>
         )}
 
-        {chats.map((data: any) => (
+        {chats.map((data) => (
           <Fragment key={data.id}>
             <Message
               data={data}

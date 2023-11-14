@@ -69,10 +69,8 @@ const Invite = ({ children }: ChildrenType) => {
                     className="py-1 md:py-2"
                   >
                     {user
-                      .filter((data: any) =>
-                        selectedInvitation.includes(data.id)
-                      )
-                      .map((data: any) => (
+                      .filter((data) => selectedInvitation.includes(data.id))
+                      .map((data) => (
                         <Fragment key={data.uid}>
                           <InviteUsers
                             data={data}
@@ -90,15 +88,13 @@ const Invite = ({ children }: ChildrenType) => {
                 {user.length == 0 && <InviteUsersSkeleton />}
                 {user
                   .filter(
-                    (data: any) =>
-                      !friends.find((item: any) => item.uid == data.uid)
+                    (data) => !friends.find((item) => item.uid == data.uid)
                   )
                   .filter(
-                    (data: any) =>
-                      !invite.find((item: any) => item.uid == data.uid)
+                    (data) => !invite.find((item) => item.uid == data.uid)
                   )
-                  .filter((data: any) => !selectedInvitation.includes(data.id))
-                  .map((data: any) => (
+                  .filter((data) => !selectedInvitation.includes(data.id))
+                  .map((data) => (
                     <Fragment key={data.uid}>
                       <InviteUsers
                         data={data}

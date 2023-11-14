@@ -1,8 +1,11 @@
+import { Timestamp } from "firebase/firestore";
+
 export type MsgType = {
   id?: string;
-  send: { audio?: string; msg?: string; image?: string };
+  send: { audio?: string; msg?: string; files?: string[] };
   uid: string;
-  timestemp: any;
+  timestemp: Timestamp | string;
+  seen: boolean;
 };
 export type ChatIdType = {
   id: string;
@@ -22,8 +25,8 @@ export type ChatContextProviderType = {
   setIsAudioPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
   sendMessage: () => void;
-  uploadFile: (type: "message" | "profile", files: any) => void;
-  uploadAudio: (item: any) => void;
+  uploadFile: (type: "message" | "profile", files: File[]) => void;
+  uploadAudio: (item: Blob) => void;
   deleteMsg: (id: string) => void;
   createChatId: () => string;
   toggleChatKey: (secKey: string) => void;

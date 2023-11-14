@@ -1,5 +1,6 @@
 "use client";
 
+import { FormEvent } from "react";
 import {
   Input,
   Button,
@@ -31,17 +32,19 @@ const Register = () => {
   const { toast } = useToast();
 
   const handleForms = async (
-    e: any,
+    e: FormEvent<HTMLFormElement>,
     form: number[],
     authFunction: (...args: string[]) => void
   ) => {
     e.preventDefault();
-    const value = form.map((data) => e.target[data].value);
+    const value = form.map(
+      (data) => (e.currentTarget[data] as HTMLInputElement | undefined)?.value
+    );
 
     if (value.some((data) => !data)) {
       toast({ variant: "destructive", title: "Please fill up all the fildes" });
     } else {
-      authFunction(...value);
+      authFunction(...(value as string[]));
     }
   };
 

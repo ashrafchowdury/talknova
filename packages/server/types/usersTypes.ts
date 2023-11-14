@@ -8,11 +8,12 @@ export type UserType = {
   friends: string[];
   invite: string[];
   lastMsg?: string;
-  lastMsgTime?: any;
+  lastMsgTime: string | Date;
   key?: string;
   active?: boolean;
 };
 export type LastMsgType = {
+  id: string;
   lastMsg: string;
   lastMsgTime: string;
   uid: string;
