@@ -160,7 +160,7 @@ const Chats = () => {
   };
 
   return (
-    <main className="md:border-x relative h-screen overflow-hidden flex flex-col justify-between">
+    <main className="md:border-x relative h-screen overflow-hidden flex flex-col justify-start">
       {user?.key && isAutoLock ? <AddSecretKey user={user} /> : null}
       <nav className="h-[55px] md:h-[60px] w-[98%] md:w-[97%] md:px-2 mx-auto border-b flex items-center justify-between bg-background">
         <BackSpace href="/users" />
@@ -204,7 +204,7 @@ const Chats = () => {
       )}
       <article
         onScroll={handleScroll}
-        className="chatInterface scroll-smooth w-full h-[90%] px-2 sm:px-6 md:px-8 break-all pt-16 pb-8 overflow-y-auto overscroll-contain"
+        className="chatInterface scroll-smooth w-full h-[80%] sm:h-full px-2 sm:px-6 md:px-8 break-all pt-14 pb-16 sm:pb-24 overflow-y-auto overscroll-contain"
       >
         {chats.length == 0 && (
           <div className="w-full mt-20">
@@ -225,8 +225,8 @@ const Chats = () => {
         ))}
       </article>
 
-      <section className="w-full bg-background mb-3">
-        <div className="relative md:mx-5">
+      <section className="w-[93%] sm:w-[490px] md:w-[690px] lg:w-[650px] xl:w-[750px] bg-background fixed bottom-0 left-1/2 transform -translate-x-[50%]">
+        <div className="relative mb-3">
           {!isRecording && (
             <Input
               placeholder="Type a Message..."

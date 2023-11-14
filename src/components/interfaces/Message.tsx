@@ -138,11 +138,11 @@ const Message = ({ data, position, user }: MessageType) => {
           )}
           <div
             className={cn(
-              "absolute -bottom-[24px] flex items-center space-x-2",
+              "absolute -bottom-[20px] flex items-center space-x-2",
               msgPosition ? "right-1" : "-left-1"
             )}
           >
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-nowrap">
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-nowrap opacity-60">
               {formatTimestamp(data.timestemp)}
             </p>
             <div
