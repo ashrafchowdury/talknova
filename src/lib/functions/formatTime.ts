@@ -1,6 +1,8 @@
-export function formatTimeByLastMsg(dateStr: string): string {
+export function formatTimeByLastMsg(
+  dateStr: string | undefined | Date
+): string {
   // Parse the input string into a Date object
-  const date = new Date(dateStr);
+  const date = new Date(dateStr as string);
 
   const now = new Date();
   const timeDifference = now.getTime() - date.getTime();

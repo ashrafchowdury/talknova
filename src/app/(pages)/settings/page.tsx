@@ -48,7 +48,7 @@ const Settings = () => {
   };
 
   const changeColorScheme = (color: string) => {
-    const which: any = theme?.split("-");
+    const which = theme?.split("-") as string[];
     setTheme(`${which[0]}-${color}`);
   };
 

@@ -19,10 +19,10 @@ const Users = () => {
   const { friends, myself, isLoading } = useUsers();
   const { theme } = useTheme();
   const documentVisible = useVisibilityChange();
-  const id: any = useSearchParams().get("id");
+  const id = useSearchParams().get("id");
 
   useEffect(() => {
-    const soundEffects = (): any => {
+    const soundEffects = () => {
       if (!documentVisible && navigator.onLine && !isLoading) {
         const effect = new Audio("/new_message.mp3");
         effect.play();
@@ -37,7 +37,7 @@ const Users = () => {
       return { ...item, lastMsgTime: new Date(item.lastMsgTime) };
     });
     const alignUserByTime = changeTimeFormat.sort(
-      (a: any, b: any) =>
+      (a, b) =>
         Math.abs(now.getTime() - a.lastMsgTime.getTime()) -
         Math.abs(now.getTime() - b.lastMsgTime.getTime())
     );

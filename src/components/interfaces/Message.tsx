@@ -1,6 +1,6 @@
 import Loader from "./Loader";
 
-import { useState, useRef } from "react";
+import { useState, useRef, MutableRefObject } from "react";
 import Image from "next/image";
 import {
   Button,
@@ -30,12 +30,19 @@ import {
 import { Avatar, AudioMessage, LinkPreview } from ".";
 import { useAppearance, useDownload } from "@/lib/hooks";
 import { useEncrypt } from "@/packages/encryption";
-import { UserType } from "@/packages/server/types";
+import { UserType, MsgType } from "@/packages/server";
+import { Timestamp } from "firebase/firestore";
 
 type MessageType = {
-  data?: any;
+  data?: MsgType;
   position: "left" | "right";
   user: UserType;
+};
+// T generic type parameter
+type FileMessageType<T> = {
+  data: T;
+  position: boolean;
+  fileRef: MutableRefObject<HTMLImageElement | HTMLAudioElement>;
 };
 
 const Message = ({ data, position, user }: MessageType) => {
@@ -44,10 +51,12 @@ const Message = ({ data, position, user }: MessageType) => {
   const { decryptData, isAutoLock } = useEncrypt();
   const msgPosition = position == "left";
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const fileRef: any = useRef(null);
+  const fileRef: MutableRefObject<HTMLImageElement | HTMLAudioElement> = useRef(
+    null!
+  );
 
   // Format date
-  const formatTimestamp = (timestamp: any) => {
+  const formatTimestamp = (timestamp: Timestamp) => {
     try {
       const date = timestamp?.toDate();
       const hours = date.getHours();
@@ -91,19 +100,19 @@ const Message = ({ data, position, user }: MessageType) => {
             msgPosition
               ? "!ml-4 !mr-2 bg-border"
               : "!mr-4 bg-primary text-color",
-            data.send.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
-            data.send.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
+            data?.send.files && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
+            data?.send.audio && "py-0 md:py-0 px-0 md:px-0 bg-transparent",
             msgPosition ? "" : userAppearance
           )}
         >
-          {data.send.audio && (
+          {data?.send.audio && (
             <AudioMessage
               data={data.send.audio}
               position={msgPosition}
-              fileRef={fileRef}
+              fileRef={fileRef as MutableRefObject<HTMLAudioElement>}
             />
           )}
-          {data.send.files && (
+          {data?.send.files && (
             <FileMessage
               data={data.send.files}
               position={msgPosition}
@@ -119,7 +128,7 @@ const Message = ({ data, position, user }: MessageType) => {
             <LinkPreview
               message={
                 isAutoLock
-                  ? data?.send?.msg
+                  ? data?.send.msg
                   : decryptData(
                       data?.send?.msg,
                       [myself.uid, user?.uid].sort().join("")
@@ -129,9 +138,9 @@ const Message = ({ data, position, user }: MessageType) => {
           ) : (
             <span>
               {isAutoLock
-                ? data?.send?.msg
+                ? data?.send.msg
                 : decryptData(
-                    data?.send?.msg,
+                    data?.send.msg as string,
                     [myself.uid, user?.uid].sort().join("")
                   )}
             </span>
@@ -143,7 +152,7 @@ const Message = ({ data, position, user }: MessageType) => {
             )}
           >
             <p className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-nowrap opacity-60">
-              {formatTimestamp(data.timestemp)}
+              {formatTimestamp(data?.timestemp as Timestamp)}
             </p>
             <div
               className={cn("relative", msgPosition ? "right-0" : " hidden")}
@@ -163,9 +172,8 @@ const Message = ({ data, position, user }: MessageType) => {
             </div>
           </div>
           <MessageMenu
-            data={data}
+            data={data as MsgType}
             position={msgPosition}
-            user={user}
             fileRef={fileRef}
           />
         </div>
@@ -175,7 +183,11 @@ const Message = ({ data, position, user }: MessageType) => {
 };
 export default Message;
 
-export const FileMessage = ({ data, position, fileRef }: any) => {
+export const FileMessage = ({
+  data,
+  position,
+  fileRef,
+}: FileMessageType<string[]>) => {
   const { userAppearance } = useAppearance();
   const { isDownload, downloadImg } = useDownload();
 
@@ -183,7 +195,7 @@ export const FileMessage = ({ data, position, fileRef }: any) => {
     <>
       {data.length == 1 ? (
         <Image
-          ref={fileRef}
+          ref={fileRef as MutableRefObject<HTMLImageElement>}
           src={data[0]}
           alt="image"
           width={300}
@@ -229,7 +241,12 @@ export const FileMessage = ({ data, position, fileRef }: any) => {
             <DialogFooter>
               <Button
                 className={cn("w-full", position ? "" : userAppearance)}
-                onClick={() => downloadImg(fileRef, "multiple")}
+                onClick={() =>
+                  downloadImg(
+                    fileRef as MutableRefObject<HTMLImageElement>,
+                    "multiple"
+                  )
+                }
                 load={isDownload}
               >
                 Download All
@@ -242,7 +259,11 @@ export const FileMessage = ({ data, position, fileRef }: any) => {
   );
 };
 
-export const MessageMenu = ({ data, position, fileRef }: any) => {
+export const MessageMenu = ({
+  data,
+  position,
+  fileRef,
+}: FileMessageType<MsgType>) => {
   const [isCopied, setIsCopied] = useState(false);
   const { deleteMsg } = useChats();
   const { isDownload, downloadImg, downloadAudio } = useDownload();
@@ -279,7 +300,7 @@ export const MessageMenu = ({ data, position, fileRef }: any) => {
             variant="ghost"
             className="!py-0 px-2"
             onClick={() => {
-              navigator.clipboard.writeText(data?.send?.msg);
+              navigator.clipboard.writeText(data?.send.msg as string);
               setIsCopied(true);
             }}
           >
@@ -292,9 +313,12 @@ export const MessageMenu = ({ data, position, fileRef }: any) => {
             variant="ghost"
             className="!py-0 px-2"
             onClick={() =>
-              data?.send?.files
-                ? downloadImg(fileRef, "single")
-                : downloadAudio(fileRef)
+              data?.send.files
+                ? downloadImg(
+                    fileRef as MutableRefObject<HTMLImageElement>,
+                    "single"
+                  )
+                : downloadAudio(fileRef as MutableRefObject<HTMLAudioElement>)
             }
             load={isDownload}
           >
@@ -308,7 +332,7 @@ export const MessageMenu = ({ data, position, fileRef }: any) => {
         <Button
           variant="ghost"
           className={cn("py-0 px-2", !position && "hidden")}
-          onClick={() => deleteMsg(data.id)}
+          onClick={() => deleteMsg(data.id as string)}
         >
           <TrashIcon className="w-[14px] md:w-[18px] h-[14px] md:h-[18px]" />
         </Button>

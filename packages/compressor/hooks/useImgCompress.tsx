@@ -2,21 +2,26 @@ import { useState } from "react";
 import Compressor from "compressorjs";
 import { useToast } from "@/packages/ui";
 
+type PreviewImg = {
+  data: ArrayBuffer | string | null;
+  name: string;
+};
+
 const useImgCompress = () => {
-  const [preview, setPreview] = useState([]);
-  const [production, setProduction] = useState([]);
+  const [preview, setPreview] = useState<PreviewImg[]>([]);
+  const [production, setProduction] = useState<File[]>([]);
   const { toast } = useToast();
 
-  const compressImg = (files: any) => {
+  const compressImg = (files: FileList) => {
     const MAX_PREVIEW_COUNT = 4;
-    const productionImg: any = [];
-    const previewImg: any = [];
+    const productionImg: File[] = [];
+    const previewImg: PreviewImg[] = [];
 
     if (files.length > 0 && files.length <= MAX_PREVIEW_COUNT) {
       for (let i = 0; i < files.length; i++) {
         new Compressor(files[i], {
           quality: 0.4, // Adjust the quality here as neede
-          success(result: any) {
+          success(result: File) {
             const reader = new FileReader();
             reader.readAsDataURL(result);
             reader.onloadend = () => {

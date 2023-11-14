@@ -5,7 +5,7 @@ import { cn, formatTimeByLastMsg } from "@/lib/functions";
 import { useRouter } from "next/navigation";
 import { Badge, Skeleton } from "@/packages/ui";
 import { useEncrypt } from "@/packages/encryption";
-import { UserType } from "@/packages/server/types";
+import { UserType } from "@/packages/server";
 import { useUsers } from "@/packages/server/context/UserContext";
 
 const Users = ({ data }: { data: UserType }) => {

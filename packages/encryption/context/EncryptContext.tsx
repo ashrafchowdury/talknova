@@ -2,10 +2,11 @@
 import React, { useState, useContext, createContext } from "react";
 import CryptoJS from "crypto-js";
 
+// Types
 type EncryptContextType = {
   key: string;
   setKey: React.Dispatch<React.SetStateAction<string>>;
-  encryptData: (data: string, key: string) => void;
+  encryptData: (data: string, key: string) => string;
   decryptData: (data: string, key: string) => string;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,9 +18,12 @@ type EncryptContextType = {
 type ChildrenType = {
   children: React.ReactNode;
 };
+
+// Context
 export const EncryptContext = createContext<EncryptContextType | null>(null);
 export const useEncrypt = () => useContext(EncryptContext)!;
 
+// Provider
 const EncryptContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
@@ -28,7 +32,7 @@ const EncryptContextProvider: React.FC<ChildrenType> = ({
   const [toggleLockUi, setToggleLockUi] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const encryptData = (data: string, key: string) => {
+  const encryptData = (data: string, key: string): string => {
     try {
       const encryptedData = CryptoJS.AES.encrypt(data, key)?.toString();
       return encryptedData;
@@ -37,7 +41,7 @@ const EncryptContextProvider: React.FC<ChildrenType> = ({
       return data;
     }
   };
-  const decryptData = (data: string, key: any): string => {
+  const decryptData = (data: string, key: string): string => {
     try {
       const decryptedData = CryptoJS.AES.decrypt(data, key)?.toString(
         CryptoJS.enc.Utf8

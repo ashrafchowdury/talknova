@@ -22,7 +22,7 @@ import {
 import { QuestionMark } from ".";
 import { Cross1Icon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useEncrypt } from "@/packages/encryption";
-import { UserType } from "@/packages/server/types";
+import { UserType } from "@/packages/server";
 import { useChats } from "@/packages/server/context/ChatContext";
 
 const SecretKey = ({ user }: { user: UserType }) => {

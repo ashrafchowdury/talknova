@@ -46,7 +46,7 @@ const Notification = () => {
               <NotificattionUsersSkeleton />
             ) : (
               <>
-                {invite.map((data: any) => (
+                {invite.map((data) => (
                   <>
                     <div
                       key={data.uid}

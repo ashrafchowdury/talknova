@@ -3,7 +3,7 @@ import { useState, useEffect, useContext, createContext } from "react";
 import { useUsers } from "@/packages/server/context/UserContext";
 import { ChildrenType } from "@/types";
 import { useSearchParams } from "next/navigation";
-import { UserType } from "@/packages/server/types";
+import { UserType } from "@/packages/server";
 import { useLocalStorage } from "@uidotdev/usehooks";
 
 type AppearanceContextProviderType = {
@@ -19,7 +19,7 @@ const AppearanceContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
   const [userAppearance, setUserAppearance] = useState("");
-  const id: any = useSearchParams().get("id");
+  const id = useSearchParams().get("id") as string;
   const [getData, setData] = useLocalStorage(id);
   const { friends } = useUsers();
   const user: UserType = friends.filter((item) => item.uid == id)[0];

@@ -30,8 +30,8 @@ const ImageUpload = ({ children, type }: ImageComponentType) => {
     useImgCompress();
 
   const handleRemoveImage = (name: string) => {
-    const removePrev = preview.filter((item: any) => name !== item.name);
-    const file = production.filter((item: any) => name !== item.name);
+    const removePrev = preview.filter((item) => name !== item.name);
+    const file = production.filter((item) => name !== item.name);
     setPreview(removePrev);
     setProduction(file);
   };
@@ -63,7 +63,7 @@ const ImageUpload = ({ children, type }: ImageComponentType) => {
         >
           {preview.length > 0 ? (
             <>
-              {preview.map((data: any) => (
+              {preview.map((data) => (
                 <div
                   className={cn(
                     "relative w-full h-[300px]",
@@ -80,7 +80,7 @@ const ImageUpload = ({ children, type }: ImageComponentType) => {
                     <Cross2Icon className="w-3 md:w-4 h-3 md:h-4" />
                   </Button>
                   <Image
-                    src={data.data}
+                    src={data.data as string}
                     fill={true}
                     alt="Preview"
                     className="rounded-lg object-cover"
@@ -100,7 +100,7 @@ const ImageUpload = ({ children, type }: ImageComponentType) => {
                 type="file"
                 accept=".png, .jpg, .jpeg"
                 className="opacity-0 border w-full h-[300px] cursor-pointer"
-                onChange={(e) => compressImg(e.target.files)}
+                onChange={(e) => compressImg(e.target.files as FileList)}
                 multiple={type == "message" ? true : false}
               />
             </>

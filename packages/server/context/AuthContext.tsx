@@ -10,6 +10,8 @@ import {
   deleteUser,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  User,
+  UserCredential,
 } from "firebase/auth";
 import { setDoc, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useToast } from "@/packages/ui";
@@ -22,13 +24,17 @@ import {
   ChildrenType,
 } from "../types";
 
+// Context
 export const AuthContext = createContext<AuthContextType | null>(null);
 export const useAuth = () => useContext(AuthContext)!;
 
+// Provider
 const AuthContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
-  const [currentUser, setCurrentUser] = useState<AuthUserType | any>({});
+  const [currentUser, setCurrentUser] = useState<AuthUserType>(
+    {} as AuthUserType
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   // hooks
@@ -68,18 +74,20 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
   const actions = async ({ toasts, direct, logic, type }: ActionsType) => {
     try {
       setIsLoading(true);
-      const result = await logic();
-      if (type == "login") {
-        createSession(result?.user.uid);
-      } else if (type) {
-        await updateProfile(result?.user, { displayName: type });
-        await createUserProfile(result?.user);
-        createSession(result?.user.uid);
+      if (logic) {
+        const result = (await logic()) as UserCredential;
+        if (type == "login") {
+          createSession(result?.user.uid);
+        } else if (type) {
+          await updateProfile(result?.user, { displayName: type });
+          await createUserProfile(result?.user as AuthUserType);
+          createSession(result?.user.uid);
+        }
+        setCurrentUser(result?.user as AuthUserType);
+        toasts && toast({ title: toasts });
+        direct && push(direct);
+        setIsLoading(false);
       }
-      setCurrentUser(result?.user ?? {});
-      toasts && toast({ title: toasts });
-      direct && push(direct);
-      setIsLoading(false);
     } catch (error: any) {
       if (error.message == "auth/email-already-in-use") {
         toast({ variant: "destructive", title: "User already exist" });
@@ -127,8 +135,8 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
 
   //effects
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
-      setCurrentUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+      setCurrentUser(user as AuthUserType);
     });
     return () => {
       unsubscribe();

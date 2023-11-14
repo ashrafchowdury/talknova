@@ -24,13 +24,22 @@ import { useCookies } from "@/lib/hooks";
 import { toast } from "@/packages/ui/hooks/use-toast";
 import useActive from "../hook/useActive";
 
+// Types
+type UserProfile = {
+  image?: string;
+  name?: string;
+  bio?: string;
+};
+
+// Context
 export const UserContext = createContext<TypeUserContextProvider | null>(null);
 export const useUsers = () => useContext(UserContext)!;
 
+// Provider
 const UserContextProvider: React.FC<ChildrenType> = ({
   children,
 }: ChildrenType) => {
-  const [myself, setMyself] = useState<UserType | any>({});
+  const [myself, setMyself] = useState<UserType>({} as UserType);
   const [user, setUser] = useState<UserType[]>([]);
   const [friends, setFriends] = useState<UserType[]>([]);
   const [invite, setInvite] = useState<UserType[]>([]);
@@ -46,10 +55,10 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const getAllUsers = () => {
     const q = query(collection(database, "users"));
     onSnapshot(q, (snapshot) => {
-      const data: any = snapshot.docs.map((doc) => ({
+      const data = snapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
-      }));
+      })) as UserType[];
       const filterData = data.filter((item: UserType) => item.uid !== uid);
       setUser(filterData);
     });
@@ -58,10 +67,10 @@ const UserContextProvider: React.FC<ChildrenType> = ({
   const getCurrentUser = async () => {
     const q = query(collection(database, "users"), where("uid", "==", uid));
     const snapshot = await getDocs(q);
-    const data: any = snapshot.docs.map((doc) => ({
+    const data = snapshot.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
-    }))[0];
+    }))[0] as UserType;
     setMyself(data);
     data?.friends?.length > 0 && getUserFriends(data.friends);
     data?.invite?.length > 0 && getUserInvitations(data.invite);
@@ -77,10 +86,10 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     try {
       const q = query(collection(database, "users"), where("uid", "in", id));
       const snapshot = await getDocs(q);
-      const data: any = snapshot.docs.map((doc) => ({
+      const data = snapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
-      }));
+      })) as UserType[];
 
       if (data.length > 0) {
         setFriends(data);
@@ -96,13 +105,13 @@ const UserContextProvider: React.FC<ChildrenType> = ({
       const ids = id.map((item) => [uid, item].sort().join(""));
       const q = query(collection(database, "chats"), where("uid", "in", ids));
       onSnapshot(q, (snapshot) => {
-        const data: any = snapshot.docs.map((doc) => ({
+        const data = snapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
-        }));
-        const friendsLastMsgs = friendData.map((value: any) => {
+        })) as LastMsgType[];
+        const friendsLastMsgs = friendData.map((value) => {
           const matchingFriend = data.find(
-            (item: any) => item.uid === [uid, value.uid].sort().join("")
+            (item) => item.uid === [uid, value.uid].sort().join("")
           );
           return { ...value, ...matchingFriend, uid: value.uid };
         });
@@ -119,7 +128,10 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     const q = query(collection(database, "users"), where("uid", "in", id));
     onSnapshot(q, (snapshot) => {
       setInvite(
-        snapshot.docs.map((doc: any) => ({ ...doc.data(), id: doc.id }))
+        snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        })) as UserType[]
       );
     });
   };
@@ -162,7 +174,7 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     name?: string,
     bio?: string
   ) => {
-    const updatedFields: any = {};
+    const updatedFields: UserProfile = {};
 
     if (name) updatedFields.name = name;
     if (image) updatedFields.image = image;
