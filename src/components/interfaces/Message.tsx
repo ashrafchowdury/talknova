@@ -147,7 +147,7 @@ const Message = ({ data, position, user }: MessageType) => {
           )}
           <div
             className={cn(
-              "absolute -bottom-[24px] flex items-center space-x-2",
+              "absolute -bottom-[20px] flex items-center space-x-2",
               msgPosition ? "right-1" : "-left-1"
             )}
           >
