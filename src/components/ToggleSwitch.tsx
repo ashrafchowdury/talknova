@@ -22,7 +22,7 @@ const ToggleSwitch = ({
       className={cn("w-full flex items-center justify-between mb-7", className)}
     >
       <div className="mr-5">
-        <p className="text-[16px] font-bold mb-1">
+        <p className="text-[16px] font-bold mb-1 capitalize">
           {title}
           {badge && <Badge className="mb-1 ml-2 capitalize">{badge}</Badge>}
         </p>

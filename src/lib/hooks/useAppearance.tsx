@@ -1,7 +1,6 @@
 "use client";
-import { useState, useEffect, useContext, createContext } from "react";
+import React, { useState, useEffect, useContext, createContext } from "react";
 import { useUsers } from "@/packages/server/context/UserContext";
-import { ChildrenType } from "@/types";
 import { useSearchParams } from "next/navigation";
 import { UserType } from "@/packages/server";
 import { useLocalStorage } from "@uidotdev/usehooks";
@@ -11,6 +10,10 @@ type AppearanceContextProviderType = {
   setUserAppearance: React.Dispatch<React.SetStateAction<string>>;
   changeUserAppearance: (value: string) => void;
 };
+type ChildrenType = {
+  children: React.ReactNode;
+};
+
 export const AppearanceContext =
   createContext<AppearanceContextProviderType | null>(null);
 export const useAppearance = () => useContext(AppearanceContext)!;

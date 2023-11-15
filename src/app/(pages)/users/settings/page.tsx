@@ -6,10 +6,10 @@ import {
   ThemeSelector,
   ToggleSwitch,
   BackSpace,
-  SecretKey,
+  LockChatUI,
   Avatar,
   AllImages,
-} from "@/components/interfaces";
+} from "@/components";
 import { useUsers } from "@/packages/server/context/UserContext";
 import { useAppearance } from "@/lib/hooks";
 import { useTheme } from "next-themes";
@@ -48,7 +48,7 @@ const UserSetting = () => {
         )}
       </div>
 
-      <div className="w-full mt-7 px-4">
+      <div className="w-full mt-8 px-4">
         <p className="mb-4 font-medium opacity-60">Medias</p>
 
         <div className="flex items-center space-x-3">
@@ -63,18 +63,13 @@ const UserSetting = () => {
         </div>
       </div>
 
-      <div className="w-full mt-7 px-4">
+      <div className="w-full mt-8 px-4">
         <p className="mb-4 font-medium opacity-60">Settings</p>
-        <SecretKey user={user} />
-
-        <ToggleSwitch
-          title="Lorem Ipsum"
-          desc="Lorem ipsum, dolor sit amet consectetur"
-        />
+        <LockChatUI user={user} />
       </div>
 
-      <div className="w-full mt-7 px-4">
-        <p className="mb-4 font-medium opacity-60">Theme</p>
+      <div className="w-full mt-8 px-4">
+        <p className="mb-4 font-medium opacity-60">Chat Appearance</p>
         <ThemeSelector
           action={changeUserAppearance}
           defaultValue={

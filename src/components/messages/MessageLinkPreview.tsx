@@ -1,11 +1,7 @@
 import { useState } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Skeleton,
-} from "@/packages/ui";
+import { Popover, PopoverContent, PopoverTrigger } from "@/packages/ui";
 import { Arrow } from "@radix-ui/react-popover";
+import { MessageLinkPreviewSkeleton } from "../skeletons";
 
 type LinkPreviewType = {
   title: string;
@@ -13,7 +9,7 @@ type LinkPreviewType = {
   image: string;
   url: string;
 };
-const LinkPreview = ({ message }: { message: string }) => {
+const MessageLinkPreview = ({ message }: { message: string }) => {
   const [preview, setPreview] = useState<LinkPreviewType>({
     title: "",
     description: "",
@@ -48,7 +44,7 @@ const LinkPreview = ({ message }: { message: string }) => {
         sideOffset={5}
         className="min-w-auto max-w-[85%] sm:max-w-[350px] md:max-w-[450px]"
       >
-        {status == "fetching" && <LinkPreviewSkeleton />}
+        {status == "fetching" && <MessageLinkPreviewSkeleton />}
         {preview.title && (
           <a href={preview.url} target="_blank" rel="noopener noreferrer">
             <img
@@ -74,17 +70,4 @@ const LinkPreview = ({ message }: { message: string }) => {
   );
 };
 
-export default LinkPreview;
-
-export const LinkPreviewSkeleton = () => {
-  return (
-    <div className="w-full space-y-5">
-      <Skeleton className="w-full h-24 rounded-lg" />
-      <Skeleton className="w-full h-8 rounded-md" />
-      <div className="w-full space-y-2">
-        <Skeleton className="w-full h-4 rounded-sm" />
-        <Skeleton className="w-full h-4 rounded-sm" />
-      </div>
-    </div>
-  );
-};
+export default MessageLinkPreview;

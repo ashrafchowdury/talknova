@@ -1,5 +1,5 @@
 "use client";
-import { useState, Fragment } from "react";
+import React, { useState, Fragment } from "react";
 import {
   Command,
   CommandEmpty,
@@ -18,11 +18,11 @@ import {
   DialogClose,
   useToast,
 } from "@/packages/ui";
-import { InviteUsers, InviteUsersSkeleton } from "./interfaces";
-import { ChildrenType } from "@/types";
+import { InviteUsers } from ".";
+import { InviteUsersSkeleton } from "./skeletons";
 import { useUsers } from "@/packages/server/context/UserContext";
 
-const Invite = ({ children }: ChildrenType) => {
+const Invite = ({ children }: { children: React.ReactNode }) => {
   const [selectedInvitation, setSelectedInvitation] = useState<string[]>([]);
   const { getAllUsers, user, inviteUser, friends, invite } = useUsers();
   const { toast } = useToast();

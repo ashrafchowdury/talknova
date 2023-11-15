@@ -13,8 +13,8 @@ import {
   Avatar,
   ImageUpload,
   RecordAudio,
-  AddSecretKey,
-} from "@/components/interfaces";
+  UnlockChatUI,
+} from "@/components";
 import { useUsers } from "@/packages/server/context/UserContext";
 import { useChats } from "@/packages/server/context/ChatContext";
 import { useTheme } from "next-themes";
@@ -34,7 +34,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { database } from "@/packages/server";
-import { useAppearance } from "@/lib/hooks";
+import { MessageTyping } from "@/components/messages";
 
 // Types
 type ChatType = {
@@ -69,7 +69,6 @@ const Chats = () => {
     createChatId,
   } = useChats();
   const { isAutoLock } = useEncrypt();
-  const { userAppearance } = useAppearance();
 
   // Variables
   const user: UserType = friends.filter((item) => item.uid == id)[0];
@@ -211,7 +210,7 @@ const Chats = () => {
 
   return (
     <main className="md:border-x relative h-screen overflow-hidden flex flex-col justify-start">
-      {user?.key && isAutoLock ? <AddSecretKey user={user} /> : null}
+      {user?.key && isAutoLock ? <UnlockChatUI user={user} /> : null}
       <nav className="h-[57px] md:h-[62px] w-[98%] md:w-[97%] md:px-2 mx-auto border-b flex items-center justify-between bg-background">
         <BackSpace href="/users" />
         <div className="flex items-center">
@@ -277,28 +276,7 @@ const Chats = () => {
             />
           </Fragment>
         ))}
-        {isTyping && myself.uid !== user?.typing?.user ? (
-          <div className="w-full my-5 float-left clear-both">
-            <div className="w-auto flex items-end space-x-2">
-              <Avatar
-                img={user?.image}
-                fallback={user?.name}
-                className="w-4 md:w-6 h-4 md:h-6 text-[7px] md:text-[9px]"
-              />
-              <div
-                className={cn(
-                  "h-[34px] md:h-10 w-16 md:w-24 rounded-lg bg-primary flex items-center justify-center opacity-80",
-                  userAppearance && userAppearance
-                )}
-              >
-                <Loader
-                  variant={theme == "dark-black" ? "black" : "white"}
-                  className="scale-105"
-                />
-              </div>
-            </div>
-          </div>
-        ) : null}
+        <MessageTyping user={user} />
       </article>
 
       <section className="w-[93%] sm:w-[490px] md:w-[690px] lg:w-[650px] xl:w-[750px] bg-background fixed bottom-0 left-1/2 transform -translate-x-[50%]">

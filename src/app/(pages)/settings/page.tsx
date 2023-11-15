@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
-import { Button, Input, useToast } from "@/packages/ui";
+import { Button, Input, useToast, Separator } from "@/packages/ui";
 import {
   BackSpace,
   ToggleSwitch,
   ThemeSelector,
   Avatar,
   ImageUpload,
-} from "@/components/interfaces";
+} from "@/components";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/packages/server/context/AuthContext";
 import { useUsers } from "@/packages/server/context/UserContext";
@@ -34,7 +34,7 @@ const Settings = () => {
       });
     } else if (myself.name === detailes.name || myself.bio == detailes.bio) {
       toast({
-        title: "Nname & Bio must have to be different from before",
+        title: "Name & Bio must have to be different from before",
         variant: "destructive",
       });
     } else {
@@ -94,13 +94,6 @@ const Settings = () => {
 
       <div className="w-full mt-7 md:px-4">
         <p className="mb-4 font-medium opacity-60">Settings</p>
-
-        <ToggleSwitch
-          title="Turn on Dark mood"
-          desc="Lorem ipsum, dolor sit amet consectetur  dolor sit amet"
-          action={() => toggleTheme(theme, setTheme)}
-          checked={theme?.includes("light") ? false : true}
-        />
         <ToggleSwitch
           title="Active state"
           desc="Lorem ipsum, dolor sit amet consectetur  dolor sit amet"
@@ -111,13 +104,18 @@ const Settings = () => {
           desc="Lorem ipsum, dolor sit amet consectetur dolor sit amet  dolor sit amet consectetur dolor sit amet"
           badge="Beta"
         />
-        <ToggleSwitch
-          title="Block"
-          desc="Lorem ipsum, dolor sit amet consectetur dolor sit amet  dolor sit amet consectetur dolor sit amet"
-          badge="Beta"
-        />
-        <div className="w-full mt-7">
-          <p className="mb-4 font-medium opacity-60">Appereance</p>
+
+        <Separator className="my-8" />
+
+        <div className="w-full">
+          <p className="mb-5 font-medium opacity-60">App Appereance</p>
+          <ToggleSwitch
+            title="Turn on Dark mood"
+            desc="Lorem ipsum, dolor sit amet consectetur  dolor sit amet"
+            action={() => toggleTheme(theme, setTheme)}
+            checked={theme?.includes("light") ? false : true}
+            className="!mb-9"
+          />
           <ThemeSelector
             action={changeColorScheme}
             defaultValue={theme?.split("-")[1] as string}
@@ -126,10 +124,10 @@ const Settings = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center mt-28 mb-6">
+      <div className="flex items-center justify-center mt-20 md:mt-28 !mb-6">
         <Button
           variant="destructive"
-          className="w-full md:w-[98%] py-5 "
+          className="w-full md:w-[98%] py-5"
           onClick={() => {
             logout();
             activeStatus(false);

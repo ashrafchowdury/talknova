@@ -1,7 +1,7 @@
 "use client";
 import { useState, Fragment, useEffect } from "react";
-import { Users as User, UsersSkeleton, Loader } from "@/components/interfaces";
-import { Invite, Notification } from "@/components";
+import { Users as User, Loader, Invite, Notification } from "@/components";
+import { UsersSkeleton } from "@/components/skeletons";
 import {
   GearIcon,
   PlusCircledIcon,
@@ -12,14 +12,12 @@ import Link from "next/link";
 import { useUsers } from "@/packages/server/context/UserContext";
 import { useVisibilityChange } from "@uidotdev/usehooks";
 import { useTheme } from "next-themes";
-import { useSearchParams } from "next/navigation";
 
 const Users = () => {
   const [searchUsers, setSearchUsers] = useState("");
   const { friends, myself, isLoading } = useUsers();
   const { theme } = useTheme();
   const documentVisible = useVisibilityChange();
-  const id = useSearchParams().get("id");
 
   useEffect(() => {
     const soundEffects = () => {
@@ -44,83 +42,83 @@ const Users = () => {
     return alignUserByTime;
   };
 
-  if (isLoading) {
-    return (
-      <Loader
-        variant={theme == "light" ? "black" : "white"}
-        className="scale-150 md:scale-[2] absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
-      />
-    );
-  } else {
-    return (
-      <aside className="h-screen flex flex-col justify-between md:px-4 md:border-x">
-        <div>
-          <nav className="h-[60px] flex items-center justify-between border-b">
-            <h1 className=" text-2xl font-bold">Inbox</h1>
-            <div>
-              <Notification />
-              <Invite>
+  return (
+    <>
+      {isLoading ? (
+        <Loader
+          variant={theme == "light" ? "black" : "white"}
+          className="scale-150 md:scale-[2] absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
+        />
+      ) : (
+        <aside className="min-h-screen max-h-full flex flex-col justify-between md:px-4 md:border-x">
+          <div className="mb-12">
+            <nav className="h-[60px] flex items-center justify-between border-b">
+              <h1 className=" text-2xl font-bold">Inbox</h1>
+              <div>
+                <Notification />
+                <Invite>
+                  <Button
+                    variant="ghost"
+                    title="Invite Friends"
+                    className="py-[2px] px-2 mx-1 hover:bg-border duration-300"
+                  >
+                    <PlusCircledIcon className="w-5 h-5" />
+                  </Button>
+                </Invite>
                 <Button
                   variant="ghost"
-                  title="Invite Friends"
+                  title="Settings"
                   className="py-[2px] px-2 mx-1 hover:bg-border duration-300"
                 >
-                  <PlusCircledIcon className="w-5 h-5" />
+                  <Link href="/settings">
+                    <GearIcon className="w-5 h-5" />
+                  </Link>
                 </Button>
-              </Invite>
-              <Button
-                variant="ghost"
-                title="Settings"
-                className="py-[2px] px-2 mx-1 hover:bg-border duration-300"
-              >
-                <Link href="/settings">
-                  <GearIcon className="w-5 h-5" />
-                </Link>
-              </Button>
-            </div>
-          </nav>
+              </div>
+            </nav>
 
-          <section className="w-full relative mt-4 mb-5 md:pr-[14px]">
-            <Input
-              placeholder="Search Friends"
-              className="w-full py-5 px-9"
-              value={searchUsers}
-              onChange={(e) => setSearchUsers(e.target.value)}
-            />
-            <MagnifyingGlassIcon className="w-5 h-5 absolute top-[11px] left-[10px]" />
-          </section>
+            <section className="w-full relative mt-4 mb-5 md:pr-[14px]">
+              <Input
+                placeholder="Search Friends"
+                className="w-full py-5 px-9"
+                value={searchUsers}
+                onChange={(e) => setSearchUsers(e.target.value)}
+              />
+              <MagnifyingGlassIcon className="w-5 h-5 absolute top-[11px] left-[10px]" />
+            </section>
 
-          <section className="w-full md:w-[98%] mt-8">
-            {myself.friends?.length > 0 && friends.length == 0 ? (
-              <UsersSkeleton />
-            ) : (
-              <>
-                {alignUser()
-                  .filter(
-                    (data) =>
-                      data.name
-                        ?.toLowerCase()
-                        .includes(searchUsers.toLowerCase())
-                  )
-                  .map((data) => (
-                    <Fragment key={data.uid}>
-                      <User data={data} />
-                    </Fragment>
-                  ))}
-              </>
-            )}
-          </section>
-        </div>
+            <section className="w-full md:w-[98%] mt-8">
+              {myself.friends?.length > 0 && friends.length == 0 ? (
+                <UsersSkeleton />
+              ) : (
+                <>
+                  {alignUser()
+                    .filter(
+                      (data) =>
+                        data.name
+                          ?.toLowerCase()
+                          .includes(searchUsers.toLowerCase())
+                    )
+                    .map((data) => (
+                      <Fragment key={data.uid}>
+                        <User data={data} />
+                      </Fragment>
+                    ))}
+                </>
+              )}
+            </section>
+          </div>
 
-        <Invite>
-          <Button className="w-full md:w-[97%] mb-3">
-            <PlusCircledIcon className="w-5 h-5 mr-2" />
-            Invite Friends
-          </Button>
-        </Invite>
-      </aside>
-    );
-  }
+          <Invite>
+            <Button className="w-full md:w-[98%] mx-auto mb-3">
+              <PlusCircledIcon className="w-5 h-5 mr-2" />
+              Invite Friends
+            </Button>
+          </Invite>
+        </aside>
+      )}
+    </>
+  );
 };
 
 export default Users;
