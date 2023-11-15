@@ -1,5 +1,3 @@
-import Loader from "./Loader";
-
 import { useState, useRef, MutableRefObject } from "react";
 import Image from "next/image";
 import {
@@ -363,12 +361,3 @@ export const MessageSkeleton = () => {
     </>
   );
 };
-
-{
-  /* <div
-        className="h-[34px] md:h-10 w-16 rounded-lg bg-black text-white my-2 md:my-3 flex items-center justify-center"
-        style={{ backgroundColor: userAppearance }}
-      >
-        <Loader variant="white" />
-      </div> */
-}

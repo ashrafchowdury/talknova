@@ -11,6 +11,10 @@ export type UserType = {
   lastMsgTime: string | Date;
   key?: string;
   active?: boolean;
+  typing: {
+    user: string;
+    istyping: boolean;
+  };
 };
 export type LastMsgType = {
   id: string;

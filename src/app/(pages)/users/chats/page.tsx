@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, ChangeEvent } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { GearIcon, PaperPlaneIcon, ImageIcon } from "@radix-ui/react-icons";
 import { Button, Input, Progress } from "@/packages/ui";
@@ -34,6 +34,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { database } from "@/packages/server";
+import { useAppearance } from "@/lib/hooks";
 
 // Types
 type ChatType = {
@@ -53,6 +54,8 @@ const Chats = () => {
   const [chats, setChats] = useState<ChatType[]>([]);
   const [chatId, setChatId] = useState<ChatId>({ id: "", load: true });
   const [autoScroll, setAutoScroll] = useState(true);
+
+  // Hooks
   const id = useSearchParams().get("id");
   const router = useRouter();
   const { theme } = useTheme();
@@ -66,8 +69,13 @@ const Chats = () => {
     createChatId,
   } = useChats();
   const { isAutoLock } = useEncrypt();
-  const user: UserType = friends.filter((item) => item.uid == id)[0];
+  const { userAppearance } = useAppearance();
 
+  // Variables
+  const user: UserType = friends.filter((item) => item.uid == id)[0];
+  const isTyping = user?.typing?.istyping;
+
+  // Functions
   useEffect(() => {
     setChats([]);
     setAutoScroll(true);
@@ -180,10 +188,31 @@ const Chats = () => {
     }
   };
 
+  const typingEffect = async (typing: boolean) => {
+    await updateDoc(doc(database, "chats", `${createChatId()}`), {
+      typing: {
+        user: myself.uid,
+        istyping: typing,
+      },
+    });
+  };
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setMessage(event.target.value);
+    if (
+      (event.target.value == "" || event.target.value.length < 4) &&
+      isTyping
+    ) {
+      typingEffect(false);
+    } else if (event.target.value.length > 4 && !isTyping) {
+      typingEffect(true);
+    }
+  };
+
   return (
     <main className="md:border-x relative h-screen overflow-hidden flex flex-col justify-start">
       {user?.key && isAutoLock ? <AddSecretKey user={user} /> : null}
-      <nav className="h-[55px] md:h-[60px] w-[98%] md:w-[97%] md:px-2 mx-auto border-b flex items-center justify-between bg-background">
+      <nav className="h-[57px] md:h-[62px] w-[98%] md:w-[97%] md:px-2 mx-auto border-b flex items-center justify-between bg-background">
         <BackSpace href="/users" />
         <div className="flex items-center">
           <Avatar
@@ -195,17 +224,21 @@ const Chats = () => {
             <p className="text-[16px] md:text-lg font-bold capitalize">
               {user?.name}
             </p>
-
-            <p className="text-xs md:text-sm opacity-60 md:-mt-1">
-              {user?.active
-                ? `Active Now ...`
-                : `Last Message ${formatTimeByLastMsg(user?.lastMsgTime)}`}
-            </p>
-            {/* <p>Typing</p>
-              <Loader
-                variant={theme?.includes("light") ? "black" : "white"}
-                className="opacity-50 ml-[2px]"
-              /> */}
+            {isTyping && myself.uid !== user?.typing?.user ? (
+              <div className="flex items-end md:-mt-1">
+                <p className="text-xs md:text-sm opacity-60">Typing</p>
+                <Loader
+                  variant={theme?.includes("light") ? "black" : "white"}
+                  className="opacity-50 ml-[2px]"
+                />
+              </div>
+            ) : (
+              <p className="text-xs md:text-sm opacity-60 md:-mt-1">
+                {user?.active
+                  ? `Active Now ...`
+                  : `Last Message ${formatTimeByLastMsg(user?.lastMsgTime)}`}
+              </p>
+            )}
           </div>
         </div>
 
@@ -244,6 +277,28 @@ const Chats = () => {
             />
           </Fragment>
         ))}
+        {isTyping && myself.uid !== user?.typing?.user ? (
+          <div className="w-full my-5 float-left clear-both">
+            <div className="w-auto flex items-end space-x-2">
+              <Avatar
+                img={user?.image}
+                fallback={user?.name}
+                className="w-4 md:w-6 h-4 md:h-6 text-[7px] md:text-[9px]"
+              />
+              <div
+                className={cn(
+                  "h-[34px] md:h-10 w-16 md:w-24 rounded-lg bg-primary flex items-center justify-center opacity-80",
+                  userAppearance && userAppearance
+                )}
+              >
+                <Loader
+                  variant={theme == "dark-black" ? "black" : "white"}
+                  className="scale-105"
+                />
+              </div>
+            </div>
+          </div>
+        ) : null}
       </article>
 
       <section className="w-[93%] sm:w-[490px] md:w-[690px] lg:w-[650px] xl:w-[750px] bg-background fixed bottom-0 left-1/2 transform -translate-x-[50%]">
@@ -252,7 +307,8 @@ const Chats = () => {
             <Input
               placeholder="Type a Message..."
               className=" !py-6 text-sm md:text-[16px] pr-36"
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={handleChange}
+              onBlur={() => isTyping && typingEffect(false)}
               value={message}
               disabled={fileUploadProgress !== 0}
             />

@@ -28,11 +28,12 @@ Talknova is a real-time chat application built with modern technologies, providi
 ## Upcoming Features
 
 - [x] Add Image Compressor
-- [ ] User active/deactivate feature
+- [x] User active/deactivate feature - Beta
 - [x] Image Download
 - [x] Message seen & unseen
 - [ ] Block User
 - [ ] Delete Account
+- [x] User Typing effect
 - [ ] ...
 
 ## Getting started
