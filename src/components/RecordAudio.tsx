@@ -18,6 +18,7 @@ import { useAppearance } from "@/lib/hooks";
 const RecordAudio = () => {
   const [audio, setAudio] = useState<Blob | null>(null);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [isDelete, setIsDelete] = useState(false);
   const {
     isAudioPlaying,
     setIsAudioPlaying,
@@ -44,8 +45,10 @@ const RecordAudio = () => {
   }, [isRecording]);
 
   useEffect(() => {
-    if (audio !== null) {
+    if (audio !== null && !isDelete) {
       uploadAudio(audio);
+    } else {
+      setAudio(null);
     }
   }, [audio]);
 
@@ -55,22 +58,21 @@ const RecordAudio = () => {
   const startRecording = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
+      isDelete && setIsDelete(false);
       setIsAudioPlaying(false);
       setIsRecording(true);
     } catch (error) {
       toast({ title: "Please enable your Mic first", variant: "destructive" });
     }
   };
-  const stopRecording = async () => {
+  const stopRecording = async (isdelete: boolean) => {
+    setIsDelete(isdelete);
     setTimeout(() => {
       setIsRecording(false);
       setRecordingTime(0);
     }, 500);
   };
-  const deleteRecording = () => {
-    setAudio(null);
-    stopRecording();
-  };
+
   return (
     <>
       {!isRecording && (
@@ -110,7 +112,7 @@ const RecordAudio = () => {
           variant="ghost"
           size="icon"
           className="w-5 md:w-6 h-5 md:h-6 hover:bg-transparent mr-2"
-          onClick={stopRecording}
+          onClick={() => stopRecording(false)}
         >
           <StopIcon className="w-5 md:w-6 h-5 md:h-6 text-color" />
         </Button>
@@ -124,14 +126,14 @@ const RecordAudio = () => {
           mimeType="audio/webm"
           visualSetting="frequencyBars"
         />
-        <p className="text-white dark:text-black text-sm whitespace-nowrap">{`${minutes}:${
+        <p className="text-sm text-background whitespace-nowrap">{`${minutes}:${
           seconds < 10 ? 0 : ""
         }${seconds}`}</p>
         <Button
           variant="destructive"
           size="icon"
           className="w-7 md:w-9 h-7 md:h-8 mr-2"
-          onClick={deleteRecording}
+          onClick={() => stopRecording(true)}
         >
           <TrashIcon className="w-4 md:w-5 h-4 md:h-5 text-white" />
         </Button>
