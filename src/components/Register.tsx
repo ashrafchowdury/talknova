@@ -52,7 +52,7 @@ const Register = () => {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button>Get Sarted</Button>
+          <Button className="text-xs md:text-sm">Get Sarted</Button>
         </DialogTrigger>
         <DialogContent className="w-[95%] sm:w-[400px] border-none px-4 py-10 sm:p-12">
           <Tabs defaultValue="login" className="w-full sm:w-[400px] mx-auto">

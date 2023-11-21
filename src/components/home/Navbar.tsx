@@ -2,14 +2,14 @@
 import { MoonIcon, GitHubLogoIcon, SunIcon } from "@radix-ui/react-icons";
 import { Button, Logo } from "@/packages/ui";
 import Link from "next/link";
-import Register from "./Register";
+import Register from "../Register";
 import { useTheme } from "next-themes";
 import { toggleTheme } from "@/lib/functions";
 
 const Navbar = () => {
   const { setTheme, theme } = useTheme();
   return (
-    <nav className="h-[80px] flex justify-between items-center">
+    <nav className="h-[100px] flex justify-between items-center">
       <div className="flex items-center">
         <Logo />
         <h1 className=" text-xl sm:text-2xl font-bold ml-1 sm:ml-2">

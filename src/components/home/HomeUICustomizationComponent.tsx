@@ -14,7 +14,9 @@ const HomeUICustomizationComponent = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline">Customize UI</Button>
+        <Button className="text-xs md:text-sm" variant="outline">
+          Customize UI
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[220px] sm:w-[260px]" align="start">
         <div className="space-y-2">

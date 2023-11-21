@@ -15,17 +15,12 @@ import AllImages from "./AllImages";
 import QuestionMark from "./QuestionMark";
 import Notification from "./Notification";
 import Invite from "./Invite";
-import Navbar from "./Navbar";
-import Features from "./Features";
 import Register from "./Register";
-import HomeUICustomizationComponent from "./HomeUICustomizationComponent";
 import NotificationUsers from "./NotificationUsers";
 
 export {
   Notification,
   Invite,
-  Navbar,
-  Features,
   Register,
   InviteUsers,
   Message,
@@ -42,6 +37,5 @@ export {
   AllImages,
   UnlockChatUI,
   QuestionMark,
-  HomeUICustomizationComponent,
   NotificationUsers,
 };
