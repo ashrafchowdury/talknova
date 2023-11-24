@@ -3,6 +3,13 @@
 
 echo '🏗️ Styling, testing and building the application before committing'
 
+# Format code
+npm run format ||
+(
+    echo '❌ Format failed: View the errors above to see why. ❌'
+    false;
+)
+
 # Check Prettier standards
 npm run check-format ||
 (
@@ -18,5 +25,6 @@ npm run check-types ||
     false;
 )
 
+
 # If everything passes... Now we can commit
-echo '✅✅✅✅ Eveything looks good ✅✅✅✅'
+echo '✅ Eveything looks good ✅'

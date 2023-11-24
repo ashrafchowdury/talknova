@@ -88,7 +88,7 @@ const Chats = () => {
       doc ? (doc.scrollTop = doc?.scrollHeight) : null;
     }
     seenMsg();
-  }, [chats]);
+  }, [chats, user?.typing]);
 
   const getChats = () => {
     try {
