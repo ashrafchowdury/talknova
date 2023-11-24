@@ -9,8 +9,9 @@ export const metadata: Metadata = {
   title: "A fully functional chat application",
   description:
     "Talknova is a real-time chat application built with modern technologies, providing a secure and engaging communication platform for users.",
+  metadataBase: new URL("https://talknova.vercel.app"),
   openGraph: {
-    images: ["/preview.png"],
+    images: "/preview.png",
   },
 };
 
@@ -22,7 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={outfit.className}>
-        <ThemeProvider attribute="class" defaultTheme="light-black">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light-black"
+          enableSystem={true}
+        >
           <AuthContextProvider>
             {children} <Toaster />
           </AuthContextProvider>

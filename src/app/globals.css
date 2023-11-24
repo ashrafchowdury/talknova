@@ -4,6 +4,7 @@
 
 @layer base {
   /* Black & White theme */
+  :root,
   .light-black {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;

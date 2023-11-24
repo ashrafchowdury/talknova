@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext, createContext } from "react";
 import { useUsers } from "@/packages/server/context/UserContext";
 import { useSearchParams } from "next/navigation";
 import { UserType } from "@/packages/server";
-import { useLocalStorage } from "@uidotdev/usehooks";
+import { useLocalStorage } from ".";
 
 type AppearanceContextProviderType = {
   userAppearance: string;
@@ -23,20 +23,21 @@ const AppearanceContextProvider: React.FC<ChildrenType> = ({
 }: ChildrenType) => {
   const [userAppearance, setUserAppearance] = useState("");
   const id = useSearchParams().get("id") as string;
-  const [getData, setData] = useLocalStorage(id);
+  const { setItem, getItem, removeItem } = useLocalStorage(id);
   const { friends } = useUsers();
   const user: UserType = friends.filter((item) => item.uid == id)[0];
 
   const changeUserAppearance = (value: string) => {
     if (value == "bg-primary") {
-      localStorage.removeItem(id);
+      removeItem();
     } else {
-      setData(value);
+      setItem(value);
     }
     setUserAppearance(value);
   };
   useEffect(() => {
-    setUserAppearance(getData as string);
+    const item = getItem();
+    setUserAppearance(item);
   }, [user?.uid]);
 
   const value: AppearanceContextProviderType = {

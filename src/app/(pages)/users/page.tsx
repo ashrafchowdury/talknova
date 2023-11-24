@@ -10,24 +10,23 @@ import {
 import { Button, Input } from "@/packages/ui";
 import Link from "next/link";
 import { useUsers } from "@/packages/server/context/UserContext";
-import { useVisibilityChange } from "@uidotdev/usehooks";
 import { useTheme } from "next-themes";
 
 const Users = () => {
   const [searchUsers, setSearchUsers] = useState("");
   const { friends, myself, isLoading } = useUsers();
   const { theme } = useTheme();
-  const documentVisible = useVisibilityChange();
 
-  useEffect(() => {
-    const soundEffects = () => {
-      if (!documentVisible && navigator.onLine && !isLoading) {
-        const effect = new Audio("/new_message.mp3");
-        effect.play();
-      }
-    };
-    soundEffects();
-  }, [friends]);
+  // Experimental Feature
+  // useEffect(() => {
+  //   const soundEffects = () => {
+  //     if (!documentVisible && navigator.onLine && !isLoading) {
+  //       const effect = new Audio("/new_message.mp3");
+  //       effect.play();
+  //     }
+  //   };
+  //   soundEffects();
+  // }, [friends]);
 
   const alignUser = () => {
     const now = new Date();
