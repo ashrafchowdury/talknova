@@ -58,6 +58,11 @@ const useChatManager = () => {
       doc ? (doc.scrollTop = doc?.scrollHeight) : null;
     }
     seenMsg();
+    // it run when the message pop-up arraived
+    if (selectedUser?.typing?.user == id && selectedUser?.typing?.istyping) {
+      const audio = new Audio("/new_message.wav");
+      audio.play();
+    }
   }, [chats, selectedUser?.typing]);
 
   // functions
