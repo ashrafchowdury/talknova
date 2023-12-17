@@ -57,7 +57,7 @@ const Chats = () => {
       {selectedUser?.key && isAutoLock ? (
         <UnlockChatUI user={selectedUser} />
       ) : null}
-      <nav className="h-[57px] md:h-[62px] w-[98%] md:w-[97%] md:px-2 mx-auto border-b flex items-center justify-between bg-background">
+      <nav className="h-[57px] md:h-[62px] w-[95%] sm:w-[490px] md:w-[690px] lg:w-[650px] xl:w-[750px] md:px-2 mx-auto border-b flex items-center justify-between bg-background fixed top-0 left-1/2 transform -translate-x-[50%] z-20">
         <BackSpace href="/users" />
         <div className="flex items-center">
           <Avatar
@@ -107,7 +107,7 @@ const Chats = () => {
       )}
       <article
         onScroll={handleAutoScroll}
-        className="chatInterface scroll-smooth w-full h-[80%] sm:h-full px-2 sm:px-6 md:px-8 break-all pt-14 pb-16 sm:pb-24 overflow-y-auto overscroll-contain"
+        className="chatInterface scroll-smooth w-full h-[95%] sm:h-full px-2 sm:px-6 md:px-8 break-all pt-24 pb-16 sm:pb-24 overflow-y-auto overscroll-contain"
       >
         {chats.length == 0 && (
           <div className="w-full mt-20">

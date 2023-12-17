@@ -4,10 +4,14 @@ import { Button, Logo } from "@/packages/ui";
 import Link from "next/link";
 import Register from "../Register";
 import { useTheme } from "next-themes";
+import { useCookies } from "@/lib/hooks";
 import { toggleTheme } from "@/lib/functions";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const { setTheme, theme } = useTheme();
+  const { uid } = useCookies();
+  const router = useRouter();
   return (
     <nav className="h-[100px] flex justify-between items-center">
       <div className="flex items-center">
@@ -48,7 +52,16 @@ const Navbar = () => {
           )}
         </Button>
 
-        <Register />
+        {uid ? (
+          <Button
+            className="text-xs md:text-sm"
+            onClick={() => router.push("/users")}
+          >
+            Start Chating
+          </Button>
+        ) : (
+          <Register />
+        )}
       </section>
     </nav>
   );

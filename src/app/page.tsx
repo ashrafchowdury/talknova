@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { Register, Avatar } from "@/components";
+import { Register } from "@/components";
 import {
   Navbar,
   HomeUICustomizationComponent,
@@ -15,18 +14,13 @@ import {
   AllOtherFeatures,
   HomeHeaderImage,
 } from "@/components/home";
+import { Button } from "@/packages/ui";
 import { useCookies } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { uid } = useCookies();
   const router = useRouter();
-
-  useEffect(() => {
-    if (uid) {
-      router.push("/users");
-    }
-  }, [uid]);
 
   return (
     <main className="w-[95%] sm:w-[550px] md:w-[720px] lg:w-[1050px] xl:w-[1250px] mx-auto">
@@ -43,7 +37,16 @@ export default function Home() {
             vitae mollitia!
           </p>
           <div className=" flex items-center space-x-3 mt-8 sm:mt-10">
-            <Register />
+            {uid ? (
+              <Button
+                className="text-xs md:text-sm"
+                onClick={() => router.push("/users")}
+              >
+                Start Chating
+              </Button>
+            ) : (
+              <Register />
+            )}
             <HomeUICustomizationComponent />
           </div>
         </section>

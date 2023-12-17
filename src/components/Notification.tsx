@@ -64,14 +64,16 @@ const Notification = () => {
           </section>
         </aside>
 
-        <SheetFooter className=" mt-8">
-          <SheetClose className="flex items-center space-x-2 w-full">
-            <Button variant="destructive" className="w-full">
-              Reject All
-            </Button>
-            <Button className="w-full">Accept All</Button>
-          </SheetClose>
-        </SheetFooter>
+        {invite.length !== 0 && (
+          <SheetFooter className=" mt-8">
+            <SheetClose className="flex items-center space-x-2 w-full">
+              <Button variant="destructive" className="w-full">
+                Reject All
+              </Button>
+              <Button className="w-full">Accept All</Button>
+            </SheetClose>
+          </SheetFooter>
+        )}
       </SheetContent>
     </Sheet>
   );
