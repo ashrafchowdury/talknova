@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { StopIcon, TrashIcon } from "@radix-ui/react-icons";
-import { Button, useToast } from "@/packages/ui";
+import { Button } from "@/packages/ui";
 import dynamic from "next/dynamic";
 import { ReactMicStopEvent } from "react-mic";
 const DynamicReactMic = dynamic(
@@ -14,6 +14,7 @@ import { cn } from "@/lib/functions";
 import { useChats } from "@/packages/server/context/ChatContext";
 import { useTheme } from "next-themes";
 import { useAppearance } from "@/lib/hooks";
+import { toast } from "sonner";
 
 const RecordAudio = () => {
   const [audio, setAudio] = useState<Blob | null>(null);
@@ -27,7 +28,6 @@ const RecordAudio = () => {
     uploadAudio,
     fileUploadProgress,
   } = useChats();
-  const { toast } = useToast();
   const { theme } = useTheme();
   const { userAppearance } = useAppearance();
 
@@ -62,7 +62,7 @@ const RecordAudio = () => {
       setIsAudioPlaying(false);
       setIsRecording(true);
     } catch (error) {
-      toast({ title: "Please enable your Mic first", variant: "destructive" });
+      toast.warning("Please enable your Mic first");
     }
   };
   const stopRecording = async (isdelete: boolean) => {

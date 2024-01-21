@@ -16,20 +16,19 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-  useToast,
 } from "@/packages/ui";
 import { InviteUsers } from ".";
 import { InviteUsersSkeleton } from "./skeletons";
 import { useUsers } from "@/packages/server/context/UserContext";
+import { toast } from "sonner";
 
 const Invite = ({ children }: { children: React.ReactNode }) => {
   const [selectedInvitation, setSelectedInvitation] = useState<string[]>([]);
   const { getAllUsers, user, inviteUser, friends, invite } = useUsers();
-  const { toast } = useToast();
 
   const handleInviteUsers = () => {
     selectedInvitation.map((email: string) => inviteUser(email));
-    toast({ title: "Sended Request Successfully" });
+    toast.success("Sended Request Successfully");
     setSelectedInvitation([]);
   };
   const addUsers = (email: string) => {

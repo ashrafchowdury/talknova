@@ -21,7 +21,7 @@ import {
 } from "firebase/firestore";
 import { database } from "../config";
 import { useCookies } from "@/lib/hooks";
-import { toast } from "@/packages/ui/hooks/use-toast";
+import { toast } from "sonner";
 import useActive from "../hook/useActive";
 
 // Types
@@ -183,9 +183,9 @@ const UserContextProvider: React.FC<ChildrenType> = ({
     if (Object.keys(updatedFields).length > 0) {
       try {
         await updateDoc(doc(database, "users", `${myself.id}`), updatedFields);
-        toast({ title: "Profile updated successfully" });
+        toast.success("Profile updated successfully");
       } catch (error) {
-        toast({ title: "Something went wrong!", variant: "destructive" });
+        toast.error("Something went wrong!");
       }
     }
   };

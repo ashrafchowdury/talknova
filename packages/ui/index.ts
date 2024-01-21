@@ -53,7 +53,6 @@ import {
   CommandSeparator,
 } from "./command";
 import { Progress } from "./progress";
-import { useToast } from "./hooks/use-toast";
 import {
   Sheet,
   SheetTrigger,
@@ -67,19 +66,7 @@ import {
 import { Separator } from "./separator";
 import { Badge, badgeVariants } from "./badge";
 import { ThemeProvider } from "./theme/theme-provider";
-import { Toaster } from "./toaster";
-import {
-  type ToastProps,
-  type ToastActionElement,
-  ToastProvider,
-  ToastViewport,
-  Toast,
-  ToastTitle,
-  ToastDescription,
-  ToastClose,
-  ToastAction,
-} from "./toast";
-
+import { Toaster } from "./sonner";
 export {
   Button,
   Input,
@@ -133,7 +120,6 @@ export {
   CommandShortcut,
   CommandSeparator,
   Progress,
-  useToast,
   Sheet,
   SheetTrigger,
   SheetClose,
@@ -147,13 +133,4 @@ export {
   badgeVariants,
   ThemeProvider,
   Toaster,
-  type ToastProps,
-  type ToastActionElement,
-  ToastProvider,
-  ToastViewport,
-  Toast,
-  ToastTitle,
-  ToastDescription,
-  ToastClose,
-  ToastAction,
 };

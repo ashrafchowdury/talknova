@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Button, Input, useToast, Separator } from "@/packages/ui";
+import { Button, Input, Separator } from "@/packages/ui";
 import {
   BackSpace,
   ToggleSwitch,
@@ -13,30 +13,21 @@ import { useAuth } from "@/packages/server/context/AuthContext";
 import { useUsers } from "@/packages/server/context/UserContext";
 import { toggleTheme } from "@/lib/functions";
 import { themeSchema } from "@/lib/helpers";
+import { toast } from "sonner";
 
 const Settings = () => {
   const [detailes, setDetailes] = useState({ name: "", bio: "" });
   const { logout, isLoading } = useAuth();
   const { updateUserProfile, myself, activeStatus } = useUsers();
   const { theme, setTheme } = useTheme();
-  const { toast } = useToast();
 
   const handleUpdateProfile = () => {
     if (detailes.name.length > 0 && detailes.name.length < 2) {
-      toast({
-        title: "Name must have to be more than one character",
-        variant: "destructive",
-      });
+      toast.error("Name must have to be more than one character");
     } else if (detailes.bio.length > 0 && detailes.bio.length < 10) {
-      toast({
-        title: "Bio must have to be more than 10 characters",
-        variant: "destructive",
-      });
+      toast.error("Bio must have to be more than 10 characters");
     } else if (myself.name === detailes.name || myself.bio == detailes.bio) {
-      toast({
-        title: "Name & Bio must have to be different from before",
-        variant: "destructive",
-      });
+      toast.error("Name & Bio must have to be different from before");
     } else {
       try {
         updateUserProfile("", detailes.name, detailes.bio);

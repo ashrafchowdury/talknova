@@ -20,7 +20,6 @@ import {
 import { database } from "../config";
 import { useCookies } from "@/lib/hooks";
 import { useEncrypt } from "@/packages/encryption";
-import { toast } from "@/packages/ui/hooks/use-toast";
 import {
   MsgType,
   ChatContextProviderType,
@@ -29,6 +28,7 @@ import {
 } from "../types";
 import { useUsers } from "./UserContext";
 import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 // Types
 type MediaType = {
@@ -108,7 +108,7 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
         setMessage("");
       }
     } catch (error) {
-      toast({ title: "Something went wrong!", variant: "destructive" });
+      toast.error("Something went wrong!");
     }
   };
 
@@ -141,7 +141,7 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
               );
             },
             (error) => {
-              toast({ title: "Something went wrong!", variant: "destructive" });
+              toast.error("Something went wrong!");
               reject(error);
             },
             () => {
@@ -165,10 +165,10 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
             : updateUserProfile(downloadURLs[0] as string); // All uploads are done, and downloadURLs contains all the file URLs
         })
         .catch((error) => {
-          toast({ title: "Something went wrong!", variant: "destructive" });
+          toast.error("Something went wrong!");
         });
     } catch (error) {
-      toast({ title: "Something went wrong!", variant: "destructive" });
+      toast.error("Something went wrong!");
     }
   };
 
@@ -187,7 +187,7 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
           );
         },
         (error) => {
-          toast({ title: "Something went wrong!", variant: "destructive" });
+          toast.error("Something went wrong!");
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref)
@@ -199,7 +199,7 @@ const ChatContextProvider: React.FC<ChildrenType> = ({
         }
       );
     } catch (error) {
-      toast({ title: "Something went wrong!", variant: "destructive" });
+      toast.error("Something went wrong!");
     }
   };
 
