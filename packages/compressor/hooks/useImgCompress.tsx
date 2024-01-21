@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Compressor from "compressorjs";
-import { useToast } from "@/packages/ui";
+import { toast } from "sonner";
 
 type PreviewImg = {
   data: ArrayBuffer | string | null;
@@ -10,7 +10,6 @@ type PreviewImg = {
 const useImgCompress = () => {
   const [preview, setPreview] = useState<PreviewImg[]>([]);
   const [production, setProduction] = useState<File[]>([]);
-  const { toast } = useToast();
 
   const compressImg = (files: FileList) => {
     const MAX_PREVIEW_COUNT = 4;
@@ -37,15 +36,12 @@ const useImgCompress = () => {
             };
           },
           error(err) {
-            toast({ title: "Something Went Wrong!", variant: "destructive" });
+            toast.error("Something Went Wrong!");
           },
         });
       }
     } else {
-      toast({
-        title: "Can't Select More Then 4 Images At A Time",
-        variant: "destructive",
-      });
+      toast.error("Can't Select More Then 4 Images At A Time");
     }
   };
 

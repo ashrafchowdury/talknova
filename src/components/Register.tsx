@@ -25,11 +25,10 @@ import {
   LockClosedIcon,
   PersonIcon,
 } from "@radix-ui/react-icons";
-import { useToast } from "@/packages/ui";
+import { toast } from "sonner";
 
 const Register = () => {
   const { singup, login, forget, isLoading } = useAuth();
-  const { toast } = useToast();
 
   const handleForms = async (
     e: FormEvent<HTMLFormElement>,
@@ -42,7 +41,7 @@ const Register = () => {
     );
 
     if (value.some((data) => !data)) {
-      toast({ variant: "destructive", title: "Please fill up all the fildes" });
+      toast.error("Please fill up all the fildes");
     } else {
       authFunction(...(value as string[]));
     }

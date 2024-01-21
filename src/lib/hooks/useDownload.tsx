@@ -2,11 +2,10 @@
 
 import { useState, MutableRefObject } from "react";
 import { saveAs } from "file-saver";
-import { useToast } from "@/packages/ui";
+import { toast } from "sonner";
 
 const useDownload = () => {
   const [isDownload, setIsDownload] = useState(false);
-  const { toast } = useToast();
 
   const downloadImg = async (
     fileRef: MutableRefObject<HTMLImageElement>,
@@ -25,7 +24,7 @@ const useDownload = () => {
       }
       setIsDownload(false);
     } catch (error) {
-      toast({ title: "Someting Went Wrong!", variant: "destructive" });
+      toast.error("Someting Went Wrong!");
     }
   };
 
@@ -39,7 +38,7 @@ const useDownload = () => {
       saveAs(audioUrl, `talknova.webm`);
       setIsDownload(false);
     } catch (error) {
-      toast({ title: "Someting Went Wrong!", variant: "destructive" });
+      toast.error("Someting Went Wrong!");
     }
   };
 

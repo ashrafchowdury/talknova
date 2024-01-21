@@ -14,7 +14,6 @@ import {
   UserCredential,
 } from "firebase/auth";
 import { setDoc, doc, updateDoc, arrayUnion } from "firebase/firestore";
-import { useToast } from "@/packages/ui";
 import { useRouter } from "next/navigation";
 import { useCookies } from "@/lib/hooks";
 import {
@@ -23,6 +22,7 @@ import {
   ActionsType,
   ChildrenType,
 } from "../types";
+import { toast } from "sonner";
 
 // Context
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -38,7 +38,6 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   // hooks
-  const { toast } = useToast();
   const { push } = useRouter();
   const { createSession, removeSession } = useCookies();
 
@@ -84,15 +83,15 @@ const AuthContextProvider: React.FC<ChildrenType> = ({
           createSession(result?.user.uid);
         }
         setCurrentUser(result?.user as AuthUserType);
-        toasts && toast({ title: toasts });
+        toasts && toast.success(toasts);
         direct && push(direct);
         setIsLoading(false);
       }
     } catch (error: any) {
       if (error.message == "auth/email-already-in-use") {
-        toast({ variant: "destructive", title: "User already exist" });
+        toast.error("User with same email already exist");
       } else {
-        toast({ variant: "destructive", title: "Something went wrong!" });
+        toast.error("Something went wrong!");
       }
     }
     setIsLoading(false);
