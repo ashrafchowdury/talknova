@@ -25,10 +25,17 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.6",
+    "@trigger.dev/nextjs": "^2.3.18",
+    "@trigger.dev/react": "^2.3.18",
+    "@trigger.dev/sdk": "^2.3.18",
     "@types/node": "20.5.0",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
+    "@upstash/qstash": "^2.3.1",
+    "@upstash/ratelimit": "^1.0.1",
+    "@upstash/redis": "^1.28.4",
     "autoprefixer": "10.4.15",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
@@ -39,7 +46,8 @@
     "file-saver": "^2.0.5",
     "firebase": "^10.3.0",
     "js-cookie": "^3.0.5",
-    "next": "^14.0.1",
+    "next": "^14.1.3",
+    "next-auth": "^4.24.7",
     "next-themes": "^0.2.1",
     "postcss": "8.4.28",
     "react": "18.2.0",
@@ -52,11 +60,13 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/crypto-js": "^4.1.2",
     "@types/file-saver": "^2.0.7",
     "@types/js-cookie": "^3.0.5",
     "@types/react-mic": "^12.4.3",
     "husky": "^8.0.0",
-    "prettier": "3.0.2"
+    "prettier": "3.0.2",
+    "prisma": "^5.10.2"
   }
 }
