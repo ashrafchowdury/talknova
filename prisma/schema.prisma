@@ -9,10 +9,43 @@ datasource db {
 
 // smaple schema
 model User {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  email    String?
-  username String?
-  password String
-  avatar   String?
-  bio      String?
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  email     String?
+  username  String?
+  password  String
+  avatar    String?
+  bio       String?
+  createdAt DateTime   @default(now())
+  friends   Friends[]
+  requests  Requests[]
+  Messages  Messages[]
+}
+
+model Friends {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @db.ObjectId
+}
+
+model Requests {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @db.ObjectId
+}
+
+model Messages {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  message   String?
+  media     Media[]
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [senderId], references: [id])
+  senderId  String?  @db.ObjectId
+}
+
+model Media {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  url        String[]
+  type       String
+  messages   Messages? @relation(fields: [messagesId], references: [id])
+  messagesId String?   @db.ObjectId
 }
