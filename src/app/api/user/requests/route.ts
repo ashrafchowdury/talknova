@@ -5,10 +5,10 @@ import prisma from "@/lib/prisma";
 // Get all user invitations
 export async function GET(req: NextRequest) {
   try {
-    const user: any = await auth();
+    const session = await auth();
 
     const all_invitations = await prisma.user.findFirst({
-      where: { id: user.id },
+      where: { id: session?.user.id as string },
       select: { requests: true },
     });
 

@@ -9,13 +9,15 @@ export async function POST(
   try {
     const chatUserId = params.slug;
     const { messageIds } = (await req.json()) as { messageIds: string[] };
-    const { user }: any = await auth();
+    const session = await auth();
 
     await prisma.messages.deleteMany({
       where: {
         id: { in: messageIds },
         chat: {
-          connectId: `${chatUserId + user.id + process.env.CHAT_SECRET_ID}`,
+          connectId: `${
+            chatUserId + session?.user.id + process.env.CHAT_SECRET_ID
+          }`,
         },
       },
     });

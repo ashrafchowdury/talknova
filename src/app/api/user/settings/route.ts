@@ -4,16 +4,16 @@ import prisma from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   try {
-    const { user }: any = await auth();
+    const session = await auth();
 
     const currentUserInfo = await prisma.user.findUnique({
-      where: { id: user.id },
+      where: { id: session?.user.id as string },
       select: {
         id: true,
-        username: true,
+        name: true,
         email: true,
         bio: true,
-        avatar: true,
+        image: true,
         createdAt: true,
         _count: { select: { friends: true, requests: true } }, // number of friends & requests count
       },

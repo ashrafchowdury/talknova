@@ -4,11 +4,11 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
-    const { user }: any = await auth();
+const session = await auth();
     const data = await req.json();
 
     const updateUserData = await prisma.user.update({
-      where: { id: user.id },
+      where: { id: session?.user.id as string },
       data: { ...data },
     });
 

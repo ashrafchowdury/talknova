@@ -12,13 +12,15 @@ export async function POST(
       messageId: string;
       reaction: string;
     };
-    const { user }: any = await auth();
+    const session = await auth();
 
     const updated_reaction = await prisma.messages.update({
       where: {
         id: messageId,
         chat: {
-          connectId: `${chatUserId + user.id + process.env.CHAT_SECRET_ID}`,
+          connectId: `${
+            chatUserId + session?.user.id + process.env.CHAT_SECRET_ID
+          }`,
         },
       },
       data: {

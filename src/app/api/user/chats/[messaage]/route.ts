@@ -8,12 +8,14 @@ export async function GET(
 ) {
   try {
     const chatUserId = params.slug;
-    const { user }: any = await auth();
+       const session = await auth();
 
     const all_chats = await prisma.messages.findMany({
       where: {
         chat: {
-          connectId: `${chatUserId + user.id + process.env.CHAT_SECRET_ID}`,
+          connectId: `${
+            chatUserId + session?.user.id + process.env.CHAT_SECRET_ID
+          }`,
         },
       },
     });

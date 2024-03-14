@@ -2,17 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
+
 // Accept user invitation
 export async function POST(req: NextRequest) {
   try {
     const { invitedUserId } = await req.json();
-    const user: any = await auth();
+      const session = await auth();
+      const userId = session?.user.id as any;
 
     // add new firend on my friend list
     await prisma.friends.create({
       data: {
-        user: { connect: { id: user.id } },
-        userId: user.id,
+        user: { connect: { id: userId } },
+        userId: userId,
         friendId: invitedUserId,
       },
     });
@@ -22,7 +24,7 @@ export async function POST(req: NextRequest) {
       data: {
         user: { connect: { id: invitedUserId } },
         userId: invitedUserId,
-        friendId: user.id,
+        friendId: userId,
       },
     });
 
@@ -32,7 +34,7 @@ export async function POST(req: NextRequest) {
     });
 
     const updatedUserFriends = await prisma.user.findFirst({
-      where: { id: user.id },
+      where: { id: userId },
       select: { requests: true, friends: true },
     });
 

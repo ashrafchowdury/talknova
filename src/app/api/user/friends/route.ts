@@ -4,10 +4,10 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const user: any = await auth();
+    const session = await auth();
 
     const allFriends = await prisma.user.findFirst({
-      where: { id: user?.id },
+      where: { id: session?.user.id as string },
       select: { friends: true },
     });
 

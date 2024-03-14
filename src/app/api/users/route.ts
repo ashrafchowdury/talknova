@@ -1,14 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-
 import prisma from "@/lib/prisma";
 
-// Get all users
-export async function GET() {
-  try {
-    const user: any = await auth();
+import { User as NextAuthUser } from "next-auth";
+import { User as PrismaUser } from "@prisma/client";
 
-    if (!user.id) {
+export type CustomUser = NextAuthUser & PrismaUser;
+
+// Get all users
+export async function GET(req: NextRequest) {
+  try {
+    const session = await auth();
+  
+    if (!session?.user.id) {
       return NextResponse.json(
         { error: "Unothorized request" },
         { status: 400 }
@@ -18,8 +22,8 @@ export async function GET() {
     const allUsers = await prisma.user.findMany({
       select: {
         id: true,
-        username: true,
-        avatar: true,
+        name: true,
+        image: true,
         bio: true,
       },
     });

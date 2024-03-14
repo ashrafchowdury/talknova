@@ -6,13 +6,13 @@ import prisma from "@/lib/prisma";
 export async function POST(req: NextRequest) {
   try {
     const { invitedUserId } = await req.json();
-    const user: any = await auth();
+      const session = await auth();
 
     const create_new_request = await prisma.requests.create({
       data: {
         user: { connect: { id: invitedUserId } },
         userId: invitedUserId,
-        requestId: user.id,
+        requestId: session?.user.id as string,
       },
     });
 

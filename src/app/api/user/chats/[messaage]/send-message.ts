@@ -13,12 +13,14 @@ export async function POST(
       medias: { url: string[]; type: string };
       quote?: string; // quote message id
     };
-    const { user }: any = await auth();
+     const session = await auth();
 
     // Find the chat using connectId
     const chat = await prisma.chat.findFirst({
       where: {
-        connectId: `${chatUserId + user.id + process.env.CHAT_SECRET_ID}`,
+        connectId: `${
+          chatUserId + session?.user.id + process.env.CHAT_SECRET_ID
+        }`,
       },
     });
 

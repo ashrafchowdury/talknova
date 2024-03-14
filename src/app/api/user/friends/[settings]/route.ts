@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 export async function GET(
@@ -12,9 +11,9 @@ export async function GET(
     const friendsInfo = await prisma.user.findUnique({
       where: { id: friendId },
       select: {
-        username: true,
+        name: true,
         bio: true,
-        avatar: true,
+        image: true,
         createdAt: true,
         _count: { select: { friends: true } }, // number of friends
       },

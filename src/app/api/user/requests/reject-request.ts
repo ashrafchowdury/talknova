@@ -6,9 +6,9 @@ import prisma from "@/lib/prisma";
 export async function DELETE(req: NextRequest) {
   try {
     const { invitedUserId } = await req.json();
-    const user: any = await auth();
+    const session = await auth();
 
-    if (!user) {
+    if (!session?.user.id) {
       return NextResponse.json(
         { error: "Unothorized request" },
         { status: 400 }
