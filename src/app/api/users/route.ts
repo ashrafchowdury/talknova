@@ -2,16 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-import { User as NextAuthUser } from "next-auth";
-import { User as PrismaUser } from "@prisma/client";
-
-export type CustomUser = NextAuthUser & PrismaUser;
-
 // Get all users
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
-  
+
     if (!session?.user.id) {
       return NextResponse.json(
         { error: "Unothorized request" },
@@ -20,11 +15,15 @@ export async function GET(req: NextRequest) {
     }
 
     const allUsers = await prisma.user.findMany({
+      where: {
+        id: { not: session?.user.id }, // Exclude the current user
+      },
       select: {
         id: true,
         name: true,
         image: true,
         bio: true,
+        createdAt: true,
       },
     });
 

@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
         bio: true,
         image: true,
         createdAt: true,
-        _count: { select: { friends: true, requests: true } }, // number of friends & requests count
+        _count: { select: { friends: true } }, // number of friends & requests count
       },
     });
 
