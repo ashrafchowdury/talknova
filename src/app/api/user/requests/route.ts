@@ -7,32 +7,35 @@ export async function GET(req: NextRequest) {
   try {
     const session = await auth();
 
-    const query = {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          bio: true,
-          createdAt: true,
-          image: true,
-        },
-      },
+    const selectors = {
+      id: true,
+      name: true,
+      bio: true,
+      createdAt: true,
+      image: true,
     };
 
-    const getReceivedRequests = await prisma.requestsRecievedBy.findMany({
+    const requestIds = await prisma.requests.findMany({
       where: { userId: session?.user.id as string },
-      select: { ...query },
+      select: { requestId: true },
     });
 
-    const getSenedRequests = await prisma.requestsSentBy.findMany({
-      where: { userId: session?.user.id as string },
-      select: { ...query, requestId: true },
+    const userList = await prisma.user.findMany({
+      where: {
+        id: { in: requestIds.map((user) => user.requestId) as string[] },
+      },
+      select: { ...selectors },
+    });
+
+    const list = await prisma.requests.findMany({
+      where: { requestId: session?.user.id as string },
+      select: { user: { select: { ...selectors } } },
     });
 
     return NextResponse.json(
       {
-        received: getReceivedRequests,
-        send: getSenedRequests,
+        received: userList,
+        send: list.map((user) => user.user),
       },
       { status: 200 }
     );
@@ -47,20 +50,14 @@ export async function GET(req: NextRequest) {
 // Send a new invitation
 export async function POST(req: NextRequest) {
   try {
-    const { invitedUserId } = await req.json();
+    const { invitedUserId: receiverId } = await req.json();
     const session = await auth();
+    const senderId = session?.user.id as string;
 
-    await prisma.requestsRecievedBy.create({
+    await prisma.requests.create({
       data: {
-        userId: invitedUserId,
-        requestId: session?.user.id as string,
-      },
-    });
-
-    await prisma.requestsSentBy.create({
-      data: {
-        userId: session?.user.id as string,
-        requestId: invitedUserId,
+        userId: receiverId,
+        requestId: senderId,
       },
     });
 
@@ -76,41 +73,31 @@ export async function POST(req: NextRequest) {
 // Accept user invitation
 export async function PATCH(req: NextRequest) {
   try {
-    const { requestedUserId } = await req.json();
+    const { receiverId } = await req.json();
     const session = await auth();
-    const userId = session?.user.id as string;
+    const senderId = session?.user.id as string;
 
     // add new firend on my friend list
     await prisma.friends.create({
       data: {
-        userId: userId,
-        friendId: requestedUserId,
+        userId: senderId,
+        friendId: receiverId,
       },
     });
 
     // add new firend on user friend list
     await prisma.friends.create({
       data: {
-        userId: requestedUserId,
-        friendId: userId,
+        userId: receiverId,
+        friendId: senderId,
       },
     });
 
-    // remove inviter from my list
-    await prisma.requestsRecievedBy.deleteMany({
-      where: { userId, requestId: requestedUserId },
+    await prisma.requests.deleteMany({
+      where: { userId: senderId, requestId: receiverId },
     });
 
-    await prisma.requestsSentBy.deleteMany({
-      where: { userId: requestedUserId, requestId: session?.user.id as string },
-    });
-
-    const updatedUserFriends = await prisma.user.findFirst({
-      where: { id: userId },
-      select: { friends: true },
-    });
-
-    return NextResponse.json({ data: updatedUserFriends }, { status: 201 });
+    return NextResponse.json("New Friend added succcessfully", { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { error: "Unable to accept friend request, please try later" },
@@ -122,7 +109,7 @@ export async function PATCH(req: NextRequest) {
 // Reject user invitation
 export async function DELETE(req: NextRequest) {
   try {
-    const { requestedUserId, type } = await req.json();
+    const { receiverId } = await req.json();
     const session = await auth();
 
     if (!session?.user.id) {
@@ -131,31 +118,10 @@ export async function DELETE(req: NextRequest) {
         { status: 400 }
       );
     }
-    const userRequest = await prisma.requestsRecievedBy.findFirst({
-      where: { userId: requestedUserId, requestId: session.user.id },
-    });
-    const myRequestList = await prisma.requestsRecievedBy.findFirst({
-      where: { userId: session.user.id, requestId: requestedUserId },
-    });
-    console.log("userRequest", userRequest);
-    console.log("myRequestList", myRequestList);
-    // if (type === "cancel") {
-    //   const tryf = await prisma.requestsRecievedBy.delete({
-    //     where: { id: "", userId: requestedUserId, requestId: session.user.id },
-    //   });
-    //   console.log(tryf);
-    //   await prisma.requestsSentBy.deleteMany({
-    //     where: { userId: session.user.id, requestId: requestedUserId },
-    //   });
-    // } else {
-    //   await prisma.requestsRecievedBy.deleteMany({
-    //     where: { userId: session.user.id, requestId: requestedUserId },
-    //   });
 
-    //   await prisma.requestsSentBy.deleteMany({
-    //     where: { userId: requestedUserId, requestId: session.user.id },
-    //   });
-    // }
+    await prisma.requests.deleteMany({
+      where: { userId: receiverId, requestId: session.user.id },
+    });
 
     return NextResponse.json("Request rejected successfully", { status: 200 });
   } catch (error) {

@@ -13,7 +13,10 @@ const UserCard = ({
   label: string;
 }) => {
   return (
-    <div className="flex items-center justify-between space-x-2 py-2 px-2 border rounded-md">
+    <div
+      className="flex items-center justify-between space-x-2 py-2 px-2 border rounded-md"
+      key={user.id}
+    >
       <div className="flex items-center space-x-2">
         <Avatar
           fallback={user.name}

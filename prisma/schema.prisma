@@ -35,19 +35,18 @@ model Session {
 }
 
 model User {
-  id               String               @id @default(auto()) @map("_id") @db.ObjectId
-  name             String?              @map("username")
-  email            String?              @unique
-  emailVerified    DateTime?
-  image            String?
-  password         String?
-  accounts         Account[]
-  sessions         Session[]
-  bio              String?
-  createdAt        DateTime             @default(now())
-  friends          Friends[]
-  requestsRecieved RequestsRecievedBy[]
-  requestsSent     RequestsSentBy[]
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?    @map("username")
+  email         String?    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  accounts      Account[]
+  sessions      Session[]
+  bio           String?
+  createdAt     DateTime   @default(now())
+  friends       Friends[]
+  requests      Requests[]
 }
 
 model VerificationToken {
@@ -59,8 +58,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// smaple schema
-
 model Friends {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   user     User?   @relation(fields: [userId], references: [id])
@@ -68,24 +65,17 @@ model Friends {
   friendId String  @db.ObjectId
 }
 
-model RequestsRecievedBy {
+model Requests {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   user      User?   @relation(fields: [userId], references: [id])
   userId    String? @db.ObjectId
-  requestId String?  @db.ObjectId
-}
-
-model RequestsSentBy {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  user      User?   @relation(fields: [userId], references: [id])
-  userId    String? @db.ObjectId
-  requestId String?  @db.ObjectId
+  requestId String? @db.ObjectId
 }
 
 model Chat {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  connectId String     @db.ObjectId
-  messages  Messages[]
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  connectionId String     @db.ObjectId
+  messages     Messages[]
 }
 
 model Messages {
@@ -97,6 +87,7 @@ model Messages {
   reaction  String?
   chat      Chat?    @relation(fields: [chatId], references: [id])
   chatId    String?  @db.ObjectId
+  senderId  String   @db.ObjectId
 }
 
 model Media {

@@ -6,12 +6,23 @@ export async function GET() {
   try {
     const session = await auth();
 
-    const allFriends = await prisma.user.findFirst({
-      where: { id: session?.user.id as string },
-      select: { friends: true },
+    const friendsId = await prisma.friends.findMany({
+      where: { friendId: session?.user.id as string },
+      select: {
+        user: {
+          select: {
+            id: true,
+            bio: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json({ data: allFriends }, { status: 200 });
+    const friends = friendsId?.map((user) => user.user);
+
+    return NextResponse.json(friends, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "Encounter error while trying to get friends data." },

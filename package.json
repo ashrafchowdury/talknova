@@ -11,7 +11,8 @@
     "check-types": "tsc --pretty --noEmit",
     "check-format": "prettier --check .",
     "format": "prettier --write .",
-    "trigger:dev": "npx @trigger.dev/cli@latest dev"
+    "trigger:dev": "npx @trigger.dev/cli@latest dev",
+    "push": "npx prisma db push"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",

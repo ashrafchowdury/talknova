@@ -15,15 +15,9 @@ import { toast } from "sonner";
 import { User } from "@/lib/types";
 import UserCard from "./user-card";
 
-type RequestUser = {
-  id: string;
-  userId: string;
-  requestId: string;
-  user: User;
-};
 type RequestsType = {
-  received: RequestUser[];
-  send: RequestUser[];
+  received: User[];
+  send: User[];
 };
 
 const Requests = ({ children }: any) => {
@@ -49,8 +43,8 @@ const Requests = ({ children }: any) => {
   const acceptRequest = async (requestId: string) => {
     try {
       const res = await fetch("/api/user/requests", {
-        method: "POST",
-        body: JSON.stringify({ invitedUserId: requestId }),
+        method: "PATCH",
+        body: JSON.stringify({ receiverId: requestId }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -59,6 +53,7 @@ const Requests = ({ children }: any) => {
       if (!res.ok) {
         throw new Error("Failed to fetch");
       }
+      console.log(res);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -68,7 +63,7 @@ const Requests = ({ children }: any) => {
     try {
       const res = await fetch("/api/user/requests", {
         method: "DELETE",
-        body: JSON.stringify({ requestedUserId: requestId, type }),
+        body: JSON.stringify({ receiverId: requestId, type }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -77,10 +72,11 @@ const Requests = ({ children }: any) => {
       if (!res.ok) {
         throw new Error("Failed to fetch");
       }
-    //   setRequests({
-    //     received: requests.received,
-    //     send: requests.send.filter((user) => user.user.id !== requestId),
-    //   });
+
+      setRequests({
+        received: requests.received,
+        send: requests.send.filter((user) => user.id !== requestId),
+      });
     } catch (error: any) {
       console.log(error.message);
     }
@@ -109,7 +105,7 @@ const Requests = ({ children }: any) => {
             <section className="flex flex-col space-y-3 mt-5 min-h-[200px]">
               {requests.received?.map((user) => (
                 <UserCard
-                  user={user.user}
+                  user={user}
                   label="Accept"
                   action={() => acceptRequest(user.id)}
                 />
@@ -127,9 +123,9 @@ const Requests = ({ children }: any) => {
             <section className="flex flex-col space-y-3 mt-5 min-h-[200px]">
               {requests.send?.map((user) => (
                 <UserCard
-                  user={user.user}
+                  user={user}
                   label="Cancel"
-                  action={() => rejectRequest(user.user.id, "cancel")}
+                  action={() => rejectRequest(user.id, "cancel")}
                 />
               ))}
 
