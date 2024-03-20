@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import redis from "@/lib/redis";
 
 // Get all users
 export async function GET(req: NextRequest) {
@@ -14,10 +15,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    const isUsersExistOnCache = await redis.json.get("all-users");
+
+    if (isUsersExistOnCache) {
+      return NextResponse.json({ data: isUsersExistOnCache }, { status: 200 });
+    }
+
     const allUsers = await prisma.user.findMany({
-      where: {
-        id: { not: session?.user.id }, // Exclude the current user
-      },
       select: {
         id: true,
         name: true,
@@ -26,6 +30,9 @@ export async function GET(req: NextRequest) {
         createdAt: true,
       },
     });
+
+    await redis.json.set("all-users", "$", allUsers);
+    await redis.expire("all-users", 9000);
 
     return NextResponse.json({ data: allUsers }, { status: 200 });
   } catch (error) {

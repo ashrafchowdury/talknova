@@ -40,11 +40,11 @@ const Requests = ({ children }: any) => {
     }
   };
 
-  const acceptRequest = async (requestId: string) => {
+  const acceptRequest = async (requestId: string, index: number) => {
     try {
       const res = await fetch("/api/user/requests", {
         method: "PATCH",
-        body: JSON.stringify({ receiverId: requestId }),
+        body: JSON.stringify({ receiverId: requestId, index }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -53,17 +53,16 @@ const Requests = ({ children }: any) => {
       if (!res.ok) {
         throw new Error("Failed to fetch");
       }
-      console.log(res);
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
-  const rejectRequest = async (requestId: string, type: string) => {
+  const rejectRequest = async (requestId: string, index: number) => {
     try {
       const res = await fetch("/api/user/requests", {
         method: "DELETE",
-        body: JSON.stringify({ receiverId: requestId, type }),
+        body: JSON.stringify({ receiverId: requestId, index }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -103,11 +102,11 @@ const Requests = ({ children }: any) => {
 
           <TabsContent value="received">
             <section className="flex flex-col space-y-3 mt-5 min-h-[200px]">
-              {requests.received?.map((user) => (
+              {requests.received?.map((user, index) => (
                 <UserCard
                   user={user}
                   label="Accept"
-                  action={() => acceptRequest(user.id)}
+                  action={() => acceptRequest(user.id, index)}
                 />
               ))}
 
@@ -121,11 +120,11 @@ const Requests = ({ children }: any) => {
 
           <TabsContent value="send">
             <section className="flex flex-col space-y-3 mt-5 min-h-[200px]">
-              {requests.send?.map((user) => (
+              {requests.send?.map((user, index) => (
                 <UserCard
                   user={user}
                   label="Cancel"
-                  action={() => rejectRequest(user.id, "cancel")}
+                  action={() => rejectRequest(user.id, index)}
                 />
               ))}
 

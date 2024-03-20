@@ -1,11 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import redis from "@/lib/redis";
+import { User } from "@/lib/types";
 
 // Get all user invitations
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
+
+    const isRequestsExistOnCache = await redis.json.get(
+      `${session?.user.id}:requests`
+    );
+
+    if (isRequestsExistOnCache) {
+      return NextResponse.json(
+        {
+          received: (isRequestsExistOnCache as { received: User[] }).received,
+          send: (isRequestsExistOnCache as { send: User[] }).send,
+        },
+        { status: 200 }
+      );
+    }
 
     const selectors = {
       id: true,
@@ -32,6 +48,13 @@ export async function GET(req: NextRequest) {
       select: { user: { select: { ...selectors } } },
     });
 
+    // cache requests data
+    await redis.json.set(`${session?.user.id}:requests`, "$", {
+      received: userList,
+      send: list.map((user) => user.user),
+    });
+    await redis.expire(`${session?.user.id}:requests`, 900);
+
     return NextResponse.json(
       {
         received: userList,
@@ -54,12 +77,31 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     const senderId = session?.user.id as string;
 
-    await prisma.requests.create({
+    const newRequest = await prisma.requests.create({
       data: {
         userId: receiverId,
         requestId: senderId,
       },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            bio: true,
+            image: true,
+            createdAt: true,
+          },
+        },
+      },
     });
+
+    // update cache
+    await redis.json.arrinsert(
+      `${session?.user.id}:requests`,
+      "$.send",
+      0,
+      newRequest.user
+    );
 
     return NextResponse.json("Request sended successfully.", { status: 201 });
   } catch (error) {
@@ -73,15 +115,26 @@ export async function POST(req: NextRequest) {
 // Accept user invitation
 export async function PATCH(req: NextRequest) {
   try {
-    const { receiverId } = await req.json();
+    const { receiverId, index } = await req.json();
     const session = await auth();
     const senderId = session?.user.id as string;
 
     // add new firend on my friend list
-    await prisma.friends.create({
+    const myFriendList = await prisma.friends.create({
       data: {
         userId: senderId,
         friendId: receiverId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            bio: true,
+            image: true,
+            createdAt: true,
+          },
+        },
       },
     });
 
@@ -97,6 +150,18 @@ export async function PATCH(req: NextRequest) {
       where: { userId: senderId, requestId: receiverId },
     });
 
+    // update cache
+    await redis.json.arrinsert(
+      `${session?.user.id}:friends`,
+      "$",
+      0,
+      myFriendList.user
+    );
+    await redis.json.del(
+      `${session?.user.id}:requests`,
+      `$.received[${index}]`
+    );
+
     return NextResponse.json("New Friend added succcessfully", { status: 201 });
   } catch (error) {
     return NextResponse.json(
@@ -109,18 +174,13 @@ export async function PATCH(req: NextRequest) {
 // Reject user invitation
 export async function DELETE(req: NextRequest) {
   try {
-    const { receiverId } = await req.json();
+    const { receiverId, index } = await req.json();
     const session = await auth();
 
-    if (!session?.user.id) {
-      return NextResponse.json(
-        { error: "Unothorized request" },
-        { status: 400 }
-      );
-    }
+    await redis.json.del(`${session?.user.id}:requests`, `$.send[${index}]`);
 
     await prisma.requests.deleteMany({
-      where: { userId: receiverId, requestId: session.user.id },
+      where: { userId: receiverId, requestId: session?.user.id as string },
     });
 
     return NextResponse.json("Request rejected successfully", { status: 200 });
