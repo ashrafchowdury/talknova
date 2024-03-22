@@ -2,25 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
+export const connectionId = (userId: string | unknown, chatUserId: string): string => {
+  return `${userId + chatUserId + process.env.CHAT_SECRET_ID}`
+    .split("")
+    .sort()
+    .join("");
+};
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   try {
     const chatUserId = params.slug;
-       const session = await auth();
+    const session = await auth();
 
     const all_chats = await prisma.messages.findMany({
       where: {
-        chat: {
-          connectId: `${
-            chatUserId + session?.user.id + process.env.CHAT_SECRET_ID
-          }`,
-        },
+        chatId: connectionId(session?.user.id, chatUserId),
       },
     });
 
-    return NextResponse.json({ data: all_chats }, { status: 200 });
+    return NextResponse.json(all_chats, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "Unable to get user chats, please again try later" },
@@ -42,39 +45,42 @@ export async function POST(
     };
     const session = await auth();
 
-    // Find the chat using connectId
-    const chat = await prisma.chat.findFirst({
-      where: {
-        connectId: `${
-          chatUserId + session?.user.id + process.env.CHAT_SECRET_ID
-        }`,
-      },
-    });
-
-    if (!chat) {
+    if (!message) {
       throw new Error("Chat not found");
     }
 
-    // Create new message
-    const newMessage = await prisma.messages.create({
-      data: {
-        chat: { connect: { id: chat.id } },
-        message: message,
-        quote: quote,
-        ...(medias.type
-          ? {
-              media: {
-                create: { url: medias.url, type: medias.type },
-              },
-            }
-          : {}),
-      },
-      include: {
-        media: true,
-      },
-    });
+    try {
+      const newMessage = await prisma.messages.create({
+        data: {
+          chat: {
+            connect: {
+              connectionId: connectionId(session?.user.id, chatUserId),
+            } as any,
+          },
+          message: message,
+          senderId: session?.user.id as string,
+          quote,
+        },
+      });
 
-    return NextResponse.json({ data: newMessage }, { status: 201 });
+      return NextResponse.json(newMessage, { status: 201 });
+    } catch (error) {
+      const newChat = await prisma.chat.create({
+        data: {
+          connectionId: connectionId(session?.user.id, chatUserId),
+          messages: {
+            create: {
+              message: message,
+              senderId: session?.user.id as string,
+              quote,
+            },
+          },
+        },
+        include: { messages: true },
+      });
+
+      return NextResponse.json(newChat.messages[0], { status: 201 });
+    }
   } catch (error) {
     return NextResponse.json(
       { error: "Unable to get user chats, please again try later" },
@@ -82,7 +88,6 @@ export async function POST(
     );
   }
 }
-
 
 export async function DELETE(
   req: NextRequest,
@@ -97,24 +102,13 @@ export async function DELETE(
       where: {
         id: { in: messageIds },
         chat: {
-          connectId: `${
-            chatUserId + session?.user.id + process.env.CHAT_SECRET_ID
-          }`,
+          connectionId: connectionId(session?.user.id, chatUserId),
         },
       },
     });
 
-    // Get updated messages list
-    // const updatedMessages = await prisma.messages.findMany({
-    //   where: {
-    //     chat: {
-    //       connectId: `${chatUserId + user.id + process.env.CHAT_SECRET_ID}`,
-    //     },
-    //   },
-    // });
-
     return NextResponse.json(
-      { data: "messages got deleted successfully" },
+      { data: "messages deleted successfully" },
       { status: 201 }
     );
   } catch (error) {
@@ -124,3 +118,13 @@ export async function DELETE(
     );
   }
 }
+
+/*  
+...(medias.type
+  ? {
+      media: {
+        create: { url: medias.url, type: medias.type },
+      },
+    }
+  : {}),
+*/

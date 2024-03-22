@@ -7,9 +7,8 @@ import {
   DialogTitle,
 } from "@/packages/ui";
 import { User } from "@/lib/types";
-import { Button } from "@/packages/ui";
-import { Avatar } from "@/components";
 import UserCard from "./user-card";
+import ReloadButton from "./reload-button";
 
 const AllUsers = ({ children }: any) => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -43,17 +42,14 @@ const AllUsers = ({ children }: any) => {
     }
   };
 
-  useEffect(() => {
-    getData();
-    console.log("data called");
-  }, []);
-
   return (
     <Dialog>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="xl:!w-[800px]">
         <DialogHeader>
-          <DialogTitle>All Users</DialogTitle>
+          <DialogTitle className="flex items-center space-x-3">
+            All Users <ReloadButton action={() => getData()} />
+          </DialogTitle>
         </DialogHeader>
 
         <section className="flex flex-col space-y-3">

@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import { User } from "@/lib/types";
 import UserCard from "./user-card";
+import ReloadButton from "./reload-button";
 
 type RequestsType = {
   received: User[];
@@ -81,15 +82,11 @@ const Requests = ({ children }: any) => {
     }
   };
 
-  useEffect(() => {
-    getData();
-    console.log("requests data called");
-  }, []);
-
   return (
     <Dialog>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="w-[95%] sm:w-[400px] border-none px-2 py-10 sm:p-12">
+        <ReloadButton action={() => getData()} className="mx-auto flex items-center justify-center" />
         <Tabs defaultValue="received" className="w-full sm:w-[400px] mx-auto">
           <TabsList className="w-full h-auto">
             <TabsTrigger value="received" className="w-full py-2">

@@ -45,6 +45,7 @@ model User {
   sessions      Session[]
   bio           String?
   createdAt     DateTime   @default(now())
+  active        Boolean    @default(false)
   friends       Friends[]
   requests      Requests[]
 }
@@ -74,7 +75,7 @@ model Requests {
 
 model Chat {
   id           String     @id @default(auto()) @map("_id") @db.ObjectId
-  connectionId String     @db.ObjectId
+  connectionId String     @unique
   messages     Messages[]
 }
 
@@ -85,8 +86,8 @@ model Messages {
   createdAt DateTime @default(now())
   quote     String?  @db.ObjectId
   reaction  String?
-  chat      Chat?    @relation(fields: [chatId], references: [id])
-  chatId    String?  @db.ObjectId
+  chat      Chat?    @relation(fields: [chatId], references: [connectionId])
+  chatId    String?
   senderId  String   @db.ObjectId
 }
 
