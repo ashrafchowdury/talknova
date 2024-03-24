@@ -33,13 +33,14 @@ import ReloadButton from "../components/reload-button";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { cn } from "@/lib/functions";
+import MessageMenu from "../components/message-menu";
 
 type ChatMedia = {
   url: string[];
   type: string;
   messageId: string;
 };
-type Chats = {
+export type Chats = {
   message: string;
   id: string;
   chatId: string;
@@ -90,13 +91,19 @@ const User = () => {
 
   const handleSendMessage = async (chatUserId: string) => {
     try {
-      const sendMessage = await fetch(`/api/user/chats/${chatUserId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: message, quote: msgReply?.messageId }),
-      });
+      const sendMessage = await fetch(
+        `/api/user/chats/${searchParams.get("userId")}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: message,
+            quote: msgReply?.messageId,
+          }),
+        }
+      );
 
       const data = await sendMessage.json();
 
@@ -110,9 +117,9 @@ const User = () => {
 
   const getAllChats = async (chatUserId: string) => {
     try {
-      const res = await fetch(`/api/user/chats/${chatUserId}`);
+      const res = await fetch(`/api/user/chats/${searchParams.get("userId")}`);
       const data = await res.json();
-
+      console.log(data);
       setChats(data);
     } catch (error) {
       console.log(error);
@@ -121,7 +128,7 @@ const User = () => {
 
   const deleteMessage = async (chatUserId: string, msgId: string[]) => {
     try {
-      const res = await fetch(`/api/user/chats/${chatUserId}`, {
+      const res = await fetch(`/api/user/chats/${searchParams.get("userId")}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -257,24 +264,27 @@ const User = () => {
                 </nav>
 
                 <section className="w-full mt-10 mb-24 px-5 space-y-5">
-                  {chats?.map((chat) => (
-                    <>
-                      {chat.senderId == user.id ? (
-                        <div className="flex items-end space-x-2">
+                  {chats?.map((chat) => {
+                    const chatUser = chat.senderId == user.id;
+                    return (
+                      <>
+                        <div
+                          className={cn(
+                            "flex flex-row-reverse items-end space-x-2",
+                            chatUser && "flex-row"
+                          )}
+                        >
                           <Avatar
-                            fallback={user.name}
-                            img={user.image}
-                            className="w-5 h-5 text-[8px]"
-                          />
-                          <div className="py-2 px-4 bg-primary rounded-md mr-2">
-                            <p>{chat.message}</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex flex-row-reverse items-end">
-                          <Avatar
-                            fallback={session?.user?.name as string}
-                            img={session?.user?.image as string}
+                            fallback={
+                              chatUser
+                                ? user.name
+                                : (session?.user?.name as string)
+                            }
+                            img={
+                              chatUser
+                                ? user.image
+                                : (session?.user?.image as string)
+                            }
                             className="w-5 h-5 text-[8px] ml-2"
                           />
                           <div className="flex flex-col relative">
@@ -290,7 +300,12 @@ const User = () => {
                               </div>
                             )}
                             {chat.reaction && (
-                              <span className="absolute -bottom-3 -left-1 z-20 p-[1px] border rounded-md text-sm bg-secondary">
+                              <span
+                                className={cn(
+                                  "absolute -bottom-3 z-20 p-[1px] border rounded-md text-sm bg-secondary",
+                                  chatUser ? "-right-1" : "-left-1"
+                                )}
+                              >
                                 {
                                   reactions.filter(
                                     (item) => item.title == chat.reaction
@@ -299,76 +314,27 @@ const User = () => {
                               </span>
                             )}
 
-                            <div className="py-2 px-4 border rounded-md cursor-pointer">
+                            <div
+                              className={cn(
+                                "py-2 px-4 border rounded-md cursor-pointer",
+                                chatUser && "bg-primary text-white"
+                              )}
+                            >
                               <p>{chat.message}</p>
                             </div>
                           </div>
-                          <Popover>
-                            <PopoverTrigger>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="w-7 h-7"
-                                onClick={() => getAllChats(user.id)}
-                              >
-                                <EllipsisVertical className="w-4 h-4" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-[180px] p-0"
-                              align="start"
-                            >
-                              <section>
-                                <button
-                                  className="text-sm text-start w-full py-2 px-4 hover:bg-secondary duration-200"
-                                  onClick={() =>
-                                    setMsgReply({
-                                      message: chat.message,
-                                      messageId: chat.id,
-                                    })
-                                  }
-                                >
-                                  Reply message
-                                </button>
-                                <button
-                                  className="text-sm text-start w-full py-2 px-4 hover:bg-secondary duration-200 text-red-500"
-                                  onClick={() =>
-                                    deleteMessage(user.id, [chat.id])
-                                  }
-                                >
-                                  Delete message
-                                </button>
-                                <div className="flex items-center justify-between mt-3 px-4 py-1 border-t">
-                                  {reactions.map((item) => (
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className={cn(
-                                        "w-7 h-7 text-xl",
-                                        item.title == chat.reaction &&
-                                          "border bg-secondary"
-                                      )}
-                                      onClick={() =>
-                                        addReaction(
-                                          user.id,
-                                          chat.id,
-                                          chat.reaction == item.title
-                                            ? null
-                                            : item.title
-                                        )
-                                      }
-                                    >
-                                      {item.react}
-                                    </Button>
-                                  ))}
-                                </div>
-                              </section>
-                            </PopoverContent>
-                          </Popover>
+                          <MessageMenu
+                            user={user}
+                            chat={chat}
+                            deleteMessage={deleteMessage}
+                            setMsgReply={setMsgReply}
+                            addReaction={addReaction}
+                            isMainUser={true}
+                          />
                         </div>
-                      )}
-                    </>
-                  ))}
+                      </>
+                    );
+                  })}
                 </section>
 
                 <section className="w-full absolute bottom-3 px-4 flex items-center space-x-2">
