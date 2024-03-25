@@ -1,8 +1,10 @@
 export type User = {
-    id: string
+  id: string;
   name: string;
   email?: string;
   image: string;
-  createdAd: any;
+  createdAt: any;
   bio: string;
+  _count: { friends?: number; requests?: number };
+  accounts?: { provider: string }[];
 };
