@@ -222,11 +222,19 @@ const Profile = () => {
             <div>
               <Label className="opacity-80 mb-1.5">Registred By</Label>
               <p className="py-1.5 px-1.5 border rounded-md text-sm cursor-not-allowed space-x-2 flex items-center">
-                {user?.accounts?.map((item) => (
+                {user?.accounts?.length == 0 ? (
                   <span className="py-1 px-2 rounded-sm capitalize bg-secondary border">
-                    {item.provider}
+                    Email / Password
                   </span>
-                ))}
+                ) : (
+                  <>
+                    {user?.accounts?.map((item) => (
+                      <span className="py-1 px-2 rounded-sm capitalize bg-secondary border">
+                        {item.provider}
+                      </span>
+                    ))}
+                  </>
+                )}
               </p>
             </div>
           </section>

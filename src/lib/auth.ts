@@ -5,14 +5,13 @@ import type {
 } from "next";
 import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
-import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleAuthProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { createJwtToken } from "@/lib/functions/create-jwt-token";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { User } from "@prisma/client";
 
 // You'll need to import and pass this
 // to `NextAuth` in `app/api/auth/[...nextauth]/route.ts`
@@ -38,7 +37,7 @@ export const config = {
           throw new Error("Invalid credential");
         }
 
-        const isUserExist: any = await prisma.user.findFirst({
+        const isUserExist = await prisma.user.findFirst({
           where: { OR: [{ email }, { name: username }] },
         });
 
@@ -52,26 +51,26 @@ export const config = {
               email,
               name: username,
               password: hash_password,
+              image: "",
+              emailVerified: null,
+              bio: "",
             },
           });
 
-          const token = createJwtToken(createUser.id);
-
-          return { token };
+          return createUser as User;
         }
 
         // if user is already exist thean check password
         const isPasswordMatch = await bcrypt.compare(
           password,
-          isUserExist.password
+          isUserExist.password as string
         );
+
         if (!isPasswordMatch) {
           throw new Error("Invalid Password");
         }
 
-        const token = createJwtToken(isUserExist.id);
-
-        return { token } as any;
+        return isUserExist as User;
       },
     }),
     GithubProvider({

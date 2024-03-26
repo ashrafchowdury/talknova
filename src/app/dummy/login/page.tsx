@@ -13,13 +13,11 @@ import {
   CardTitle,
 } from "@/packages/ui";
 import {
-  EnvelopeClosedIcon,
   LockClosedIcon,
   PersonIcon,
 } from "@radix-ui/react-icons";
 import { toast } from "sonner";
 import { signIn } from "next-auth/react";
-import { useParams } from "next/navigation";
 import {
   ReloadIcon,
   GitHubLogoIcon,
@@ -27,8 +25,8 @@ import {
 } from "@radix-ui/react-icons";
 
 const Register = () => {
-  const { next } = useParams as { next?: string };
   const [isLoading, setIsLoading] = useState(false);
+  const callbackURL = "http://localhost:3000/dummy";
 
   const handleForms = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,8 +38,21 @@ const Register = () => {
       [username.includes("@") ? "email" : "username"]: username,
       password: password,
       redirect: true,
-      callbackUrl: "http://localhost:3000/dummy",
+      callbackUrl: callbackURL,
     });
+  };
+
+  const oAuth = async (provider: "google" | "github") => {
+    try {
+      setIsLoading(true);
+      await signIn(provider, { callbackUrl: callbackURL });
+      setIsLoading(false);
+    } catch (error) {
+      toast.error(
+        "Encounter error while triyng to login, please try again later"
+      );
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -87,16 +98,7 @@ const Register = () => {
 
           <CardFooter className="w-full m-0 p-0 flex flex-col space-y-3">
             <Button
-              onClick={() => {
-                setIsLoading(true);
-                signIn("google", {
-                  ...(next && next.length > 0 ? { callbackUrl: next } : {}),
-                }).then((res) => {
-                  if (res?.status) {
-                    setIsLoading(false);
-                  }
-                });
-              }}
+              onClick={() => oAuth("google")}
               disabled={isLoading}
               variant="outline"
               className="w-full flex justify-center items-center space-x-2"
@@ -110,10 +112,7 @@ const Register = () => {
             </Button>
 
             <Button
-              onClick={() => {
-                setIsLoading(true);
-                signIn("github");
-              }}
+              onClick={() => oAuth("github")}
               disabled={isLoading}
               variant="outline"
               className="w-full flex justify-center items-center space-x-2"
