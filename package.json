@@ -10,9 +10,13 @@
     "prepare": "husky install",
     "check-types": "tsc --pretty --noEmit",
     "check-format": "prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "trigger:dev": "npx @trigger.dev/cli@latest dev",
+    "push": "npx prisma db push"
   },
   "dependencies": {
+    "@next-auth/prisma-adapter": "^1.0.7",
+    "@prisma/client": "^5.10.2",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-icons": "^1.3.0",
@@ -25,11 +29,19 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.6",
+    "@trigger.dev/nextjs": "^2.3.18",
+    "@trigger.dev/react": "^2.3.18",
+    "@trigger.dev/sdk": "^2.3.18",
     "@types/node": "20.5.0",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
+    "@upstash/qstash": "^2.3.1",
+    "@upstash/ratelimit": "^1.0.1",
+    "@upstash/redis": "^1.28.4",
     "autoprefixer": "10.4.15",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
+    "cloudinary": "^2.0.3",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "compressorjs": "^1.2.1",
@@ -39,12 +51,17 @@
     "file-saver": "^2.0.5",
     "firebase": "^10.3.0",
     "js-cookie": "^3.0.5",
-    "next": "^14.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.358.0",
+    "mime": "^4.0.1",
+    "next": "^14.1.3",
+    "next-auth": "^4.24.7",
     "next-themes": "^0.2.1",
     "postcss": "8.4.28",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-mic": "^12.4.6",
+    "react-resizable-panels": "^2.0.13",
     "sonner": "^1.3.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
@@ -52,11 +69,17 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/crypto-js": "^4.1.2",
     "@types/file-saver": "^2.0.7",
     "@types/js-cookie": "^3.0.5",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/react-mic": "^12.4.3",
     "husky": "^8.0.0",
-    "prettier": "3.0.2"
+    "prettier": "3.0.2",
+    "prisma": "^5.10.2"
+  },
+  "trigger.dev": {
+    "endpointId": "talknova-grc6"
   }
 }
